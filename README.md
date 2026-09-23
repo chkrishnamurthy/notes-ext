@@ -9,6 +9,10 @@ the next few days.
 Built to [`PRODUCT_RESEARCH_AND_PLAN.md`](PRODUCT_RESEARCH_AND_PLAN.md) — the
 seven decisions in its §14, with the §9 Manifest V3 plan as the architecture.
 
+What comes next is in [`ROADMAP.md`](ROADMAP.md): 22 candidate features in three
+phases, the Chrome Web Store listing work that has to happen first, and the
+evidence behind each one.
+
 ## Running it
 
 ```sh
