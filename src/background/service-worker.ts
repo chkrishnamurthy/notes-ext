@@ -13,7 +13,8 @@ import {
   MENU_PAGE,
   MENU_SELECTION,
 } from '../lib/capture';
-import { broadcast } from '../lib/messages';
+import { canInject } from '../lib/inject';
+import { broadcast, type ExtensionMessage } from '../lib/messages';
 import { createNote, purgeExpiredTrash } from '../lib/notes';
 import { runMigrations } from '../lib/migrations';
 import { chromeLocalArea, NoteStore } from '../lib/storage';
@@ -47,11 +48,55 @@ function registerMenus(): void {
   });
 }
 
-/** Opening on the toolbar click is the documented way to avoid a popup. */
+/**
+ * The toolbar click has to reach `action.onClicked` so the overlay can be
+ * injected, which it will not do while Chrome is set to open the side panel
+ * for us. The side panel is still registered — it is the fallback for pages a
+ * content script cannot touch.
+ */
 function configurePanel(): void {
   chrome.sidePanel
-    .setPanelBehavior({ openPanelOnActionClick: true })
+    .setPanelBehavior({ openPanelOnActionClick: false })
     .catch(() => undefined);
+}
+
+/**
+ * Show the notes panel for this tab.
+ *
+ * The first click injects the overlay, which opens itself; later clicks find
+ * a listener already there and toggle it. `activeTab` grants the host access
+ * this needs, and only for the tab the user just clicked on — which is why
+ * the extension still asks for no host permissions.
+ */
+async function showPanel(tab: chrome.tabs.Tab): Promise<void> {
+  const windowId = tab.windowId;
+
+  if (!canInject(tab.url) || tab.id === undefined) {
+    if (windowId !== undefined) {
+      chrome.sidePanel.open({ windowId }).catch(() => undefined);
+    }
+    return;
+  }
+
+  try {
+    await chrome.tabs.sendMessage(tab.id, { type: 'toggle-overlay' });
+    return;
+  } catch {
+    // No listener yet, so this is the first click on this page.
+  }
+
+  try {
+    await chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      files: ['content.js'],
+    });
+  } catch {
+    // Injection is refused on the Web Store and other protected origins even
+    // when the URL looks ordinary. Fall back rather than doing nothing.
+    if (windowId !== undefined) {
+      chrome.sidePanel.open({ windowId }).catch(() => undefined);
+    }
+  }
 }
 
 async function startup(): Promise<void> {
@@ -107,9 +152,40 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
   })();
 });
 
+chrome.action.onClicked.addListener((tab) => {
+  void showPanel(tab);
+});
+
 chrome.commands.onCommand.addListener((command, tab) => {
   if (command !== 'open-panel') return;
-  // Also a user gesture, so sidePanel.open is permitted here.
-  const windowId = tab?.windowId ?? chrome.windows.WINDOW_ID_CURRENT;
-  chrome.sidePanel.open({ windowId }).catch(() => undefined);
+  if (tab) {
+    void showPanel(tab);
+    return;
+  }
+  // A command can fire without a tab; the side panel still works from here.
+  chrome.sidePanel
+    .open({ windowId: chrome.windows.WINDOW_ID_CURRENT })
+    .catch(() => undefined);
+});
+
+/**
+ * Requests from the overlay for things a content script cannot do itself.
+ * The listener returns true so the async reply is not dropped.
+ */
+chrome.runtime.onMessage.addListener((message: ExtensionMessage, _sender, respond) => {
+  if (message?.type === 'open-tab') {
+    chrome.tabs
+      .create({ url: message.url })
+      .then(() => respond({ ok: true }))
+      .catch(() => respond({ ok: false }));
+    return true;
+  }
+  if (message?.type === 'open-options') {
+    chrome.tabs
+      .create({ url: chrome.runtime.getURL('options.html') })
+      .then(() => respond({ ok: true }))
+      .catch(() => respond({ ok: false }));
+    return true;
+  }
+  return undefined;
 });

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { NotebookPen, Settings2, X } from 'lucide-react';
 
 import { copyText } from '../lib/clipboard';
+import type { HostBridge } from '../lib/host';
 import type { ExtensionMessage } from '../lib/messages';
 import {
   clearableNotes,
@@ -53,41 +54,6 @@ function explain(result: Extract<WriteResult<unknown>, { ok: false }>): string {
   return `Not saved — ${result.message}`;
 }
 
-/**
- * Open the settings page in a tab.
- *
- * `chrome.runtime.openOptionsPage()` is the obvious call, but from a side
- * panel it can resolve without ever showing anything, which looks to the user
- * like a dead button. Creating the tab explicitly is unambiguous. It is kept
- * as the fallback so a failure is reported rather than swallowed.
- */
-async function openSettings(): Promise<boolean> {
-  try {
-    await chrome.tabs.create({ url: chrome.runtime.getURL('options.html') });
-    return true;
-  } catch {
-    try {
-      chrome.runtime.openOptionsPage();
-      return true;
-    } catch {
-      return false;
-    }
-  }
-}
-
-/**
- * Chrome closes the side panel from inside the panel page. `sidePanel.close`
- * exists on newer builds; `window.close` is the fallback everywhere else.
- */
-function closePanel(): void {
-  const api = chrome.sidePanel as typeof chrome.sidePanel & { close?: () => Promise<void> };
-  if (typeof api.close === 'function') {
-    api.close().catch(() => window.close());
-    return;
-  }
-  window.close();
-}
-
 /** The layout choice is a per-viewer convenience, so it lives in the browser. */
 function loadNoteView(): NoteView {
   try {
@@ -97,7 +63,7 @@ function loadNoteView(): NoteView {
   }
 }
 
-export function App() {
+export function App({ host }: { host: HostBridge }) {
   const [notes, setNotes] = useState<Note[] | null>(null);
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
   const [usageRatio, setUsageRatio] = useState(0);
@@ -142,7 +108,7 @@ export function App() {
     void (async () => {
       const loadedSettings = await store.getSettings();
       setSettings(loadedSettings);
-      applyTheme(loadedSettings.theme);
+      applyTheme(loadedSettings.theme, host.themeRoot);
 
       const draft = await store.getDraft();
       pushContent({ html: draft.html, text: draft.text });
@@ -170,13 +136,13 @@ export function App() {
       if (keys.includes('settings')) {
         void store.getSettings().then((next) => {
           setSettings(next);
-          applyTheme(next.theme);
+          applyTheme(next.theme, host.themeRoot);
         });
       }
     };
     chrome.storage.onChanged.addListener(onChanged);
     return () => chrome.storage.onChanged.removeListener(onChanged);
-  }, [refresh]);
+  }, [refresh, host]);
 
   // Confirmation for captures made from the context menu while the panel is open.
   useEffect(() => {
@@ -407,7 +373,9 @@ export function App() {
   }
 
   function openSource(url: string) {
-    chrome.tabs.create({ url }).catch(() => announce('Could not open that page.'));
+    void host.openTab(url).then((ok) => {
+      if (!ok) announce('Could not open that page.');
+    });
   }
 
   function changeNoteView(next: NoteView) {
@@ -457,12 +425,12 @@ export function App() {
       } else if (status) {
         announce('');
       } else {
-        closePanel();
+        host.requestClose();
       }
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [saveError, confirmClear, editTarget, query, status]);
+  }, [saveError, confirmClear, editTarget, query, status, host]);
 
   // ---------------------------------------------------------------------
   // Render
@@ -472,7 +440,7 @@ export function App() {
   const nearQuota = usageRatio >= QUOTA_WARN_RATIO;
 
   return (
-    <div className="flex h-screen flex-col bg-paper text-ink">
+    <div className="flex h-full min-h-0 flex-col bg-paper text-ink">
       {/* One compact row. Everything else in the panel is content. */}
       <header className="flex shrink-0 items-center justify-between gap-2 px-3 py-1.5">
         <span className="flex items-center gap-1.5 text-sm font-semibold tracking-tight">
@@ -486,7 +454,7 @@ export function App() {
             aria-label="Settings and backup"
             title="Settings and backup"
             onClick={() =>
-              void openSettings().then((ok) => {
+              void host.openOptions().then((ok) => {
                 if (!ok) announce('Could not open settings. Try the extension menu in Chrome.');
               })
             }
@@ -498,7 +466,7 @@ export function App() {
             className="fn-tool"
             aria-label="Close side panel"
             title="Close side panel"
-            onClick={closePanel}
+            onClick={() => host.requestClose()}
           >
             <X size={15} aria-hidden="true" />
           </button>

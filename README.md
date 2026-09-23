@@ -30,7 +30,8 @@ to pick the change up.
 
 | To do this | Do this |
 | --- | --- |
-| Open the panel | Click the toolbar icon, or press **Alt+Shift+N** |
+| Open the panel | Click the toolbar icon, or press **Alt+Shift+N**. It genies up out of the bottom-right corner |
+| Close the panel | Click outside it, press **Escape**, or use the × — it genies back down into the corner |
 | Add a thought | Type in the composer, then **Ctrl/Cmd+Enter** |
 | Format text | The toolbar, or type it: `- ` a list, `1. ` a numbered list, `# ` a heading, `> ` a quote, ``` a code block, `**bold**` |
 | Keep a snippet | The code-block button — whitespace is preserved exactly |
@@ -61,10 +62,53 @@ src/
     migrations.ts   per-record schema upgrades
     capture.ts      what a context-menu click becomes
     time.ts         grouping and relative timestamps
-  background/     the service worker: menus, capture, panel opening, start-up
+  background/     the service worker: menus, capture, panel routing, start-up
+  content/        the injected overlay: shadow root, floating frame, genie
   sidepanel/      the React panel and the TipTap editor
   options/        settings and backup
 ```
+
+### Two shells, one panel
+
+The same React app runs in two places, and it does not know which:
+
+- **An overlay injected into the page.** The everyday surface. It floats over
+  the page as a card in the bottom-right, and animates in and out with a genie
+  effect. Injected on the toolbar click under `activeTab`, so it needs **no
+  host permission** — the install prompt stays clean.
+- **The native side panel.** The fallback for pages Chrome will not let a
+  content script touch: `chrome://` pages, the Web Store, the new tab page.
+  `src/lib/inject.ts` decides which you get.
+
+Everything that differs between them — opening a tab, opening settings,
+closing, where the `data-theme` attribute belongs — goes through
+`src/lib/host.ts`. The UI never calls a shell-specific API directly.
+
+### The genie effect
+
+The browser has no primitive for warping live pixels, so `src/lib/genie.ts`
+reproduces the macOS minimise animation the way it actually reads: the panel is
+cloned into 32 horizontal slices, and each one is pulled toward the corner on
+its own delay. The bottom slices arrive first and the upper ones trail, which
+is what forms the curved neck; a mid-flight bend keyframe stops the tail
+travelling in a straight line. Only `transform` and `opacity` animate, so it
+stays on the compositor. `prefers-reduced-motion` gets a plain fade.
+
+The geometry is pure and unit-tested; the DOM work around it is deliberately
+thin.
+
+### Living on someone else's page
+
+Two problems that only show up in a real browser, both solved in the CSS:
+
+- The overlay mounts in a **shadow root**, so the host page cannot restyle it
+  and it cannot restyle the host page. That means the colour tokens have to be
+  declared on `:host` as well as `:root` — `:root` matches nothing inside a
+  shadow root, and without the second selector every colour silently resolves
+  to an invalid value.
+- **The design system is sized in px, not rem.** Inside a host document, `rem`
+  resolves against *that page's* root font size, and plenty of sites set it to
+  10px or 62.5%.
 
 `src/lib` takes its storage area as an interface, so every rule in the product
 is unit-testable without a browser. The React layer holds no rules of its own.
@@ -129,14 +173,21 @@ extension never watches pages you merely visit. Incognito is disabled.
 ## Testing
 
 ```sh
-npm test       # 120 unit tests, including the sanitizer
-npm run e2e    # 4 suites, 157 checks, against a real Chrome
+npm test       # 143 unit tests, including the sanitizer and the genie geometry
+npm run e2e    # 5 suites, 193 checks, against a real Chrome
 npm run verify # build + both
 ```
 
 `npm run e2e` launches its own headless Chrome with a throwaway profile, loads
-`dist/` over the DevTools protocol, and tears everything down afterwards. It
-never touches your real Chrome profile. `FORNOW_HEADFUL=1 npm run e2e` runs it
+the build over the DevTools protocol, and tears everything down afterwards. It
+never touches your real Chrome profile.
+
+It injects using a **copy** of `dist/` with `<all_urls>` added, because
+`activeTab` is granted only by a real click on the toolbar icon and the
+DevTools protocol cannot produce that gesture. `dist/` is never modified, and
+the `worker` suite asserts the permission set by reading the **shipped**
+manifest from disk — so the harness's extra permission can never hide a
+regression in the real one. `FORNOW_HEADFUL=1 npm run e2e` runs it
 visibly; screenshots land in `e2e/screenshots`.
 
 | Suite | Covers |
@@ -145,6 +196,7 @@ visibly; screenshots land in `e2e/screenshots`.
 | `worker` | Menu registration, permissions, worker termination and cold start, no duplicate menus, no data reset |
 | `options` | A real export download, a full import round trip, rejecting a foreign file, retention and theme |
 | `conflicts` | Draft restoration across a panel reopen, and two windows editing one note |
+| `overlay` | Injecting into a real page, shadow-root isolation in both directions, immunity to a hostile host stylesheet and a 10px root font, the genie running and cleaning up, and routing through the worker |
 
 ## Not in this version
 

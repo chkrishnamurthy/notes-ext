@@ -11,7 +11,7 @@
  */
 
 import { spawn, spawnSync } from 'node:child_process';
-import { existsSync, mkdtempSync, mkdirSync, rmSync } from 'node:fs';
+import { cpSync, existsSync, mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -29,7 +29,7 @@ const CHROME =
     ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
     : 'google-chrome');
 
-const ALL = ['panel', 'worker', 'options', 'conflicts'];
+const ALL = ['panel', 'worker', 'options', 'conflicts', 'overlay'];
 const requested = process.argv.slice(2).filter((a) => !a.startsWith('-'));
 const suites = requested.length > 0 ? requested : ALL;
 
@@ -43,7 +43,27 @@ if (!existsSync(CHROME)) {
 }
 
 const profile = mkdtempSync(join(tmpdir(), 'fornow-profile-'));
+const buildDir = mkdtempSync(join(tmpdir(), 'fornow-build-'));
 mkdirSync(SHOTS, { recursive: true });
+
+/**
+ * A copy of `dist/` with `<all_urls>` added, used only by the harness.
+ *
+ * In production the overlay is injected under `activeTab`, which Chrome grants
+ * only after a real click on the toolbar icon — a gesture the DevTools
+ * protocol cannot produce. Without a host permission the suite could not
+ * inject at all, so the test build gets one. `dist/` itself is never modified,
+ * and the shipped manifest still asks for no host permissions.
+ */
+function testBuild() {
+  const out = join(buildDir, 'dist');
+  cpSync(DIST, out, { recursive: true });
+  const file = join(out, 'manifest.json');
+  const manifest = JSON.parse(readFileSync(file, 'utf8'));
+  manifest.host_permissions = ['<all_urls>'];
+  writeFileSync(file, JSON.stringify(manifest, null, 2));
+  return out;
+}
 
 const chrome = spawn(
   CHROME,
@@ -68,10 +88,12 @@ function shutdown(code) {
   } catch {
     // already gone
   }
-  try {
-    rmSync(profile, { recursive: true, force: true });
-  } catch {
-    // best effort
+  for (const dir of [profile, buildDir]) {
+    try {
+      rmSync(dir, { recursive: true, force: true });
+    } catch {
+      // best effort
+    }
   }
   process.exit(code);
 }
@@ -85,9 +107,9 @@ try {
     { timeout: 20000, label: 'Chrome to expose the DevTools endpoint' },
   );
   const browser = await Session.open(version.webSocketDebuggerUrl);
-  const { id } = await browser.send('Extensions.loadUnpacked', { path: DIST });
+  const { id } = await browser.send('Extensions.loadUnpacked', { path: testBuild() });
   browser.close();
-  console.log(`Loaded ${id} from dist/ into a temporary profile.\n`);
+  console.log(`Loaded ${id} into a temporary profile.\n`);
 
   let failed = 0;
   for (const suite of suites) {
@@ -104,6 +126,7 @@ try {
         ...process.env,
         FORNOW_EXT_ID: id,
         FORNOW_DIST: DIST,
+        FORNOW_TEST_DIST: join(buildDir, 'dist'),
         FORNOW_SHOTS: SHOTS,
         FORNOW_CDP_PORT: String(PORT),
       },

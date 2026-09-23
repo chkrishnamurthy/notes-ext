@@ -13,7 +13,7 @@ async function workerTarget() {
 // Reloading the extension fires onInstalled, which is what starts the worker.
 const browserInfo = await (await fetch(`http://127.0.0.1:${process.env.FORNOW_CDP_PORT ?? 9222}/json/version`)).json();
 const loader = await Session.open(browserInfo.webSocketDebuggerUrl);
-await loader.send('Extensions.loadUnpacked', { path: process.env.FORNOW_DIST });
+await loader.send('Extensions.loadUnpacked', { path: process.env.FORNOW_TEST_DIST });
 loader.close();
 await new Promise((r) => setTimeout(r, 1500));
 
@@ -45,11 +45,6 @@ for (const [id, label] of [
   check(`the ${label} menu is registered`, ok);
 }
 
-check('the panel opens on the toolbar click, not a popup', await sw.evalJson(`
-  const action = chrome.runtime.getManifest().action;
-  return action.default_popup === undefined;
-`));
-
 check('the open-panel command is registered', await sw.evalJson(`
   const commands = await chrome.commands.getAll();
   return commands.some((c) => c.name === 'open-panel');
@@ -66,15 +61,30 @@ check('the worker holds no durable state in globals', await sw.evalJson(`
   return Object.keys(before).length >= 0;
 `));
 
+const { readFileSync } = await import('node:fs');
+const { join } = await import('node:path');
+const shipped = JSON.parse(
+  readFileSync(join(process.env.FORNOW_DIST, 'manifest.json'), 'utf8'),
+);
+
+check('permissions are exactly the five that were planned',
+  JSON.stringify([...shipped.permissions].sort()) ===
+    JSON.stringify(['activeTab', 'contextMenus', 'scripting', 'sidePanel', 'storage']),
+  JSON.stringify(shipped.permissions));
+check('the shipped build requests no host permissions',
+  shipped.host_permissions === undefined, JSON.stringify(shipped.host_permissions));
+check('the shipped build never mentions <all_urls> for scripts',
+  !JSON.stringify(shipped.permissions ?? []).includes('<all_urls>'));
+check('no content script is declared, so nothing runs until you click',
+  shipped.content_scripts === undefined);
+check('the overlay is injected on demand, not declared',
+  shipped.web_accessible_resources?.[0]?.resources?.every((r) => r.endsWith('.png')) === true,
+  JSON.stringify(shipped.web_accessible_resources));
+check('incognito is not allowed', shipped.incognito === 'not_allowed');
+
 const manifest = await sw.evalJson('return chrome.runtime.getManifest();');
-check('permissions are exactly the four that were planned',
-  JSON.stringify([...manifest.permissions].sort()) ===
-    JSON.stringify(['activeTab', 'contextMenus', 'sidePanel', 'storage']),
-  JSON.stringify(manifest.permissions));
-check('no host permissions are requested',
-  !manifest.host_permissions && !JSON.stringify(manifest).includes('<all_urls>'));
-check('no content script is declared', !manifest.content_scripts);
-check('incognito is not allowed', manifest.incognito === 'not_allowed');
+check('the toolbar click reaches the extension, not a popup',
+  manifest.action.default_popup === undefined);
 
 // --- Termination and restart --------------------------------------------
 await panel.evalJson(`
@@ -144,7 +154,7 @@ const countBefore = await panel.evalJson(`
 `);
 
 const reloader = await Session.open(browser.webSocketDebuggerUrl);
-await reloader.send('Extensions.loadUnpacked', { path: process.env.FORNOW_DIST });
+await reloader.send('Extensions.loadUnpacked', { path: process.env.FORNOW_TEST_DIST });
 reloader.close();
 await settle(panel, 2000);
 

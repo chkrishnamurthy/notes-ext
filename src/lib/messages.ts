@@ -17,7 +17,27 @@ export interface CaptureFailedMessage {
   message: string;
 }
 
-export type ExtensionMessage = CaptureSavedMessage | CaptureFailedMessage;
+/** Asks the worker to open a tab, which a content script cannot do itself. */
+export interface OpenTabMessage {
+  type: 'open-tab';
+  url: string;
+}
+
+export interface OpenOptionsMessage {
+  type: 'open-options';
+}
+
+/** Sent to a tab to toggle an overlay that is already injected. */
+export interface ToggleOverlayMessage {
+  type: 'toggle-overlay';
+}
+
+export type ExtensionMessage =
+  | CaptureSavedMessage
+  | CaptureFailedMessage
+  | OpenTabMessage
+  | OpenOptionsMessage
+  | ToggleOverlayMessage;
 
 /**
  * Broadcast to whichever panel happens to be open. No receiver is the normal

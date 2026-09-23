@@ -10,7 +10,13 @@
     "48": "icons/icon-48.png",
     "128": "icons/icon-128.png"
   },
-  "permissions": ["storage", "sidePanel", "contextMenus", "activeTab"],
+  "permissions": [
+    "storage",
+    "sidePanel",
+    "contextMenus",
+    "activeTab",
+    "scripting"
+  ],
   "background": {
     "service_worker": "service-worker.js",
     "type": "module"
@@ -19,7 +25,7 @@
     "default_path": "sidepanel.html"
   },
   "action": {
-    "default_title": "For Now — open notes panel",
+    "default_title": "For Now \u2014 open notes",
     "default_icon": {
       "16": "icons/icon-16.png",
       "32": "icons/icon-32.png"
@@ -41,5 +47,15 @@
   "incognito": "not_allowed",
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'"
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "icons/*.png"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ]
 }

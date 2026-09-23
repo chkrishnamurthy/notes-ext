@@ -1,0 +1,67 @@
+/* Shell styling for the injected overlay. Everything here lives inside the
+   shadow root, so none of it can reach the host page. */
+
+:host {
+  all: initial;
+}
+
+.fn-stage {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  /* The overlay's own root font size, so the panel's sizing never depends on
+     whatever the host page set on <html>. */
+  font-size: 16px;
+  font-family: var(--font-sans);
+}
+
+/* A floating window anchored near the bottom-right, which is where the genie
+   funnels to. Height is capped so it never touches the top of the viewport. */
+.fn-frame {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  width: min(410px, calc(100vw - 40px));
+  height: min(640px, calc(100vh - 56px));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--fn-line);
+  border-radius: 14px;
+  background-color: var(--fn-paper);
+  color: var(--fn-ink);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.08),
+    0 12px 28px -6px rgba(0, 0, 0, 0.22),
+    0 32px 64px -16px rgba(0, 0, 0, 0.3);
+  pointer-events: auto;
+  contain: layout paint;
+}
+
+.fn-mount {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  background-color: var(--fn-paper);
+  color: var(--fn-ink);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* The panel fills the frame rather than the viewport when it is a window. */
+.fn-mount > div {
+  height: 100%;
+}
+
+/* Where the travelling clones live during the effect. */
+.fn-genie-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  contain: strict;
+}
+
+/* Slices must not be rounded individually: each one is a band cut out of the
+   same sheet, and rounding them turns the effect into a stack of pills. The
+   clone inside already carries the frame's own corners. */
