@@ -76,6 +76,31 @@ export async function clickExact(s, selector, label) {
   await settle(s);
 }
 
+/**
+ * Click through the browser rather than through the DOM.
+ *
+ * `el.click()` produces an untrusted event, which Chrome does not count as a
+ * user gesture — and `permissions.request` refuses to run without one. This
+ * dispatches real mouse input at the element's coordinates instead, so the
+ * gesture is genuine.
+ */
+export async function clickReal(s, selector, { shadowHost = null } = {}) {
+  const box = await s.evalJson(`
+    const root = ${shadowHost ? `document.querySelector(${JSON.stringify(shadowHost)}).shadowRoot` : 'document'};
+    const el = root.querySelector(${JSON.stringify(selector)});
+    if (!el) return null;
+    el.scrollIntoView({ block: 'center' });
+    const r = el.getBoundingClientRect();
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+  `);
+  if (!box) throw new Error(`No element for ${selector}`);
+  const base = { x: box.x, y: box.y, button: 'left', clickCount: 1 };
+  await s.send('Input.dispatchMouseEvent', { type: 'mouseMoved', ...base, button: 'none' });
+  await s.send('Input.dispatchMouseEvent', { type: 'mousePressed', ...base });
+  await s.send('Input.dispatchMouseEvent', { type: 'mouseReleased', ...base });
+  await settle(s);
+}
+
 export async function focus(s, selector) {
   await s.evalJson(`document.querySelector(${JSON.stringify(selector)}).focus(); return true;`);
 }

@@ -20,20 +20,26 @@ const store = new NoteStore(chromeLocalArea());
 
 const RETENTION_CHOICES = [7, 14, 30, 90];
 
+/** The one origin pattern the quick-open button needs, and nothing wider. */
+const ALL_SITES = '<all_urls>';
+
 export function Options() {
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
   const [counts, setCounts] = useState({ active: 0, trashed: 0 });
   const [usage, setUsage] = useState({ bytes: 0, ratio: 0 });
   const [message, setMessage] = useState('');
   const [pending, setPending] = useState<{ parsed: ParsedBackup; filename: string } | null>(null);
+  const [siteAccess, setSiteAccess] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const refresh = useCallback(async () => {
-    const [notes, loadedSettings, bytes] = await Promise.all([
+    const [notes, loadedSettings, bytes, granted] = await Promise.all([
       store.listNotes(),
       store.getSettings(),
       store.usage(),
+      chrome.permissions.contains({ origins: [ALL_SITES] }).catch(() => false),
     ]);
+    setSiteAccess(granted);
     setCounts({
       active: notes.filter(isActive).length,
       trashed: notes.filter(isTrashed).length,
@@ -56,6 +62,44 @@ export function Options() {
     } else {
       setMessage(`Could not save settings — ${result.message}`);
     }
+  }
+
+  /**
+   * Turn the quick-open button on or off.
+   *
+   * `permissions.request` has to be reached before the click's user gesture is
+   * spent, so it is the first thing this does — an `await` in front of it
+   * would make Chrome reject the prompt outright.
+   */
+  function toggleLauncher(next: boolean) {
+    if (!next) {
+      void (async () => {
+        await saveSettings({ ...settings, showLauncher: false });
+        await chrome.runtime.sendMessage({ type: 'launcher-changed' }).catch(() => undefined);
+        // Hand the access back rather than keeping a permission that is no
+        // longer being used for anything.
+        await chrome.permissions.remove({ origins: [ALL_SITES] }).catch(() => undefined);
+        setSiteAccess(false);
+        setMessage('Quick-open button turned off, and site access given back to Chrome.');
+      })();
+      return;
+    }
+
+    chrome.permissions
+      .request({ origins: [ALL_SITES] })
+      .then(async (granted) => {
+        setSiteAccess(granted);
+        if (!granted) {
+          setMessage(
+            'Site access was declined, so the button stays off. The toolbar icon and Alt+Shift+N still work.',
+          );
+          return;
+        }
+        await saveSettings({ ...settings, showLauncher: true });
+        await chrome.runtime.sendMessage({ type: 'launcher-changed' }).catch(() => undefined);
+        setMessage('Quick-open button turned on. It appears at the bottom-right of every page.');
+      })
+      .catch(() => setMessage('Chrome refused the permission prompt. Nothing was changed.'));
   }
 
   async function exportBackup() {
@@ -256,6 +300,42 @@ export function Options() {
             ))}
           </select>
         </div>
+      </Section>
+
+      <Section title="Quick-open button">
+        <p>
+          A small button at the bottom-right of every page, so the panel is one
+          click away without hunting for the toolbar icon. The panel genies out of
+          it, and it steps aside while the panel is open.
+        </p>
+        <p>
+          It is off by default for a reason: to draw a button on a page, the
+          extension needs permission to run on that page, and the only way to have
+          it everywhere is access to every site. Turning this on asks Chrome for
+          that access. Turning it off hands the access straight back.
+        </p>
+        <p>
+          <strong>This changes nothing about what is collected.</strong> The button
+          reads no page content and sends nothing anywhere — it draws an icon and
+          listens for a click. Notes stay on this device either way.
+        </p>
+        <label className="mt-3 flex cursor-pointer items-start gap-2.5">
+          <input
+            type="checkbox"
+            className="mt-0.5 size-4 cursor-pointer accent-[var(--color-accent)]"
+            checked={settings.showLauncher && siteAccess}
+            onChange={(event) => toggleLauncher(event.target.checked)}
+          />
+          <span className="text-sm text-ink">
+            Show the quick-open button on pages
+            {settings.showLauncher && !siteAccess ? (
+              <span className="mt-0.5 block text-xs text-warning">
+                Turned on, but site access has been revoked in Chrome, so the button is
+                not showing. Tick this again to restore it.
+              </span>
+            ) : null}
+          </span>
+        </label>
       </Section>
 
       <Section title="Appearance">

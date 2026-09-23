@@ -18,7 +18,9 @@ import { createRoot, type Root } from 'react-dom/client';
 import { StrictMode } from 'react';
 
 import { App } from '../sidepanel/App';
+import { cornerPoint } from '../lib/corner';
 import { overlayHost } from '../lib/host';
+import { enterTopLayer, pin, pinShell } from '../lib/shell';
 import {
   DEFAULT_GENIE,
   animateSlices,
@@ -47,18 +49,42 @@ interface OverlayState {
 let state: OverlayState | null = null;
 
 /**
- * The point the panel funnels into: the bottom-right corner of the viewport,
- * inset a little so the tail is visible rather than clipped at the edge.
+ * The point the panel funnels into: the centre of the quick-open button, so
+ * the panel reads as coming out of the thing that was clicked. The same point
+ * is used when the button is switched off, where it is simply the corner.
  */
 function targetPoint(): Point {
-  return { x: window.innerWidth - 28, y: window.innerHeight - 20 };
+  // `clientWidth`/`clientHeight` rather than `innerWidth`/`innerHeight`: the
+  // inner sizes include the scrollbars, and a fixed element is laid out inside
+  // them. On a page with a horizontal scrollbar the two differ by about 15px,
+  // which is enough for the panel to visibly miss the button it came out of.
+  const root = document.documentElement;
+  return cornerPoint(
+    root.clientWidth || window.innerWidth,
+    root.clientHeight || window.innerHeight,
+  );
+}
+
+/**
+ * Tell the quick-open button to get out of the way. It is a separate content
+ * script in the same isolated world, so a window event reaches it directly.
+ */
+function announce(open: boolean): void {
+  window.dispatchEvent(new CustomEvent('for-now:overlay', { detail: { open } }));
 }
 
 function create(): OverlayState {
   const host = document.createElement('div');
   host.id = HOST_ID;
-  // The host element itself carries no styling the page could inherit from.
-  host.style.cssText = 'all:initial;position:fixed;inset:0;z-index:2147483647;pointer-events:none';
+  // The host lives in the page's DOM, so the page's CSS applies to it. Every
+  // declaration goes on as `!important`, which is the only thing an author
+  // rule cannot outrank.
+  pinShell(host, {
+    position: 'fixed',
+    inset: '0',
+    'z-index': '2147483647',
+    'pointer-events': 'none',
+  });
 
   const shadow = host.attachShadow({ mode: 'open' });
 
@@ -81,6 +107,10 @@ function create(): OverlayState {
   stage.append(frame);
   shadow.append(stage);
   document.documentElement.append(host);
+  // The top layer is what makes the claim above actually true: it is measured
+  // against the viewport, so a page that transforms `<html>` cannot drag the
+  // panel off-screen, and no z-index on the page can get above it.
+  enterTopLayer(host);
 
   const root = createRoot(mount);
   root.render(
@@ -145,8 +175,11 @@ export async function open(): Promise<void> {
   if (current.busy || current.open) return;
   current.busy = true;
 
-  current.host.style.pointerEvents = 'auto';
+  pin(current.host, 'pointer-events', 'auto');
   current.frame.style.visibility = 'hidden';
+  // Before the animation, not after: the button sits exactly where the genie
+  // starts, and would otherwise show through the first few frames.
+  announce(true);
   // One frame for React to paint, so the clones copy a laid-out panel rather
   // than an empty box.
   await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
@@ -167,9 +200,12 @@ export async function close(): Promise<void> {
   current.busy = true;
 
   await genie(current, 'out');
-  current.host.style.pointerEvents = 'none';
+  pin(current.host, 'pointer-events', 'none');
   current.open = false;
   current.busy = false;
+  // After, so the button fades back in as the tail arrives rather than
+  // sitting under the animation the whole way down.
+  announce(false);
 }
 
 export async function toggle(): Promise<void> {
@@ -182,6 +218,7 @@ export function destroy(): void {
   if (!state) return;
   const { root, host } = state;
   state = null;
+  announce(false);
   // Unmount asynchronously: React refuses to unmount during its own render.
   setTimeout(() => {
     root.unmount();

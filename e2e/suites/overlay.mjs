@@ -22,9 +22,13 @@ const HOST_PAGE = 'https://example.com/';
 const HOSTILE_CSS = `
   html { font-size: 10px; }
   * { box-sizing: content-box !important; color: red !important;
-      font-family: "Comic Sans MS" !important; line-height: 3 !important; }
+      font-family: "Comic Sans MS" !important; line-height: 3 !important;
+      text-transform: uppercase !important; letter-spacing: 4px !important; }
+  /* These two are the ones that actually reached the panel: an !important
+     author rule outranks a normal inline style, and a transform on an
+     ancestor becomes the containing block for anything fixed inside it. */
+  * { transform: rotate(5deg) !important; opacity: 0.25 !important; }
   div { border: 4px dashed lime !important; background: magenta !important; }
-  button { text-transform: uppercase !important; }
 `;
 
 const list = await targets(PORT);
@@ -75,8 +79,12 @@ const mount = await s.evalJson(`
     shadow: !!host.shadowRoot,
     hasEditor: !!host.shadowRoot.querySelector('.fn-prose'),
     hasToolbar: !!host.shadowRoot.querySelector('[role=toolbar]'),
-    rect: { right: Math.round(window.innerWidth - r.right), bottom: Math.round(window.innerHeight - r.bottom),
-            w: Math.round(r.width), h: Math.round(r.height) },
+    // Measured against the layout viewport, which is what a fixed element
+    // sits inside; innerWidth/innerHeight would include the scrollbars.
+    rect: { right: Math.round(document.documentElement.clientWidth - r.right),
+            bottom: Math.round(document.documentElement.clientHeight - r.bottom),
+            top: Math.round(r.top), w: Math.round(r.width), h: Math.round(r.height) },
+    viewport: { w: document.documentElement.clientWidth, h: document.documentElement.clientHeight },
   };
 `);
 check('it mounts into the page', mount.mounted === true);
@@ -84,8 +92,11 @@ check('it is isolated in a shadow root', mount.shadow === true);
 check('the editor and toolbar come with it', mount.hasEditor && mount.hasToolbar);
 check('it is a floating card anchored bottom-right',
   mount.rect.right <= 24 && mount.rect.bottom <= 24, JSON.stringify(mount.rect));
-check('it does not fill the whole viewport',
-  mount.rect.w < 500 && mount.rect.h < 700, JSON.stringify(mount.rect));
+const heightShare = mount.rect.h / mount.viewport.h;
+check('it takes nearly the full height of the viewport', heightShare >= 0.92,
+  `${Math.round(heightShare * 100)}% of ${mount.viewport.h}px`);
+check('it is still a floating card, not a docked sidebar',
+  mount.rect.w < 500 && mount.rect.top >= 12, JSON.stringify(mount.rect));
 await shot(s, `${OUT}/40-overlay.png`);
 
 // --- Isolation, both directions -------------------------------------------
@@ -117,6 +128,31 @@ check('the host page cannot force borders onto the panel',
 check('the panel does not restyle the host page', isolation.pageH1 === 'rgb(255, 0, 0)',
   isolation.pageH1);
 check('the panel does not write a theme onto the host page', isolation.pageUntouched === true);
+
+// The host element lives in the page's own DOM, so the page's CSS applies to
+// it directly. This is the regression test for the panel being rotated and
+// faded out by rules the shadow root could do nothing about.
+const shell = await s.evalJson(`
+  const host = document.getElementById('for-now-overlay-host');
+  const cs = getComputedStyle(host);
+  return {
+    transform: cs.transform,
+    opacity: Number(cs.opacity),
+    textTransform: cs.textTransform,
+    letterSpacing: cs.letterSpacing,
+    visibility: cs.visibility,
+    topLayer: host.matches(':popover-open'),
+  };
+`);
+check('the host page cannot rotate the whole panel', shell.transform === 'none', shell.transform);
+check('the host page cannot fade the whole panel out', shell.opacity === 1, String(shell.opacity));
+check('inherited styles do not leak in through the host',
+  shell.textTransform === 'none' && shell.letterSpacing === 'normal',
+  `${shell.textTransform} / ${shell.letterSpacing}`);
+check('the host page cannot hide the panel', shell.visibility === 'visible', shell.visibility);
+// The top layer is what defeats a transform on <html>, which no fixed-position
+// descendant can escape on its own.
+check('the panel sits in the browser’s top layer', shell.topLayer === true);
 
 // This is the regression test for the bug that made the overlay render
 // unthemed: the colour tokens are declared on `:root`, which matches nothing

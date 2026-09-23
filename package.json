@@ -7,7 +7,7 @@
   "scripts": {
     "icons": "node scripts/make-icons.mjs",
     "prebuild": "npm run icons",
-    "build": "tsc --noEmit && vite build && vite build --config vite.content.config.ts",
+    "build": "tsc --noEmit && vite build && vite build --config vite.content.config.ts && vite build --config vite.launcher.config.ts",
     "dev": "vite build --watch --mode development",
     "test": "vitest run",
     "test:watch": "vitest",

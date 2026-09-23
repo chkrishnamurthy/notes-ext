@@ -16,13 +16,23 @@
 }
 
 /* A floating window anchored near the bottom-right, which is where the genie
-   funnels to. Height is capped so it never touches the top of the viewport. */
+   funnels to.
+
+   The height is intentionally not capped at some comfortable-looking number.
+   Notes are the whole point of the panel, so it takes nearly the full height
+   of the viewport and leaves only enough margin to read as a floating window
+   rather than as a docked sidebar. */
 .fn-frame {
   position: absolute;
+  top: 20px;
   right: 20px;
   bottom: 20px;
-  width: min(410px, calc(100vw - 40px));
-  height: min(640px, calc(100vh - 56px));
+  /* Sized by its insets rather than by `100vh - 40px`. The two are not the
+     same: `vh` units include the scrollbars, while the fixed containing block
+     this sits in does not, so a page with a horizontal scrollbar would push
+     the panel 15px off the top of the screen. Percentages of the stage are
+     measured against the same box the panel is actually laid out in. */
+  width: min(410px, calc(100% - 40px));
   display: flex;
   flex-direction: column;
   overflow: hidden;

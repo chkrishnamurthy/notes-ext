@@ -32,12 +32,28 @@ export interface ToggleOverlayMessage {
   type: 'toggle-overlay';
 }
 
+/** The quick-open button on a page was clicked. */
+export interface LauncherClickMessage {
+  type: 'launcher-click';
+}
+
+/**
+ * The quick-open setting was changed on the options page. The worker has to
+ * register or unregister the content script itself, since the options page
+ * cannot reach other tabs.
+ */
+export interface LauncherChangedMessage {
+  type: 'launcher-changed';
+}
+
 export type ExtensionMessage =
   | CaptureSavedMessage
   | CaptureFailedMessage
   | OpenTabMessage
   | OpenOptionsMessage
-  | ToggleOverlayMessage;
+  | ToggleOverlayMessage
+  | LauncherClickMessage
+  | LauncherChangedMessage;
 
 /**
  * Broadcast to whichever panel happens to be open. No receiver is the normal

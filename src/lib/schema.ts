@@ -65,11 +65,19 @@ export interface Settings {
   theme: ThemePreference;
   /** Days a note stays recoverable in Trash before it is purged. */
   trashRetentionDays: number;
+  /**
+   * Show the quick-open button on web pages. Off by default, because turning
+   * it on requires access to every site — a decision that has to be the
+   * user's, made deliberately, rather than something the extension assumes on
+   * their behalf at install time.
+   */
+  showLauncher: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
   theme: 'system',
   trashRetentionDays: 30,
+  showLauncher: false,
 };
 
 export const EMPTY_DRAFT: Draft = { html: '', text: '', updatedAt: 0 };
@@ -208,6 +216,9 @@ export function parseSettings(value: unknown): Settings {
         : DEFAULT_SETTINGS.theme,
     // Clamped so an edited or corrupt value can never mean "purge immediately".
     trashRetentionDays: Math.min(365, Math.max(1, Math.round(days))),
+    // Anything but an explicit `true` means off. A corrupt record must never
+    // be the reason a button appears on every page the user visits.
+    showLauncher: value.showLauncher === true,
   };
 }
 
