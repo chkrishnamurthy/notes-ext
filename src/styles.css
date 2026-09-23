@@ -1,0 +1,463 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   Palette, taken from the approved mockup.
+
+   Each colour is a plain custom property first, redefined for dark mode, and
+   only then mapped into Tailwind's theme. That indirection is what lets every
+   utility (bg-paper, text-muted, …) follow the theme without a single `dark:`
+   variant in the components.
+
+   `data-theme` on <html> overrides the system preference; absent, the system
+   preference wins.
+--------------------------------------------------------------------------- */
+
+:root {
+  --fn-bg: #fbfaf7;
+  --fn-paper: #ffffff;
+  --fn-ink: #202d27;
+  --fn-muted: #657168;
+  --fn-line: #dce1da;
+  --fn-soft: #edf1eb;
+  --fn-accent: #315e49;
+  --fn-on-accent: #ffffff;
+  --fn-warning: #7b3e19;
+  --fn-warning-bg: #fff2e6;
+  --fn-mark: #e7edc8;
+  --fn-shadow: rgba(36, 54, 43, 0.07);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --fn-bg: #1c201e;
+    --fn-paper: #222825;
+    --fn-ink: #eff4ef;
+    --fn-muted: #b2bdb5;
+    --fn-line: #414c44;
+    --fn-soft: #303a33;
+    --fn-accent: #a7d1b5;
+    --fn-on-accent: #14291c;
+    --fn-warning: #ffca9f;
+    --fn-warning-bg: #402d21;
+    --fn-mark: #4a5032;
+    --fn-shadow: rgba(0, 0, 0, 0.35);
+  }
+}
+
+:root[data-theme="dark"] {
+  --fn-bg: #1c201e;
+  --fn-paper: #222825;
+  --fn-ink: #eff4ef;
+  --fn-muted: #b2bdb5;
+  --fn-line: #414c44;
+  --fn-soft: #303a33;
+  --fn-accent: #a7d1b5;
+  --fn-on-accent: #14291c;
+  --fn-warning: #ffca9f;
+  --fn-warning-bg: #402d21;
+  --fn-mark: #4a5032;
+  --fn-shadow: rgba(0, 0, 0, 0.35);
+}
+
+@theme {
+  --color-bg: var(--fn-bg);
+  --color-paper: var(--fn-paper);
+  --color-ink: var(--fn-ink);
+  --color-muted: var(--fn-muted);
+  --color-line: var(--fn-line);
+  --color-soft: var(--fn-soft);
+  --color-accent: var(--fn-accent);
+  --color-on-accent: var(--fn-on-accent);
+  --color-warning: var(--fn-warning);
+  --color-warning-bg: var(--fn-warning-bg);
+  --color-mark: var(--fn-mark);
+
+  /* Packaged with the extension — nothing is fetched from a font service. */
+  --font-sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-serif: Georgia, "Times New Roman", serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    color-scheme: light dark;
+  }
+
+  html[data-theme="light"] {
+    color-scheme: light;
+  }
+
+  html[data-theme="dark"] {
+    color-scheme: dark;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--fn-paper);
+    color: var(--fn-ink);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* The native indicator, kept visible everywhere rather than reinvented. */
+  :focus-visible {
+    outline: 2px solid var(--fn-accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+    color: inherit;
+  }
+
+  /* Tailwind's reset sets interactive elements to the default arrow. Anything
+     you can act on should say so under the pointer. */
+  button,
+  select,
+  summary,
+  a[href],
+  label[for],
+  [role="button"],
+  input[type="file"],
+  input[type="checkbox"],
+  input[type="radio"] {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  select:disabled {
+    cursor: not-allowed;
+  }
+
+  /* Text inputs are the exception: there, the I-beam is the correct signal. */
+  input[type="text"],
+  input[type="search"],
+  textarea {
+    cursor: auto;
+  }
+
+  mark {
+    background-color: var(--fn-mark);
+    color: var(--fn-ink);
+    border-radius: 2px;
+  }
+}
+
+@layer components {
+  /* Every control is at least 34px tall, and 44px on touch input, so the
+     panel stays usable on a touchscreen laptop. */
+  .fn-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 34px;
+    padding: 7px 11px;
+    border: 1px solid var(--fn-line);
+    border-radius: 7px;
+    background-color: var(--fn-paper);
+    white-space: nowrap;
+    transition: background-color 120ms ease, filter 120ms ease;
+  }
+
+  .fn-btn:hover:not(:disabled) {
+    background-color: var(--fn-soft);
+  }
+
+  .fn-btn:disabled {
+    opacity: 0.5;
+  }
+
+  .fn-btn-primary {
+    background-color: var(--fn-accent);
+    border-color: var(--fn-accent);
+    color: var(--fn-on-accent);
+  }
+
+  .fn-btn-primary:hover:not(:disabled) {
+    background-color: var(--fn-accent);
+    filter: brightness(0.92);
+  }
+
+  .fn-btn-quiet {
+    background-color: transparent;
+    border-color: transparent;
+    padding: 5px 7px;
+  }
+
+  .fn-btn-icon {
+    min-width: 34px;
+    padding: 7px;
+  }
+
+  .fn-btn-small {
+    min-height: 28px;
+    padding: 3px 7px;
+    font-size: 11px;
+  }
+
+  .fn-btn[aria-pressed="true"] {
+    background-color: var(--fn-soft);
+    color: var(--fn-accent);
+  }
+
+  @media (pointer: coarse) {
+    .fn-btn {
+      min-height: 44px;
+    }
+
+    .fn-btn-small {
+      min-height: 44px;
+    }
+  }
+
+  /* A small square icon button: the toolbar, the note row actions and the
+     header controls all use it, so they share one hit area and one pressed
+     state. */
+  .fn-tool {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-width: 24px;
+    min-height: 24px;
+    padding: 3px;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    background-color: transparent;
+    color: var(--fn-ink);
+    transition: background-color 120ms ease;
+  }
+
+  .fn-tool:hover:not(:disabled) {
+    background-color: var(--fn-soft);
+  }
+
+  .fn-tool:disabled {
+    opacity: 0.4;
+  }
+
+  .fn-tool[aria-pressed='true'] {
+    background-color: var(--fn-soft);
+    color: var(--fn-accent);
+  }
+
+  /* The view tabs. Smaller than a button, but still a real hit target. */
+  .fn-chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 26px;
+    padding: 3px 7px;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    background-color: transparent;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .fn-chip:hover {
+    background-color: var(--fn-soft);
+  }
+
+  .fn-chip[aria-pressed='true'] {
+    background-color: var(--fn-soft);
+    color: var(--fn-accent);
+    font-weight: 500;
+  }
+
+  /* In a side panel the document viewport is the panel, so a width query is
+     a panel-width query. Below this the counts give their pixels to search;
+     the count is still announced, because it lives in the tab's sr-only text. */
+  @media (max-width: 360px) {
+    .fn-count {
+      display: none;
+    }
+  }
+
+  @media (pointer: coarse) {
+    .fn-tool,
+    .fn-chip {
+      min-height: 40px;
+      min-width: 40px;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Rich text.
+
+   One set of rules styles both the editor surface and a rendered note in card
+   view, so what you type is what you later see.
+--------------------------------------------------------------------------- */
+
+.fn-prose {
+  font-size: 14px;
+  line-height: 1.6;
+  outline: none;
+}
+
+.fn-prose > * + * {
+  margin-top: 0.6em;
+}
+
+.fn-prose p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.fn-prose h1 {
+  font-size: 1.35em;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.fn-prose h2 {
+  font-size: 1.15em;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.fn-prose strong {
+  font-weight: 650;
+}
+
+.fn-prose s {
+  text-decoration-color: var(--fn-muted);
+}
+
+.fn-prose a {
+  color: var(--fn-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  overflow-wrap: anywhere;
+}
+
+.fn-prose ul,
+.fn-prose ol {
+  margin: 0;
+  padding-left: 1.3em;
+}
+
+.fn-prose ul {
+  list-style: disc;
+}
+
+.fn-prose ol {
+  list-style: decimal;
+}
+
+.fn-prose li {
+  margin: 0.15em 0;
+}
+
+.fn-prose li p {
+  margin: 0;
+}
+
+.fn-prose blockquote {
+  margin: 0;
+  padding-left: 0.8em;
+  border-left: 3px solid var(--fn-line);
+  color: var(--fn-muted);
+}
+
+.fn-prose code {
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  background-color: var(--fn-soft);
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+}
+
+/* A code block keeps its own whitespace and scrolls sideways rather than
+   reflowing, because a wrapped snippet is a changed snippet. */
+.fn-prose pre {
+  margin: 0;
+  padding: 0.6em 0.75em;
+  border-radius: 6px;
+  background-color: var(--fn-soft);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.55;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+.fn-prose pre code {
+  padding: 0;
+  background: none;
+  font-size: inherit;
+}
+
+/* Checklists, rendered by TipTap's task list. */
+.fn-prose ul[data-type='taskList'] {
+  padding-left: 0;
+  list-style: none;
+}
+
+.fn-prose ul[data-type='taskList'] li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5em;
+}
+
+.fn-prose ul[data-type='taskList'] li > label {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 0.25em;
+  user-select: none;
+}
+
+.fn-prose ul[data-type='taskList'] li > div {
+  min-width: 0;
+  flex: 1;
+}
+
+.fn-prose ul[data-type='taskList'] li[data-checked='true'] > div {
+  color: var(--fn-muted);
+  text-decoration: line-through;
+}
+
+.fn-prose input[type='checkbox'] {
+  accent-color: var(--fn-accent);
+}
+
+/* TipTap's placeholder, shown only in an empty document. */
+.fn-prose p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  color: var(--fn-muted);
+  pointer-events: none;
+}
+
+/* A note rendered in card view is a preview, not a document: it is capped so
+   one long note cannot push every other note off the screen. */
+.fn-prose-note {
+  max-height: 14rem;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, #000 78%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 78%, transparent 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
