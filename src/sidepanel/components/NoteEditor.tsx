@@ -234,8 +234,10 @@ export function NoteEditor({
           <span />
         )}
         <div className="flex items-center justify-end gap-1.5">
+          {/* Same size as the button beside it: a pair of actions should read
+              as a pair, with only the colour saying which one is primary. */}
           {editing ? (
-            <button type="button" className="fn-btn fn-btn-small" onClick={onCancelEdit}>
+            <button type="button" className="fn-btn" onClick={onCancelEdit}>
               Cancel
             </button>
           ) : null}

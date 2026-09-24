@@ -309,6 +309,16 @@ await click(s, 'article button[aria-label^="Edit note"]');
 await settle(s, 500);
 body = await text(s);
 check('a note opens in the editor', has(body, 'Save changes'));
+const pair = await s.evalJson(`
+  const find = (label) => [...document.querySelectorAll('button')].find((b) => b.textContent.trim() === label);
+  const measure = (el) => {
+    const cs = getComputedStyle(el);
+    return { h: Math.round(el.getBoundingClientRect().height), font: cs.fontSize, radius: cs.borderTopLeftRadius };
+  };
+  return { cancel: measure(find('Cancel')), save: measure(find('Save changes')) };
+`);
+check('Cancel and Save changes are the same size',
+  JSON.stringify(pair.cancel) === JSON.stringify(pair.save), JSON.stringify(pair));
 check('the original is kept until changes are saved', has(body, 'original note is kept'));
 check('the note content is loaded into the editor',
   (await editorContent(s)).text.trim().length > 0);

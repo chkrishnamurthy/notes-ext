@@ -98,7 +98,7 @@ export function Appearance({
   })();
 
   return (
-    <div className="grid gap-6 md:grid-cols-[minmax(0,1fr)_248px]">
+    <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px] 2xl:grid-cols-[minmax(0,1fr)_380px]">
       <div className="min-w-0 space-y-5">
         <Field label="Mode" hint={settings.theme === 'system' ? `Following your system, currently ${effective}` : `Always ${effective}`}>
           <Segmented
@@ -226,7 +226,7 @@ export function Appearance({
         </button>
       </div>
 
-      <div className="min-w-0 space-y-2 md:sticky md:top-6 md:self-start">
+      <div className="min-w-0 space-y-2 lg:sticky lg:top-24 lg:self-start">
         <div className="flex items-center justify-between gap-2">
           <span className="text-sm font-medium text-ink">Preview</span>
           {settings.theme === 'system' ? (
@@ -324,7 +324,7 @@ function PaletteGrid({
     <div
       role="radiogroup"
       aria-label={mode === 'light' ? 'Light theme' : 'Dark theme'}
-      className="grid grid-cols-[repeat(auto-fill,minmax(112px,1fr))] gap-2.5"
+      className="grid grid-cols-[repeat(auto-fill,minmax(128px,1fr))] gap-2.5"
     >
       {PALETTES.map((palette) => (
         <PaletteCard

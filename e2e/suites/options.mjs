@@ -2,7 +2,7 @@
 import { OPTIONS, check, clickExact, clickText, consoleErrors, errors, has, openPage, report, settle, shot, text } from '../driver.mjs';
 
 const OUT = process.env.FORNOW_SHOTS ?? '.';
-const s = await openPage(OPTIONS, { width: 1000, height: 1100 });
+const s = await openPage(OPTIONS, { width: 1440, height: 1100 });
 
 // Seed a store that covers every shape a backup has to carry.
 await s.evalJson(`
