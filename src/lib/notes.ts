@@ -19,7 +19,10 @@ import type { NoteStore, WriteResult } from './storage';
  * text from HTML does, which is why the editor supplies both.
  */
 export interface NoteDraftInput {
-  /** Rich body from the editor. Supply `text` alongside it. */
+  /**
+   * Rich body, already sanitized — from the editor, or a selection captured
+   * from a page. Supply `text` alongside it.
+   */
   html?: string;
   /** Plain text. On its own, the HTML body is derived from it. */
   text: string;
@@ -39,6 +42,7 @@ export function buildNote(input: NoteDraftInput, now = Date.now()): Note {
     updatedAt: now,
     pinned: false,
     rev: 1,
+    contentRev: 1,
     schemaVersion: SCHEMA_VERSION,
   };
   const targetUrl = sanitizeUrl(input.targetUrl);
@@ -75,14 +79,15 @@ export function editNote(
   store: NoteStore,
   id: string,
   changes: { html: string; text: string },
-  expectedRev: number,
+  /** The note's `contentRev` when the edit began. */
+  expectedContentRev: number,
   now = Date.now(),
 ): Promise<WriteResult<Note>> {
   const text = normalizeText(changes.text);
   return store.updateNote(
     id,
     (current) => ({ ...current, html: changes.html, text }),
-    expectedRev,
+    expectedContentRev,
     now,
   );
 }
@@ -160,6 +165,10 @@ export function clearableNotes(notes: Note[]): Note[] {
 /**
  * Move every unpinned active note to Trash. Returns the ids so the caller can
  * offer a single Undo covering the whole batch.
+ *
+ * `notes` is only where the candidates come from. Each one is re-checked
+ * against storage as it is trashed, so a note edited or pinned in another
+ * window since the list was rendered keeps that change.
  */
 export async function clearUnpinned(
   store: NoteStore,
@@ -168,15 +177,14 @@ export async function clearUnpinned(
 ): Promise<WriteResult<string[]>> {
   const targets = clearableNotes(notes);
   if (targets.length === 0) return { ok: true, value: [] };
-  const updated = targets.map((note) => ({
-    ...note,
-    deletedAt: now,
-    updatedAt: now,
-    rev: note.rev + 1,
-  }));
-  const result = await store.putNotes(updated);
+  const result = await store.updateMany(
+    targets.map((note) => note.id),
+    (current) =>
+      isActive(current) && !current.pinned ? { ...current, deletedAt: now } : null,
+    now,
+  );
   if (!result.ok) return result;
-  return { ok: true, value: targets.map((note) => note.id) };
+  return { ok: true, value: result.value.map((note) => note.id) };
 }
 
 export async function restoreMany(
@@ -184,17 +192,18 @@ export async function restoreMany(
   ids: string[],
   now = Date.now(),
 ): Promise<WriteResult<string[]>> {
-  const restored: Note[] = [];
-  for (const id of ids) {
-    const note = await store.getNote(id);
-    // A note the user deleted forever in the meantime is simply skipped.
-    if (!note) continue;
-    const { deletedAt: _discarded, ...rest } = note;
-    restored.push({ ...rest, updatedAt: now, rev: note.rev + 1 });
-  }
-  const result = await store.putNotes(restored);
+  const result = await store.updateMany(
+    ids,
+    (current) => {
+      // Already restored somewhere else: nothing left to undo.
+      if (current.deletedAt === undefined) return null;
+      const { deletedAt: _discarded, ...rest } = current;
+      return rest;
+    },
+    now,
+  );
   if (!result.ok) return result;
-  return { ok: true, value: restored.map((note) => note.id) };
+  return { ok: true, value: result.value.map((note) => note.id) };
 }
 
 export function deleteForever(store: NoteStore, ids: string[]): Promise<WriteResult<string[]>> {

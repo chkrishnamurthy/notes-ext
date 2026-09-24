@@ -137,7 +137,7 @@
     margin: 0;
     color: var(--fn-ink);
     font-family: var(--font-sans);
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
   }
@@ -293,6 +293,13 @@
     color: var(--fn-accent);
   }
 
+  /* Toolbar icons are sized by CSS rather than by the icon's own attributes,
+     so they can grow with the panel (see the container queries below). */
+  .fn-tool svg {
+    width: var(--fn-tool-icon, 15px);
+    height: var(--fn-tool-icon, 15px);
+  }
+
   /* The view tabs. Smaller than a button, but still a real hit target. */
   .fn-chip {
     display: inline-flex;
@@ -335,6 +342,43 @@
 }
 
 /* ---------------------------------------------------------------------------
+   The formatting toolbar follows the panel's width. The editor section is the
+   container, so this works the same in the side panel (which Chrome sizes)
+   and in the overlay (which the user drags). Narrow: compact icons that wrap.
+   Wider: bigger icons, and the groups spread across the full row instead of
+   bunching up on the left.
+--------------------------------------------------------------------------- */
+
+.fn-editor {
+  container-type: inline-size;
+}
+
+@container (min-width: 480px) {
+  .fn-toolbar {
+    justify-content: space-between;
+    padding-inline: 10px;
+    --fn-tool-icon: 17px;
+  }
+
+  .fn-toolbar .fn-tool {
+    min-width: 30px;
+    min-height: 30px;
+  }
+}
+
+@container (min-width: 720px) {
+  .fn-toolbar {
+    padding-inline: 16px;
+    --fn-tool-icon: 19px;
+  }
+
+  .fn-toolbar .fn-tool {
+    min-width: 34px;
+    min-height: 34px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
    Rich text.
 
    One set of rules styles both the editor surface and a rendered note in card
@@ -342,9 +386,17 @@
 --------------------------------------------------------------------------- */
 
 .fn-prose {
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.6;
   outline: none;
+}
+
+/* The editable surface fills the writing area, so clicking anywhere in the
+   empty space below the text focuses the note — not only on the first line. */
+.fn-prose.ProseMirror {
+  flex: 1;
+  min-height: 100%;
+  cursor: text;
 }
 
 .fn-prose > * + * {

@@ -1,11 +1,12 @@
 /**
  * The injected overlay: that it mounts into a page at all, that it is isolated
- * from the host page in both directions, that the genie runs and cleans up
- * after itself, and that the things a content script cannot do are routed to
- * the service worker instead.
+ * from the host page in both directions — including that a hostile page cannot
+ * read the notes, hear what is typed into them, or click the panel's buttons —
+ * that the genie runs and cleans up after itself, and that the panel inside is
+ * still a working notes panel.
  */
 import { Session, targets, waitFor } from '../cdp.mjs';
-import { ID, check, has, report, settle, shot } from '../driver.mjs';
+import { ID, check, inShell, overlayPanel, report, settle, shot } from '../driver.mjs';
 
 const OUT = process.env.FORNOW_SHOTS ?? '.';
 const PORT = process.env.FORNOW_CDP_PORT ?? 9222;
@@ -69,16 +70,11 @@ await settle(s, 1600);
 
 // --- Mounting -------------------------------------------------------------
 console.log('\n# Mounting');
-const mount = await s.evalJson(`
-  const host = document.getElementById('for-now-overlay-host');
-  if (!host) return { mounted: false };
-  const frame = host.shadowRoot.querySelector('.fn-frame');
+const shellMount = await inShell(s, `
+  const frame = this.querySelector('.fn-frame');
   const r = frame.getBoundingClientRect();
   return {
-    mounted: true,
-    shadow: !!host.shadowRoot,
-    hasEditor: !!host.shadowRoot.querySelector('.fn-prose'),
-    hasToolbar: !!host.shadowRoot.querySelector('[role=toolbar]'),
+    iframe: !!frame.querySelector('iframe'),
     // Measured against the layout viewport, which is what a fixed element
     // sits inside; innerWidth/innerHeight would include the scrollbars.
     rect: { right: Math.round(document.documentElement.clientWidth - r.right),
@@ -87,34 +83,212 @@ const mount = await s.evalJson(`
     viewport: { w: document.documentElement.clientWidth, h: document.documentElement.clientHeight },
   };
 `);
-check('it mounts into the page', mount.mounted === true);
-check('it is isolated in a shadow root', mount.shadow === true);
-check('the editor and toolbar come with it', mount.hasEditor && mount.hasToolbar);
+check('it mounts into the page', shellMount !== null);
+check('the panel is framed, not rendered into the page', shellMount?.iframe === true);
+
+const panel = await overlayPanel();
+const panelMount = await panel.evalJson(`
+  return {
+    hasEditor: !!document.querySelector('.fn-prose'),
+    hasToolbar: !!document.querySelector('[role=toolbar]'),
+  };
+`);
+check('the editor and toolbar come with it', panelMount.hasEditor && panelMount.hasToolbar);
 check('it is a floating card anchored bottom-right',
-  mount.rect.right <= 24 && mount.rect.bottom <= 24, JSON.stringify(mount.rect));
-const heightShare = mount.rect.h / mount.viewport.h;
+  shellMount.rect.right <= 24 && shellMount.rect.bottom <= 24, JSON.stringify(shellMount.rect));
+const heightShare = shellMount.rect.h / shellMount.viewport.h;
 check('it takes nearly the full height of the viewport', heightShare >= 0.92,
-  `${Math.round(heightShare * 100)}% of ${mount.viewport.h}px`);
+  `${Math.round(heightShare * 100)}% of ${shellMount.viewport.h}px`);
 check('it is still a floating card, not a docked sidebar',
-  mount.rect.w < 500 && mount.rect.top >= 12, JSON.stringify(mount.rect));
+  shellMount.rect.w <= 600 && shellMount.rect.top >= 12, JSON.stringify(shellMount.rect));
 await shot(s, `${OUT}/40-overlay.png`);
+
+// --- Resizing -------------------------------------------------------------
+console.log('\n# Resizing');
+check('it opens at the default width', shellMount.rect.w === 600, String(shellMount.rect.w));
+
+const mouse = async (type, x, y) => s.send('Input.dispatchMouseEvent', {
+  type, x, y, button: 'left', buttons: type === 'mouseReleased' ? 0 : 1, clickCount: 1,
+});
+const frameRect = () => inShell(s, `
+  const r = this.querySelector('.fn-frame').getBoundingClientRect();
+  return { left: Math.round(r.left), top: Math.round(r.top),
+           w: Math.round(r.width), h: Math.round(r.height) };
+`);
+const beforeResize = await frameRect();
+const grabX = beforeResize.left + 3;
+const grabY = beforeResize.top + Math.round(beforeResize.h / 2);
+await mouse('mousePressed', grabX, grabY);
+for (let i = 1; i <= 5; i += 1) await mouse('mouseMoved', grabX - i * 30, grabY);
+await mouse('mouseReleased', grabX - 150, grabY);
+await settle(s, 300);
+const widened = await frameRect();
+check('dragging the left edge widens the panel', widened.w === beforeResize.w + 150,
+  `${beforeResize.w} -> ${widened.w}`);
+const stored = await sw.evalJson(`
+  return (await chrome.storage.local.get('overlayWidth')).overlayWidth;
+`);
+check('the chosen width is saved', stored === widened.w, String(stored));
+check('the panel stays inside the viewport while wide',
+  widened.left >= 12, JSON.stringify(widened));
+await shot(s, `${OUT}/40b-overlay-resized.png`);
+
+// Double-click on the edge goes back to the default.
+await s.send('Input.dispatchMouseEvent', { type: 'mousePressed', x: widened.left + 3, y: grabY, button: 'left', buttons: 1, clickCount: 1 });
+await s.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: widened.left + 3, y: grabY, button: 'left', buttons: 0, clickCount: 1 });
+await s.send('Input.dispatchMouseEvent', { type: 'mousePressed', x: widened.left + 3, y: grabY, button: 'left', buttons: 1, clickCount: 2 });
+await s.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: widened.left + 3, y: grabY, button: 'left', buttons: 0, clickCount: 2 });
+await settle(s, 300);
+const reset = await frameRect();
+check('double-clicking the edge resets the width', reset.w === 600, String(reset.w));
+
+// The toolbar follows the panel's width: compact and wrapping when narrow,
+// larger and spread across the row when wide.
+const toolbarAt = async (width) => {
+  await sw.evalJson(`await chrome.storage.local.set({ overlayWidth: ${width} }); return true;`);
+  await settle(s, 300);
+  return panel.evalJson(`
+    const bar = document.querySelector('.fn-toolbar');
+    const buttons = [...bar.querySelectorAll('.fn-tool')];
+    const b = bar.getBoundingClientRect();
+    const last = buttons[buttons.length - 1].getBoundingClientRect();
+    return {
+      icon: Math.round(buttons[0].querySelector('svg').getBoundingClientRect().width),
+      gapRight: Math.round(b.right - last.right),
+    };
+  `);
+};
+check('the panel cannot be made narrower than 600px',
+  (await toolbarAt(360), (await frameRect()).w) === 600);
+const narrowBar = await toolbarAt(600);
+const wideBar = await toolbarAt(900);
+await shot(s, `${OUT}/40d-toolbar-900.png`);
+check('toolbar icons grow with the panel', wideBar.icon > narrowBar.icon,
+  `${narrowBar.icon}px -> ${wideBar.icon}px`);
+check('on a wide panel the toolbar spans the full row', wideBar.gapRight <= 24,
+  `${wideBar.gapRight}px left empty`);
+await toolbarAt(600);
+
+// --- Clicking into the editor ---------------------------------------------
+console.log('\n# Clicking into the editor');
+await panel.evalJson(`document.activeElement?.blur(); return true;`);
+const area = await panel.evalJson(`
+  const prose = document.querySelector('.fn-prose');
+  const r = prose.getBoundingClientRect();
+  return { top: Math.round(r.top), bottom: Math.round(r.bottom), h: Math.round(r.height) };
+`);
+check('the editable surface fills the writing area', area.h > 150, JSON.stringify(area));
+// Well below the placeholder line, in what used to be dead space.
+const clickX = reset.left + 120;
+const clickY = reset.top + area.bottom - 30;
+await s.send('Input.dispatchMouseEvent', { type: 'mousePressed', x: clickX, y: clickY, button: 'left', buttons: 1, clickCount: 1 });
+await s.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: clickX, y: clickY, button: 'left', buttons: 0, clickCount: 1 });
+await settle(s, 200);
+const focused = await panel.evalJson(`
+  return document.activeElement?.classList.contains('fn-prose') === true;
+`);
+check('clicking empty space below the text focuses the editor', focused === true);
+
+// --- Collapsing the notes list --------------------------------------------
+console.log('\n# Collapsing the notes list');
+const layout = () => panel.evalJson(`
+  return {
+    list: !!document.querySelector('input[type=search], [role=search]'),
+    editorH: Math.round(document.querySelector('.fn-editor').getBoundingClientRect().height),
+    toggle: document.querySelector('[aria-expanded][aria-label*="notes list"], [aria-expanded][aria-label*="writing area"]')?.getAttribute('aria-expanded') ?? null,
+  };
+`);
+const expanded = await layout();
+check('the collapse toggle sits in the editor’s action row', expanded.toggle === 'true',
+  String(expanded.toggle));
+await panel.evalJson(`document.querySelector('[aria-label="Expand writing area"]').click(); return true;`);
+await settle(s, 200);
+const collapsed = await layout();
+check('collapsing hides the notes list', expanded.list && !collapsed.list);
+check('the editor takes the space the list gave up', collapsed.editorH > expanded.editorH + 150,
+  `${expanded.editorH}px -> ${collapsed.editorH}px`);
+await shot(s, `${OUT}/40f-list-collapsed.png`);
+await panel.evalJson(`location.reload(); return true;`);
+await settle(s, 1200);
+const afterReload = await layout();
+check('the collapsed state is remembered', !afterReload.list);
+await panel.evalJson(`document.querySelector('[aria-label="Show notes list"]').click(); return true;`);
+await settle(s, 200);
+check('expanding brings the list back', (await layout()).list);
+
+// --- What the page can reach ----------------------------------------------
+// Everything here runs in the page's main world, the way a hostile site's own
+// scripts would. Before the panel moved into a frame, all of these succeeded.
+console.log('\n# Privacy from the host page');
+const reach = await s.evalJson(`
+  const host = document.getElementById('for-now-overlay-host');
+  return {
+    shadowRoot: host.shadowRoot === null,
+    frames: window.frames.length,
+    editor: !!document.querySelector('.fn-prose'),
+  };
+`);
+check('the page cannot open the shell’s shadow root', reach.shadowRoot === true);
+check('the page cannot find the panel’s frame', reach.frames === 0, String(reach.frames));
+check('the page cannot find the editor', reach.editor === false);
+
+const probe = await s.evalJson(`
+  const tryFetch = (url) => fetch(url).then(() => true, () => false);
+  return {
+    // Web-accessible on purpose, so it is the control for the probe itself.
+    icon: await tryFetch('chrome-extension://${ID}/icons/icon-16.png'),
+    panel: await tryFetch('chrome-extension://${ID}/overlay.html'),
+  };
+`);
+check('the probe can reach an ordinary web-accessible file', probe.icon === true);
+check('the page cannot load the panel on the extension’s fixed id', probe.panel === false);
+
+// Keys typed into the panel must not reach the page's listeners. They did when
+// the panel lived in the page's DOM: a shadow root does not stop a key event.
+await s.evalJson(`
+  window.__heard = [];
+  for (const type of ['keydown', 'keypress', 'keyup', 'input', 'beforeinput']) {
+    window.addEventListener(type, (e) => window.__heard.push(type + ':' + (e.key ?? e.data)), true);
+  }
+  return true;
+`);
+await panel.evalJson('document.querySelector(".fn-prose").focus(); return true;');
+for (const ch of 'secret') {
+  const k = { key: ch, text: ch, unmodifiedText: ch, code: `Key${ch.toUpperCase()}` };
+  await s.send('Input.dispatchKeyEvent', { type: 'keyDown', ...k });
+  await s.send('Input.dispatchKeyEvent', { type: 'keyUp', key: ch, code: k.code });
+}
+await settle(s, 300);
+const typed = await panel.evalJson('return document.querySelector(".fn-prose").innerText;');
+const heard = await s.evalJson('return window.__heard;');
+check('real keystrokes reach the panel', typed.includes('secret'), JSON.stringify(typed));
+check('the page hears none of them', heard.length === 0, JSON.stringify(heard).slice(0, 200));
+
+// Anyone can post to the page's window. Only the panel's own frame is obeyed.
+await s.evalJson(`window.postMessage({ type: 'for-now:close' }, '*'); return true;`);
+await settle(s, 900);
+check('a forged close message from the page is ignored', await inShell(s, `
+  return getComputedStyle(this.querySelector('.fn-frame')).visibility === 'visible';
+`));
 
 // --- Isolation, both directions -------------------------------------------
 console.log('\n# Isolation');
-const isolation = await s.evalJson(`
-  const shadow = document.getElementById('for-now-overlay-host').shadowRoot;
-  const frame = shadow.querySelector('.fn-frame');
-  const brand = shadow.querySelector('header span');
-  const style = getComputedStyle(brand);
-  const frameStyle = getComputedStyle(frame);
+const isolation = await panel.evalJson(`
+  const style = getComputedStyle(document.querySelector('header span'));
+  return { colour: style.color, font: style.fontFamily, lineHeight: style.lineHeight };
+`);
+const frameStyle = await inShell(s, `
+  const cs = getComputedStyle(this.querySelector('.fn-frame'));
   return {
-    colour: style.color,
-    font: style.fontFamily,
-    lineHeight: style.lineHeight,
-    frameBorder: frameStyle.borderTopStyle,
-    frameBg: frameStyle.backgroundColor,
-    pageUntouched: !document.documentElement.hasAttribute('data-theme'),
-    pageH1: getComputedStyle(document.querySelector('h1')).color,
+    border: cs.borderTopStyle,
+    paper: cs.getPropertyValue('--fn-paper').trim(),
+    bg: cs.backgroundColor,
+  };
+`);
+const pageSide = await s.evalJson(`
+  return {
+    untouched: !document.documentElement.hasAttribute('data-theme'),
+    h1: getComputedStyle(document.querySelector('h1')).color,
   };
 `);
 check('the host page cannot recolour the panel', isolation.colour !== 'rgb(255, 0, 0)',
@@ -124,10 +298,9 @@ check('the host page cannot restyle the panel’s font', !isolation.font.include
 check('the host page cannot break the panel’s spacing',
   isolation.lineHeight !== 'normal' && !isolation.lineHeight.startsWith('3'), isolation.lineHeight);
 check('the host page cannot force borders onto the panel',
-  isolation.frameBorder !== 'dashed', isolation.frameBorder);
-check('the panel does not restyle the host page', isolation.pageH1 === 'rgb(255, 0, 0)',
-  isolation.pageH1);
-check('the panel does not write a theme onto the host page', isolation.pageUntouched === true);
+  frameStyle.border !== 'dashed', frameStyle.border);
+check('the panel does not restyle the host page', pageSide.h1 === 'rgb(255, 0, 0)', pageSide.h1);
+check('the panel does not write a theme onto the host page', pageSide.untouched === true);
 
 // The host element lives in the page's own DOM, so the page's CSS applies to
 // it directly. This is the regression test for the panel being rotated and
@@ -154,37 +327,23 @@ check('the host page cannot hide the panel', shell.visibility === 'visible', she
 // descendant can escape on its own.
 check('the panel sits in the browser’s top layer', shell.topLayer === true);
 
-// This is the regression test for the bug that made the overlay render
-// unthemed: the colour tokens are declared on `:root`, which matches nothing
-// inside a shadow root, so they must be declared on `:host` as well.
-const tokens = await s.evalJson(`
-  const host = document.getElementById('for-now-overlay-host');
-  const frame = host.shadowRoot.querySelector('.fn-frame');
-  const value = getComputedStyle(frame).getPropertyValue('--fn-paper').trim();
-  const bg = getComputedStyle(frame).backgroundColor;
-  return { value, bg };
-`);
-check('the colour tokens resolve inside the shadow root', tokens.value.length > 0, tokens.value);
-check('the panel actually paints a background',
-  tokens.bg !== 'rgba(0, 0, 0, 0)' && tokens.bg !== 'transparent', tokens.bg);
+// The colour tokens are declared on `:root`, which matches nothing inside a
+// shadow root, so they must be declared on `:host` as well.
+check('the colour tokens resolve inside the shadow root', frameStyle.paper.length > 0,
+  frameStyle.paper);
+check('the frame actually paints a background',
+  frameStyle.bg !== 'rgba(0, 0, 0, 0)' && frameStyle.bg !== 'transparent', frameStyle.bg);
 
 // --- rem independence -----------------------------------------------------
 console.log('\n# Host font size');
 // The host page sets html { font-size: 10px }. Anything sized in rem would
-// come out at 62.5% here.
-const sizing = await s.evalJson(`
-  const shadow = document.getElementById('for-now-overlay-host').shadowRoot;
-  const prose = shadow.querySelector('.fn-prose');
-  const stage = shadow.querySelector('.fn-stage');
-  return {
-    pageRoot: getComputedStyle(document.documentElement).fontSize,
-    stage: getComputedStyle(stage).fontSize,
-    prose: getComputedStyle(prose).fontSize,
-  };
-`);
-check('the host page really is at 10px', sizing.pageRoot === '10px', sizing.pageRoot);
-check('the panel keeps its own type scale', sizing.prose === '14px', sizing.prose);
-check('the panel sets its own root size', sizing.stage === '16px', sizing.stage);
+// come out at 62.5% if it were measured against the page.
+const pageRoot = await s.evalJson('return getComputedStyle(document.documentElement).fontSize;');
+const prose = await panel.evalJson('return getComputedStyle(document.querySelector(".fn-prose")).fontSize;');
+const stage = await inShell(s, 'return getComputedStyle(this.querySelector(".fn-stage")).fontSize;');
+check('the host page really is at 10px', pageRoot === '10px', pageRoot);
+check('the panel keeps its own type scale', prose === '15px', prose);
+check('the shell sets its own root size', stage === '16px', stage);
 
 // --- The genie ------------------------------------------------------------
 console.log('\n# Genie');
@@ -193,9 +352,8 @@ await s.evalJson(`
   return true;
 `);
 await settle(s, 140);
-const midFlight = await s.evalJson(`
-  const shadow = document.getElementById('for-now-overlay-host').shadowRoot;
-  const layer = shadow.querySelector('.fn-genie-layer');
+const midFlight = await inShell(s, `
+  const layer = this.querySelector('.fn-genie-layer');
   if (!layer) return { slices: 0 };
   const rects = [...layer.children].map((el) => {
     const r = el.getBoundingClientRect();
@@ -203,12 +361,16 @@ const midFlight = await s.evalJson(`
   });
   return {
     slices: layer.children.length,
-    frameHidden: getComputedStyle(shadow.querySelector('.fn-frame')).visibility === 'hidden',
+    // Cloning the iframe would load the whole app once per slice.
+    iframes: layer.querySelectorAll('iframe').length,
+    frameHidden: getComputedStyle(this.querySelector('.fn-frame')).visibility === 'hidden',
     widths: rects.map((r) => r.w),
     tops: rects.map((r) => r.y),
   };
 `);
 check('closing builds a stack of slices', midFlight.slices >= 24, String(midFlight.slices));
+check('the slices are empty panels, not copies of the app', midFlight.iframes === 0,
+  String(midFlight.iframes));
 check('the live frame hands over to the clones', midFlight.frameHidden === true);
 check('lower slices have travelled further than upper ones',
   midFlight.widths[midFlight.widths.length - 1] < midFlight.widths[0],
@@ -218,19 +380,40 @@ check('the slices stay in vertical order',
 await shot(s, `${OUT}/41-genie.png`);
 
 await settle(s, 900);
-const closed = await s.evalJson(`
-  const host = document.getElementById('for-now-overlay-host');
-  const shadow = host.shadowRoot;
+const closed = await inShell(s, `
   return {
-    layer: !!shadow.querySelector('.fn-genie-layer'),
-    frameHidden: getComputedStyle(shadow.querySelector('.fn-frame')).visibility === 'hidden',
-    pointerEvents: host.style.pointerEvents,
+    layer: !!this.querySelector('.fn-genie-layer'),
+    frameHidden: getComputedStyle(this.querySelector('.fn-frame')).visibility === 'hidden',
+    pointerEvents: this.host.style.pointerEvents,
   };
 `);
 check('the slices are cleaned up after the animation', closed.layer === false);
 check('the closed panel is hidden', closed.frameHidden === true);
 check('the closed overlay stops intercepting clicks', closed.pointerEvents === 'none');
 await shot(s, `${OUT}/42-closed.png`);
+
+// Closing has to hand the keyboard back. The panel used to listen for keys on
+// the page's own window for as long as it was mounted, which took over the
+// page's Cmd/Ctrl+K and let an Escape meant for the page cancel an edit.
+console.log('\n# Keyboard after closing');
+const afterClose = await s.evalJson(`
+  const host = document.getElementById('for-now-overlay-host');
+  const shortcut = new KeyboardEvent('keydown', {
+    key: 'k', metaKey: true, ctrlKey: true, bubbles: true, cancelable: true,
+  });
+  document.body.dispatchEvent(shortcut);
+  return { focusOnPage: document.activeElement !== host, shortcutFree: !shortcut.defaultPrevented };
+`);
+check('focus goes back to the page', afterClose.focusOnPage === true);
+check('the page keeps its own Cmd/Ctrl+K', afterClose.shortcutFree === true);
+await s.evalJson('window.__heard = []; return true;');
+await s.send('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 });
+await s.send('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 });
+await settle(s, 200);
+check('keys typed after closing go to the page, not the hidden panel',
+  (await s.evalJson('return window.__heard;')).includes('keydown:Escape'));
+check('an Escape meant for the page leaves the panel’s editor alone',
+  (await panel.evalJson('return document.querySelector(".fn-prose").innerText;')).includes('secret'));
 
 // --- Reopening ------------------------------------------------------------
 console.log('\n# Reopening');
@@ -240,9 +423,8 @@ await sw.evalJson(`
   return true;
 `);
 await settle(s, 150);
-const opening = await s.evalJson(`
-  const shadow = document.getElementById('for-now-overlay-host').shadowRoot;
-  const layer = shadow.querySelector('.fn-genie-layer');
+const opening = await inShell(s, `
+  const layer = this.querySelector('.fn-genie-layer');
   if (!layer) return { slices: 0, visible: 0 };
   // The clone-visibility bug produced slices that existed but painted nothing.
   const visible = [...layer.children].filter((el) => {
@@ -257,37 +439,94 @@ check('the opening slices are actually visible', opening.visible === opening.sli
   `${opening.visible}/${opening.slices}`);
 
 await settle(s, 900);
-const reopened = await s.evalJson(`
-  const host = document.getElementById('for-now-overlay-host');
-  const shadow = host.shadowRoot;
+const reopened = await inShell(s, `
   return {
-    visible: getComputedStyle(shadow.querySelector('.fn-frame')).visibility === 'visible',
-    layer: !!shadow.querySelector('.fn-genie-layer'),
-    pointerEvents: host.style.pointerEvents,
+    visible: getComputedStyle(this.querySelector('.fn-frame')).visibility === 'visible',
+    layer: !!this.querySelector('.fn-genie-layer'),
+    pointerEvents: this.host.style.pointerEvents,
   };
 `);
 check('the panel is visible again after reopening', reopened.visible === true);
 check('the reopen cleans up its slices too', reopened.layer === false);
 check('the open overlay accepts clicks', reopened.pointerEvents === 'auto');
+const caret = await panel.evalJson(`
+  return { focus: document.hasFocus(), active: document.activeElement?.className ?? null };
+`);
+check('reopening puts the caret back in the editor',
+  caret.focus && String(caret.active).includes('fn-prose'), JSON.stringify(caret));
+
+// Tab cycles inside the panel rather than wandering into the page behind it.
+console.log('\n# Keyboard inside the open panel');
+const tab = async (shift) => {
+  const base = { key: 'Tab', code: 'Tab', windowsVirtualKeyCode: 9, modifiers: shift ? 8 : 0 };
+  await s.send('Input.dispatchKeyEvent', { type: 'keyDown', ...base });
+  await s.send('Input.dispatchKeyEvent', { type: 'keyUp', ...base });
+  await settle(s, 150);
+};
+const ends = `
+  const sel = 'a[href],button:not([disabled]),input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),[contenteditable="true"],[tabindex]:not([tabindex="-1"])';
+  const items = [...document.querySelectorAll(sel)].filter((el) => el.getClientRects().length > 0);
+`;
+await panel.evalJson(`${ends} items[items.length - 1].focus(); return true;`);
+await s.evalJson('window.__heard = []; return true;');
+await tab(false);
+check('Tab off the last control wraps to the first', await panel.evalJson(`${ends}
+  return document.hasFocus() && document.activeElement === items[0];
+`));
+await tab(true);
+check('Shift+Tab off the first control wraps to the last', await panel.evalJson(`${ends}
+  return document.hasFocus() && document.activeElement === items[items.length - 1];
+`));
+check('Tab never reaches the page behind the panel',
+  (await s.evalJson('return window.__heard;')).length === 0);
+await panel.evalJson('document.querySelector(".fn-prose").focus(); return true;');
+
+// Saving a capture opens the overlay rather than toggling it, so a second
+// right-click save never closes the panel it is meant to show.
+await sw.evalJson(`
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  await chrome.tabs.sendMessage(tab.id, { type: 'open-overlay' });
+  return true;
+`);
+await settle(s, 1000);
+check('asking an open overlay to open leaves it open', await inShell(s, `
+  return getComputedStyle(this.querySelector('.fn-frame')).visibility === 'visible';
+`));
+
+// The panel's own close button asks the shell to close, over postMessage.
+await panel.evalJson(`
+  document.querySelector('button[aria-label^="Close"]')?.click();
+  return true;
+`);
+await settle(s, 1200);
+check('the panel’s close button closes the overlay', await inShell(s, `
+  return getComputedStyle(this.querySelector('.fn-frame')).visibility === 'hidden';
+`));
+await sw.evalJson(`
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  await chrome.tabs.sendMessage(tab.id, { type: 'toggle-overlay' });
+  return true;
+`);
+await settle(s, 1200);
 
 // --- It is still a working notes panel ------------------------------------
 console.log('\n# Still a notes panel');
 await sw.evalJson('await chrome.storage.local.clear(); return true;');
-await settle(s, 400);
+await settle(s, 300);
+const livePanel = panel;
 
-await s.evalJson(`
-  const shadow = document.getElementById('for-now-overlay-host').shadowRoot;
-  const el = shadow.querySelector('.fn-prose');
+await livePanel.evalJson(`
+  const el = document.querySelector('.fn-prose');
   el.focus();
+  document.execCommand('selectAll', false, null);
+  document.execCommand('delete', false, null);
   document.execCommand('insertText', false, 'written from inside a web page');
   await new Promise((r) => setTimeout(r, 500));
-  [...shadow.querySelectorAll('button')].find((b) => b.textContent.trim() === 'Add note').click();
+  [...document.querySelectorAll('button')].find((b) => b.textContent.trim() === 'Add note').click();
   await new Promise((r) => setTimeout(r, 900));
   return true;
 `);
 
-// Storage has to be read from the worker: this evaluate runs in the page's
-// main world, which has no `chrome` object at all.
 const saved = await sw.evalJson(`
   const all = await chrome.storage.local.get(null);
   return Object.entries(all).filter(([k]) => k.startsWith('note:')).map(([, v]) => v.text);
@@ -301,32 +540,83 @@ check('the note is real rich text, not a plain string', await sw.evalJson(`
   return typeof note?.html === 'string' && note.html.includes('<p>');
 `));
 
-// A content script cannot call chrome.tabs, so the gear has to reach the
-// worker instead. If the routing were broken the click would do nothing.
-console.log('\n# Routing to the worker');
+check('the saved note is listed in the panel', await livePanel.evalJson(`
+  return document.body.innerText.includes('written from inside a web page');
+`));
+check('the saved note appears nowhere in the page', await s.evalJson(`
+  return !document.documentElement.outerHTML.includes('written from inside a web page')
+    && !document.body.innerText.includes('written from inside a web page');
+`));
+
+console.log('\n# Opening tabs');
 const before = await sw.evalJson('return (await chrome.tabs.query({})).length;');
-await s.evalJson(`
-  const shadow = document.getElementById('for-now-overlay-host').shadowRoot;
-  shadow.querySelector('button[aria-label="Settings and backup"]').click();
+await livePanel.evalJson(`
+  document.querySelector('button[aria-label="Settings and backup"]').click();
   return true;
 `);
 await settle(s, 1600);
 const after = await sw.evalJson('return (await chrome.tabs.query({})).length;');
-check('settings opens a tab through the service worker', after === before + 1,
+check('settings opens a tab from inside the overlay', after === before + 1,
   `${before} -> ${after}`);
 
-check('the panel reports no failure to the user', await s.evalJson(`
-  const shadow = document.getElementById('for-now-overlay-host').shadowRoot;
-  return !shadow.querySelector('.fn-frame').innerText.includes('Could not open settings');
+check('the worker refuses to open a script URL', await livePanel.evalJson(`
+  const reply = await chrome.runtime.sendMessage({ type: 'open-tab', url: 'javascript:alert(1)' });
+  return reply?.ok === false;
 `));
+
+check('the panel reports no failure to the user', await livePanel.evalJson(`
+  return !document.body.innerText.includes('Could not open settings');
+`));
+
+// --- Saving a selection keeps its formatting -------------------------------
+// The context-menu click itself cannot be produced over DevTools, so this runs
+// the same two injections the worker makes on one: the capture bundle, then
+// the call that reads the selection back.
+console.log('\n# Saving a selection');
+await s.evalJson(`
+  document.body.insertAdjacentHTML('beforeend',
+    '<div id="fn-capture"><p>Keep <strong>this bold</strong> and <a href="/more">this link</a>.</p>' +
+    '<ul><li>one</li><li>two</li></ul><p onclick="alert(1)">tail<img src=x onerror=alert(1)></p></div>');
+  const range = document.createRange();
+  range.selectNodeContents(document.getElementById('fn-capture'));
+  getSelection().removeAllRanges();
+  getSelection().addRange(range);
+  return true;
+`);
+const captured = await sw.evalJson(`
+  // Not the active tab: the settings check above left its own tab in front.
+  const [tab] = await chrome.tabs.query({ url: 'https://example.com/*' });
+  const target = { tabId: tab.id, frameIds: [0] };
+  await chrome.scripting.executeScript({ target, files: ['capture.js'] });
+  const [injection] = await chrome.scripting.executeScript({
+    target,
+    func: () => globalThis.__forNowReadSelection?.() ?? null,
+  });
+  return injection.result;
+`);
+check('the selection is read as rich text', typeof captured?.html === 'string',
+  JSON.stringify(captured).slice(0, 200));
+check('emphasis survives', captured?.html?.includes('<strong>this bold</strong>'));
+check('a relative link becomes a working absolute one',
+  captured?.html?.includes('href="https://example.com/more"'));
+check('lists survive', /<ul><li>one<\/li><li>two<\/li><\/ul>/.test(captured?.html ?? ''));
+check('the page’s handlers and images are stripped before it leaves the page',
+  !/onclick|onerror|<img/i.test(captured?.html ?? ''));
+check('the plain-text projection matches', captured?.text?.startsWith('Keep this bold and this link.'),
+  JSON.stringify(captured?.text));
+check('the page cannot see the capture function', await s.evalJson(
+  'return typeof globalThis.__forNowReadSelection === "undefined";'));
 
 // --- Console --------------------------------------------------------------
 console.log('\n# Console');
-const errs = s.events
-  .filter((e) => e.method === 'Runtime.exceptionThrown')
-  .map((e) => e.params.exceptionDetails?.exception?.description ?? 'exception');
-check('no uncaught exceptions in the page', errs.length === 0, errs.join(' | ').slice(0, 300));
+for (const [label, session] of [['page', s], ['panel', livePanel]]) {
+  const errs = session.events
+    .filter((e) => e.method === 'Runtime.exceptionThrown')
+    .map((e) => e.params.exceptionDetails?.exception?.description ?? 'exception');
+  check(`no uncaught exceptions in the ${label}`, errs.length === 0, errs.join(' | ').slice(0, 300));
+}
 
 report();
 s.close();
 sw.close();
+panel.close();

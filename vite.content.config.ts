@@ -31,7 +31,7 @@ export default defineConfig({
     target: 'chrome141',
     cssCodeSplit: false,
     rollupOptions: {
-      input: resolve(rootDir, 'src/content/overlay.tsx'),
+      input: resolve(rootDir, 'src/content/overlay.ts'),
       output: {
         format: 'iife',
         inlineDynamicImports: true,

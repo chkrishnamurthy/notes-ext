@@ -3,7 +3,7 @@ import {
   Bold, Code, CodeSquare, Heading1, Heading2, Italic, Link2, Link2Off,
   List, ListOrdered, ListTodo, Quote, Redo2, Strikethrough, Undo2,
 } from 'lucide-react';
-import type { ComponentType } from 'react';
+import { Fragment, type ComponentType } from 'react';
 
 /**
  * The formatting toolbar.
@@ -148,15 +148,20 @@ export function EditorToolbar({
       aria-label="Text formatting"
       // Wraps rather than scrolls: a hidden formatting button is a button
       // nobody finds, and the panel is narrow enough for this to matter.
-      className="flex flex-wrap items-center border-b border-line px-1.5 py-1"
+      className="fn-toolbar flex flex-wrap items-center border-b border-line px-1.5 py-1"
     >
+      {/* Dividers are their own items, not part of a group, so when the
+          groups spread out on a wide panel each divider sits centred in the
+          gap between two groups. */}
       {GROUPS.map((group, index) => (
-        <div key={index} className="flex items-center">
+        <Fragment key={index}>
           {index > 0 ? <Divider /> : null}
-          {group.map((tool) => (
-            <ToolButton key={tool.id} tool={tool} editor={editor} />
-          ))}
-        </div>
+          <div className="flex items-center">
+            {group.map((tool) => (
+              <ToolButton key={tool.id} tool={tool} editor={editor} />
+            ))}
+          </div>
+        </Fragment>
       ))}
 
       <Divider />
@@ -168,17 +173,15 @@ export function EditorToolbar({
         title={linkActive ? 'Remove link' : 'Add link'}
         onClick={onAddLink}
       >
-        {linkActive ? (
-          <Link2Off size={15} aria-hidden="true" />
-        ) : (
-          <Link2 size={15} aria-hidden="true" />
-        )}
+        {linkActive ? <Link2Off aria-hidden="true" /> : <Link2 aria-hidden="true" />}
       </button>
 
       <Divider />
-      {UNDO.map((tool) => (
-        <ToolButton key={tool.id} tool={tool} editor={editor} />
-      ))}
+      <div className="flex items-center">
+        {UNDO.map((tool) => (
+          <ToolButton key={tool.id} tool={tool} editor={editor} />
+        ))}
+      </div>
     </div>
   );
 }
@@ -203,7 +206,7 @@ function ToolButton({ tool, editor }: { tool: Tool; editor: Editor }) {
       onMouseDown={(event) => event.preventDefault()}
       onClick={() => tool.run(editor)}
     >
-      <Icon size={15} aria-hidden={true} />
+      <Icon aria-hidden={true} />
     </button>
   );
 }

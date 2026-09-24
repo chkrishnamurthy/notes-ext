@@ -9,6 +9,7 @@
 
 import {
   captureFrom,
+  MAX_CAPTURE_LENGTH,
   MENU_LINK,
   MENU_PAGE,
   MENU_SELECTION,
@@ -17,6 +18,7 @@ import { canInject } from '../lib/inject';
 import { broadcast, type ExtensionMessage } from '../lib/messages';
 import { createNote, purgeExpiredTrash } from '../lib/notes';
 import { runMigrations } from '../lib/migrations';
+import { sanitizeUrl } from '../lib/schema';
 import { chromeLocalArea, NoteStore } from '../lib/storage';
 
 const area = chromeLocalArea();
@@ -68,7 +70,10 @@ function configurePanel(): void {
  * this needs, and only for the tab the user just clicked on — which is why
  * the extension still asks for no host permissions.
  */
-async function showPanel(tab: chrome.tabs.Tab): Promise<void> {
+async function showPanel(
+  tab: chrome.tabs.Tab,
+  mode: 'toggle' | 'open' = 'toggle',
+): Promise<void> {
   const windowId = tab.windowId;
 
   if (!canInject(tab.url) || tab.id === undefined) {
@@ -79,7 +84,9 @@ async function showPanel(tab: chrome.tabs.Tab): Promise<void> {
   }
 
   try {
-    await chrome.tabs.sendMessage(tab.id, { type: 'toggle-overlay' });
+    await chrome.tabs.sendMessage(tab.id, {
+      type: mode === 'open' ? 'open-overlay' : 'toggle-overlay',
+    });
     return;
   } catch {
     // No listener yet, so this is the first click on this page.
@@ -241,15 +248,66 @@ chrome.runtime.onStartup.addListener(() => {
   void startup();
 });
 
+/**
+ * Read the selection the user right-clicked as rich text, keeping its links,
+ * emphasis, lists and code — or null, in which case the plain text from the
+ * menu payload is used exactly as before.
+ *
+ * The click's `activeTab` grant is what allows the injection. The result is
+ * sanitized inside the page (see `lib/selection.ts`), and checked for shape
+ * here, since it crossed from a renderer the page shares.
+ */
+async function readRichSelection(
+  tab: chrome.tabs.Tab | undefined,
+  frameId: number | undefined,
+): Promise<{ html: string; text: string } | null> {
+  if (!tab || tab.id === undefined || !canInject(tab.url)) return null;
+  const target = { tabId: tab.id, frameIds: [frameId ?? 0] };
+  try {
+    await chrome.scripting.executeScript({ target, files: ['capture.js'] });
+    const [injection] = await chrome.scripting.executeScript({
+      target,
+      func: () =>
+        (globalThis as typeof globalThis & { __forNowReadSelection?: () => unknown })
+          .__forNowReadSelection?.() ?? null,
+    });
+    const value = injection?.result as { html?: unknown; text?: unknown } | null | undefined;
+    if (
+      !value ||
+      typeof value.html !== 'string' ||
+      typeof value.text !== 'string' ||
+      value.text.length > MAX_CAPTURE_LENGTH
+    ) {
+      return null;
+    }
+    return { html: value.html, text: value.text };
+  } catch {
+    // A frame the grant does not cover, or a page that refuses injection.
+    return null;
+  }
+}
+
 chrome.contextMenus.onClicked.addListener((info, tab) => {
-  // A menu click is a user gesture, so the panel may be opened from inside
-  // this handler — but only synchronously, before the first await.
-  if (tab?.windowId !== undefined) {
+  // Show the capture landing in the same place a toolbar click opens: the
+  // overlay where the page allows one, the side panel where it does not. The
+  // side panel may only be opened synchronously, before the first await, while
+  // the click still counts as a user gesture. The overlay needs no gesture,
+  // and is opened below once the selection has been read.
+  const overlay = tab !== undefined && tab.id !== undefined && canInject(tab.url);
+  if (!overlay && tab?.windowId !== undefined) {
     chrome.sidePanel.open({ windowId: tab.windowId }).catch(() => undefined);
   }
 
   void (async () => {
-    const input = captureFrom(info, tab);
+    let input = captureFrom(info, tab);
+    if (input?.kind === 'selection') {
+      const rich = await readRichSelection(tab, info.frameId);
+      if (rich) input = { ...input, html: rich.html, text: rich.text };
+    }
+    // After the selection is read: opening the overlay moves focus into it.
+    // Opened rather than toggled, so a second save never closes it.
+    if (overlay && tab) void showPanel(tab, 'open');
+
     if (!input) {
       broadcast({
         type: 'capture-failed',
@@ -307,24 +365,43 @@ chrome.commands.onCommand.addListener((command, tab) => {
     .catch(() => undefined);
 });
 
+/** True for a message from one of this extension's own pages. */
+function fromExtensionPage(sender: chrome.runtime.MessageSender): boolean {
+  return sender.url?.startsWith(chrome.runtime.getURL('')) === true;
+}
+
 /**
- * Requests from the overlay for things a content script cannot do itself.
- * The listener returns true so the async reply is not dropped.
+ * Requests from other parts of the extension. The listener returns true so
+ * the async reply is not dropped.
+ *
+ * A content script runs inside a web page's renderer, so a compromised page
+ * could send anything a content script can. The one thing a content script
+ * has reason to ask for is the quick-open click; everything else is accepted
+ * only from the extension's own pages.
  */
 chrome.runtime.onMessage.addListener((message: ExtensionMessage, sender, respond) => {
-  if (message?.type === 'open-tab') {
-    chrome.tabs
-      .create({ url: message.url })
-      .then(() => respond({ ok: true }))
-      .catch(() => respond({ ok: false }));
-    return true;
-  }
   if (message?.type === 'launcher-click') {
     // `sender.tab` is the page the button lives on, which is the tab the panel
     // belongs to — the same path a toolbar click takes from here on.
     if (sender.tab) void showPanel(sender.tab);
     respond({ ok: true });
     return false;
+  }
+  if (!fromExtensionPage(sender)) return undefined;
+
+  if (message?.type === 'open-tab') {
+    // Only the kinds of address a note can hold: no `javascript:`, no
+    // `chrome://`, no extension pages.
+    const url = sanitizeUrl(message.url);
+    if (!url) {
+      respond({ ok: false });
+      return false;
+    }
+    chrome.tabs
+      .create({ url })
+      .then(() => respond({ ok: true }))
+      .catch(() => respond({ ok: false }));
+    return true;
   }
   if (message?.type === 'launcher-changed') {
     void (async () => {
@@ -337,13 +414,6 @@ chrome.runtime.onMessage.addListener((message: ExtensionMessage, sender, respond
       }
       respond({ ok: true });
     })();
-    return true;
-  }
-  if (message?.type === 'open-options') {
-    chrome.tabs
-      .create({ url: chrome.runtime.getURL('options.html') })
-      .then(() => respond({ ok: true }))
-      .catch(() => respond({ ok: false }));
     return true;
   }
   return undefined;

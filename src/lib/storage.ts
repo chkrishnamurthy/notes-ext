@@ -18,6 +18,7 @@ import {
   NOTE_PREFIX,
   SETTINGS_KEY,
   SCHEMA_VERSION,
+  isFromNewerVersion,
   isNoteKey,
   noteKey,
   parseDraft,
@@ -65,6 +66,22 @@ function classify(error: unknown): WriteFailureReason {
 
 function describe(error: unknown): string {
   return error instanceof Error ? error.message : String(error ?? 'Unknown error');
+}
+
+/**
+ * The committed form of a change: identity pinned, revision bumped, and the
+ * content revision bumped only when the text itself changed.
+ */
+function advance(current: Note, mutated: Note, now: number): Note {
+  const contentChanged = mutated.html !== current.html || mutated.text !== current.text;
+  return {
+    ...mutated,
+    id: current.id,
+    rev: current.rev + 1,
+    contentRev: contentChanged ? current.contentRev + 1 : current.contentRev,
+    updatedAt: now,
+    schemaVersion: SCHEMA_VERSION,
+  };
 }
 
 export class NoteStore {
@@ -175,39 +192,94 @@ export class NoteStore {
   /**
    * Apply `mutate` to the stored note, bumping its revision.
    *
-   * When `expectedRev` is given and the stored note has moved on, the write is
-   * refused and the newer record is handed back so the caller can decide. The
-   * incoming text is never dropped and never written over the newer one.
+   * `expectedContentRev` is given by an edit: the content revision the edit
+   * started from. If the note's text has changed since, or it has been moved
+   * to Trash, the write is refused and the current record is handed back so
+   * the caller can decide. The incoming text is never dropped and never
+   * written over the newer one. A pin — or anything else that leaves the text
+   * alone — does not count as a change.
    */
   updateNote(
     id: string,
     mutate: (current: Note) => Note,
-    expectedRev?: number,
+    expectedContentRev?: number,
     now = Date.now(),
   ): Promise<WriteResult<Note>> {
     return this.run(async () => {
       const record = await this.area.get(noteKey(id));
-      const current = parseNote(record[noteKey(id)]);
+      const raw = record[noteKey(id)];
+      if (isFromNewerVersion(raw)) {
+        return failure(
+          'unknown',
+          'This note was saved by a newer version of For Now. Update the extension to change it.',
+        );
+      }
+      const current = parseNote(raw);
       if (!current) {
         return failure('unknown', 'That note no longer exists on this device.');
       }
-      if (expectedRev !== undefined && current.rev !== expectedRev) {
-        return failure(
-          'conflict',
-          'This note changed in another window while you were editing.',
-          current,
-        );
+      if (expectedContentRev !== undefined) {
+        if (current.contentRev !== expectedContentRev) {
+          return failure(
+            'conflict',
+            'This note changed in another window while you were editing.',
+            current,
+          );
+        }
+        if (current.deletedAt !== undefined) {
+          // Saving into a trashed note would hide the edit where nobody looks.
+          return failure(
+            'conflict',
+            'This note was moved to Trash in another window while you were editing.',
+            current,
+          );
+        }
       }
-      const next: Note = {
-        ...mutate(current),
-        id: current.id,
-        rev: current.rev + 1,
-        updatedAt: now,
-        schemaVersion: SCHEMA_VERSION,
-      };
+      const next = advance(current, mutate(current), now);
       try {
         await this.area.set({ [noteKey(id)]: next });
         return { ok: true as const, value: next };
+      } catch (error) {
+        return failure(classify(error), describe(error));
+      }
+    });
+  }
+
+  /**
+   * Apply `mutate` to several stored notes in one write, bumping each one's
+   * revision.
+   *
+   * Every note is re-read here, inside the queue, rather than taken from the
+   * caller. A bulk action runs on whatever list the panel last rendered, and
+   * writing that list back would silently undo any edit made in another
+   * window since. `mutate` sees the current record and returns null to leave
+   * it alone — a note pinned or already trashed in the meantime, say.
+   */
+  updateMany(
+    ids: string[],
+    mutate: (current: Note) => Note | null,
+    now = Date.now(),
+  ): Promise<WriteResult<Note[]>> {
+    return this.run(async () => {
+      if (ids.length === 0) return { ok: true as const, value: [] };
+      try {
+        const record = await this.area.get(ids.map(noteKey));
+        const items: Record<string, unknown> = {};
+        const changed: Note[] = [];
+        for (const id of ids) {
+          const raw = record[noteKey(id)];
+          if (isFromNewerVersion(raw)) continue;
+          const current = parseNote(raw);
+          // Deleted forever in the meantime: nothing to change.
+          if (!current) continue;
+          const mutated = mutate(current);
+          if (!mutated) continue;
+          const next = advance(current, mutated, now);
+          items[noteKey(id)] = next;
+          changed.push(next);
+        }
+        if (changed.length > 0) await this.area.set(items);
+        return { ok: true as const, value: changed };
       } catch (error) {
         return failure(classify(error), describe(error));
       }
@@ -260,18 +332,30 @@ export class NoteStore {
   }
 
   /**
-   * Remove every note key. Used only by "replace all" import, which writes the
-   * replacement set in the same call sequence.
+   * Make `notes` the entire set of stored notes. Used only by "replace all"
+   * import.
+   *
+   * The new set is written before anything is removed, so a write that fails
+   * — out of quota, or the worker killed mid-way — leaves every existing note
+   * where it was. Only once the replacements are acknowledged are the notes
+   * the backup does not contain removed. Returns how many notes there were
+   * before, all of which have now been replaced.
    */
-  async clearAllNotes(): Promise<WriteResult<number>> {
-    try {
-      const all = await this.area.get(null);
-      const keys = Object.keys(all).filter(isNoteKey);
-      if (keys.length > 0) await this.area.remove(keys);
-      return { ok: true, value: keys.length };
-    } catch (error) {
-      return failure(classify(error), describe(error));
-    }
+  replaceAllNotes(notes: Note[]): Promise<WriteResult<number>> {
+    return this.run(async () => {
+      try {
+        const all = await this.area.get(null);
+        const existing = Object.keys(all).filter(isNoteKey);
+        const items: Record<string, unknown> = {};
+        for (const note of notes) items[noteKey(note.id)] = note;
+        if (notes.length > 0) await this.area.set(items);
+        const stale = existing.filter((key) => !(key in items));
+        if (stale.length > 0) await this.area.remove(stale);
+        return { ok: true as const, value: existing.length };
+      } catch (error) {
+        return failure(classify(error), describe(error));
+      }
+    });
   }
 }
 

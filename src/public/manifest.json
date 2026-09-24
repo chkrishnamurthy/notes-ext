@@ -59,6 +59,17 @@
       "matches": [
         "<all_urls>"
       ]
+    },
+    {
+      "resources": [
+        "overlay.html",
+        "overlay.js",
+        "assets/*"
+      ],
+      "matches": [
+        "<all_urls>"
+      ],
+      "use_dynamic_url": true
     }
   ]
 }

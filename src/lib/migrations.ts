@@ -7,7 +7,7 @@
  */
 
 import { textToCodeBlock, textToHtml } from './richtext';
-import { SCHEMA_VERSION, parseNote, type Note } from './schema';
+import { SCHEMA_VERSION, isFromNewerVersion, parseNote, type Note } from './schema';
 import type { NoteStore } from './storage';
 
 export type RawRecord = Record<string, unknown>;
@@ -22,6 +22,9 @@ export type MigrationStep = (record: RawRecord) => RawRecord;
  * `kind`, `rev`, `format`, or `pinned`, and may carry a legacy `text` field.
  *
  * Version 1 is the plain-text era, before the rich text editor.
+ *
+ * Version 2 had a single revision counter, bumped by every write — so pinning a
+ * note made an open edit of it look stale.
  */
 export const MIGRATIONS: MigrationStep[] = [
   function v0_to_v1(record) {
@@ -57,6 +60,15 @@ export const MIGRATIONS: MigrationStep[] = [
     next.schemaVersion = 2;
     return next;
   },
+
+  function v2_to_v3(record) {
+    // The content revision starts where the single revision counter was, so a
+    // draft that was mid-edit across the upgrade still matches its note.
+    const next: RawRecord = { ...record };
+    next.contentRev = typeof next.rev === 'number' ? next.rev : 1;
+    next.schemaVersion = 3;
+    return next;
+  },
 ];
 
 export function migrateRecord(record: RawRecord): RawRecord {
@@ -76,6 +88,8 @@ export interface MigrationReport {
   scanned: number;
   migrated: number;
   unreadable: number;
+  /** Records from a newer build, left exactly as they are. */
+  newer: number;
 }
 
 /**
@@ -89,7 +103,7 @@ export async function runMigrations(
   now = Date.now(),
 ): Promise<MigrationReport> {
   const all = await area.get(null);
-  const report: MigrationReport = { scanned: 0, migrated: 0, unreadable: 0 };
+  const report: MigrationReport = { scanned: 0, migrated: 0, unreadable: 0, newer: 0 };
   const upgraded: Note[] = [];
 
   for (const [key, value] of Object.entries(all)) {
@@ -100,6 +114,12 @@ export async function runMigrations(
       continue;
     }
     const record = value as RawRecord;
+    // Written by a newer build — after a rollback, say. Rewriting it here
+    // would downgrade it and drop the fields this build does not know.
+    if (isFromNewerVersion(record)) {
+      report.newer += 1;
+      continue;
+    }
     const version = typeof record.schemaVersion === 'number' ? record.schemaVersion : 0;
     if (version === SCHEMA_VERSION) continue;
 

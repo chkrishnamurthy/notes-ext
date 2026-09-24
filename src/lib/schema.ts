@@ -10,7 +10,7 @@ import { stripTagsFallback, textToHtml } from './richtext';
  */
 
 /** Bump whenever the shape of a persisted record changes, and add a migration. */
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 3;
 
 /** Where a note came from. Determines which source metadata is meaningful. */
 export type CaptureKind = 'thought' | 'selection' | 'link' | 'page';
@@ -43,8 +43,14 @@ export interface Note {
   pinned: boolean;
   /** Set when the note is in Trash. Absent means active. */
   deletedAt?: number;
-  /** Incremented on every committed write. Used for stale-edit detection. */
+  /** Incremented on every committed write. */
   rev: number;
+  /**
+   * Incremented only when the body changes. An edit checks this rather than
+   * `rev`, so pinning, trashing or restoring a note in another window does not
+   * make an open edit of it look stale.
+   */
+  contentRev: number;
   schemaVersion: number;
 }
 
@@ -54,7 +60,10 @@ export interface Draft {
   text: string;
   /** Set when the draft is an in-progress edit of an existing note. */
   editingId?: string;
-  /** The rev the edit started from, so a stale edit can be detected. */
+  /**
+   * The content revision the edit started from, so an edit made stale by a
+   * change to the note's text can be detected.
+   */
   editingRev?: number;
   updatedAt: number;
 }
@@ -135,6 +144,22 @@ export function sanitizeUrl(value: unknown): string | undefined {
 }
 
 /**
+ * True for a record written by a newer build than this one.
+ *
+ * Such a record can still be *read* — `parseNote` salvages what it recognises
+ * — but must never be written back: that would stamp it with this build's
+ * older version and drop every field this build does not know about, so a
+ * user who rolls back and then forward again would find those fields gone.
+ */
+export function isFromNewerVersion(value: unknown): boolean {
+  return (
+    isPlainObject(value) &&
+    typeof value.schemaVersion === 'number' &&
+    value.schemaVersion > SCHEMA_VERSION
+  );
+}
+
+/**
  * Coerce an untrusted record (an import file, or a record written by an older
  * version) into a Note, or return null if it cannot be salvaged. Never throws.
  */
@@ -162,6 +187,7 @@ export function parseNote(value: unknown, now = Date.now()): Note | null {
         : stripTagsFallback(html);
 
   const createdAt = num(value.createdAt, now);
+  const rev = Math.max(1, Math.floor(num(value.rev, 1)));
   const kind = KINDS.includes(value.kind as CaptureKind)
     ? (value.kind as CaptureKind)
     : 'thought';
@@ -174,7 +200,9 @@ export function parseNote(value: unknown, now = Date.now()): Note | null {
     createdAt,
     updatedAt: num(value.updatedAt, createdAt),
     pinned: value.pinned === true,
-    rev: Math.max(1, Math.floor(num(value.rev, 1))),
+    rev,
+    // Before v3 there was one counter; it stands in until the migration runs.
+    contentRev: Math.max(1, Math.floor(num(value.contentRev, rev))),
     schemaVersion: SCHEMA_VERSION,
   };
 

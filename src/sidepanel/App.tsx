@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { NotebookPen, Settings2, X } from 'lucide-react';
 
 import { copyText } from '../lib/clipboard';
+import { EMPTY_SNAPSHOT, sameDraft, shouldAdopt, type DraftSnapshot } from '../lib/draftSync';
 import type { HostBridge } from '../lib/host';
 import type { ExtensionMessage } from '../lib/messages';
 import {
@@ -20,7 +21,16 @@ import {
   sortNotes,
   trashNote,
 } from '../lib/notes';
-import { DEFAULT_SETTINGS, type Note, type Settings } from '../lib/schema';
+import {
+  DEFAULT_SETTINGS,
+  DRAFT_KEY,
+  NOTE_PREFIX,
+  isNoteKey,
+  parseDraft,
+  parseNote,
+  type Note,
+  type Settings,
+} from '../lib/schema';
 import { parseQuery } from '../lib/search';
 import { QUOTA_WARN_RATIO, type WriteResult } from '../lib/storage';
 import { applyTheme } from '../lib/theme';
@@ -37,12 +47,13 @@ import { store } from './store';
 const DRAFT_DEBOUNCE_MS = 400;
 const SAVED_STATE_MS = 2200;
 const NOTE_VIEW_KEY = 'for-now:note-view';
+const LIST_COLLAPSED_KEY = 'for-now:list-collapsed';
 
 const EMPTY_VALUE: EditorValue = { html: '', text: '' };
 
 interface EditTarget {
   id: string;
-  /** The revision the edit started from, used to detect a stale write. */
+  /** The note's content revision when the edit began, to detect a stale write. */
   rev: number;
 }
 
@@ -60,6 +71,15 @@ function loadNoteView(): NoteView {
     return localStorage.getItem(NOTE_VIEW_KEY) === 'card' ? 'card' : 'list';
   } catch {
     return 'list';
+  }
+}
+
+/** Whether the notes list is folded away to give the editor the whole panel. */
+function loadListCollapsed(): boolean {
+  try {
+    return localStorage.getItem(LIST_COLLAPSED_KEY) === 'true';
+  } catch {
+    return false;
   }
 }
 
@@ -90,8 +110,14 @@ export function App({ host }: { host: HostBridge }) {
   const [confirmClear, setConfirmClear] = useState(false);
 
   const searchRef = useRef<HTMLInputElement>(null);
+  const [listCollapsed, setListCollapsed] = useState(loadListCollapsed);
   /** Guards the draft autosave so hydration does not write the draft back. */
   const hydrated = useRef(false);
+  /** What this panel last wrote to, or adopted from, the shared draft. */
+  const synced = useRef<DraftSnapshot>(EMPTY_SNAPSHOT);
+  /** The composer as it stands, for the storage listener to compare against. */
+  const local = useRef<DraftSnapshot>(EMPTY_SNAPSHOT);
+  local.current = { html: value.html, editingId: editTarget?.id, editingRev: editTarget?.rev };
 
   // ---------------------------------------------------------------------
   // Loading and syncing
@@ -111,6 +137,7 @@ export function App({ host }: { host: HostBridge }) {
       applyTheme(loadedSettings.theme, host.themeRoot);
 
       const draft = await store.getDraft();
+      synced.current = { html: draft.html, editingId: draft.editingId, editingRev: draft.editingRev };
       pushContent({ html: draft.html, text: draft.text });
       if (draft.editingId && draft.editingRev !== undefined) {
         setEditTarget({ id: draft.editingId, rev: draft.editingRev });
@@ -132,7 +159,50 @@ export function App({ host }: { host: HostBridge }) {
     ) => {
       if (area !== 'local') return;
       const keys = Object.keys(changes);
-      if (keys.some((key) => key.startsWith('note:'))) void refresh();
+      const noteKeys = keys.filter(isNoteKey);
+      if (noteKeys.length > 0) {
+        // Apply just the notes that changed. With an overlay open in every tab,
+        // re-reading the whole store in each of them on every write adds up.
+        setNotes((previous) => {
+          if (!previous) return previous;
+          const byId = new Map(previous.map((note) => [note.id, note]));
+          for (const key of noteKeys) {
+            const id = key.slice(NOTE_PREFIX.length);
+            const next = changes[key].newValue;
+            if (next === undefined) {
+              byId.delete(id);
+              continue;
+            }
+            const note = parseNote(next);
+            if (note) byId.set(id, note);
+          }
+          return [...byId.values()];
+        });
+        void store.usage().then((usage) => {
+          setUsageRatio(usage.ratio);
+          setUsageBytes(usage.bytes);
+        });
+      }
+      // The draft is shared by every open panel; follow another panel's typing
+      // unless this one has typing of its own still to write.
+      if (keys.includes(DRAFT_KEY) && hydrated.current) {
+        const incoming = parseDraft(changes[DRAFT_KEY].newValue);
+        const snapshot: DraftSnapshot = {
+          html: incoming.html,
+          editingId: incoming.editingId,
+          editingRev: incoming.editingRev,
+        };
+        if (shouldAdopt(snapshot, synced.current, local.current)) {
+          synced.current = snapshot;
+          pushContent({ html: incoming.html, text: incoming.text });
+          setEditTarget(
+            incoming.editingId && incoming.editingRev !== undefined
+              ? { id: incoming.editingId, rev: incoming.editingRev }
+              : null,
+          );
+          setDraftSaved(incoming.text.trim().length > 0);
+        }
+      }
       if (keys.includes('settings')) {
         void store.getSettings().then((next) => {
           setSettings(next);
@@ -142,7 +212,7 @@ export function App({ host }: { host: HostBridge }) {
     };
     chrome.storage.onChanged.addListener(onChanged);
     return () => chrome.storage.onChanged.removeListener(onChanged);
-  }, [refresh, host]);
+  }, [host]);
 
   // Confirmation for captures made from the context menu while the panel is open.
   useEffect(() => {
@@ -164,13 +234,24 @@ export function App({ host }: { host: HostBridge }) {
   // letting the worker sleep does not lose an unfinished thought.
   useEffect(() => {
     if (!hydrated.current) return;
+    const snapshot: DraftSnapshot = {
+      html: value.html,
+      editingId: editTarget?.id,
+      editingRev: editTarget?.rev,
+    };
+    // Already in storage: either this panel wrote it, or it was just adopted
+    // from another panel — writing it back would only bounce between them.
+    if (sameDraft(snapshot, synced.current)) return;
     const timer = window.setTimeout(() => {
       void (async () => {
         if (!value.text.trim()) {
+          synced.current = EMPTY_SNAPSHOT;
           await store.clearDraft();
           setDraftSaved(false);
           return;
         }
+        // Recorded before the write, so its echo is recognised as this panel's.
+        synced.current = snapshot;
         const result = await store.setDraft({
           html: value.html,
           text: value.text,
@@ -249,6 +330,7 @@ export function App({ host }: { host: HostBridge }) {
     setEditTarget(null);
     setSaveError(null);
     setConflictNote(null);
+    synced.current = EMPTY_SNAPSHOT;
     void store.clearDraft();
     setDraftSaved(false);
   }
@@ -274,8 +356,8 @@ export function App({ host }: { host: HostBridge }) {
       setSaveState('error');
       setConflictNote(result.conflict ?? null);
       setSaveError({
-        message:
-          'This note changed in another window while you were editing. Your text is still here.',
+        // The store says which: the text changed, or the note went to Trash.
+        message: `${result.message} Your text is still here.`,
         conflict: true,
       });
     } else {
@@ -303,7 +385,7 @@ export function App({ host }: { host: HostBridge }) {
   function beginEdit(note: Note) {
     setQuery('');
     pushContent({ html: note.html, text: note.text });
-    setEditTarget({ id: note.id, rev: note.rev });
+    setEditTarget({ id: note.id, rev: note.contentRev });
     setSaveError(null);
     setSaveState('idle');
     announce('');
@@ -378,6 +460,15 @@ export function App({ host }: { host: HostBridge }) {
     });
   }
 
+  function changeListCollapsed(next: boolean) {
+    setListCollapsed(next);
+    try {
+      localStorage.setItem(LIST_COLLAPSED_KEY, String(next));
+    } catch {
+      // As with the note view: only the preference is lost.
+    }
+  }
+
   function changeNoteView(next: NoteView) {
     setNoteView(next);
     try {
@@ -404,8 +495,12 @@ export function App({ host }: { host: HostBridge }) {
     const onKeyDown = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault();
-        searchRef.current?.focus();
-        searchRef.current?.select();
+        // Search lives in the list, so asking for it brings the list back.
+        if (listCollapsed) changeListCollapsed(false);
+        requestAnimationFrame(() => {
+          searchRef.current?.focus();
+          searchRef.current?.select();
+        });
         return;
       }
       if (event.key !== 'Escape') return;
@@ -430,7 +525,7 @@ export function App({ host }: { host: HostBridge }) {
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [saveError, confirmClear, editTarget, query, status, host]);
+  }, [saveError, confirmClear, editTarget, query, status, host, listCollapsed]);
 
   // ---------------------------------------------------------------------
   // Render
@@ -482,8 +577,15 @@ export function App({ host }: { host: HostBridge }) {
 
       {/* The editor is the dominant surface, but capped at half the panel so
           a scratchpad never becomes a word processor with a footnote of
-          notes. Both regions have a floor as well as a ceiling. */}
-      <div className="flex max-h-[50%] min-h-[11rem] flex-[3] flex-col">
+          notes. Both regions have a floor as well as a ceiling. With the list
+          collapsed, the cap comes off and the editor takes the whole panel. */}
+      <div
+        className={
+          listCollapsed
+            ? 'flex min-h-[11rem] flex-1 flex-col'
+            : 'flex max-h-[50%] min-h-[11rem] flex-[3] flex-col'
+        }
+      >
         <NoteEditor
           value={value}
           contentKey={`${editTarget?.id ?? 'new'}#${contentToken}`}
@@ -504,52 +606,58 @@ export function App({ host }: { host: HostBridge }) {
             )
           }
           onKeepBoth={() => void keepBoth()}
+          listCollapsed={listCollapsed}
+          onToggleList={() => changeListCollapsed(!listCollapsed)}
         />
       </div>
 
-      <FilterBar
-        view={view}
-        counts={counts}
-        query={query}
-        noteView={noteView}
-        searchRef={searchRef}
-        onChangeView={(next) => {
-          setView(next);
-          setConfirmClear(false);
-        }}
-        onChangeQuery={changeQuery}
-        onChangeNoteView={changeNoteView}
-      />
-
-      <div className="min-h-[8rem] flex-[2] overflow-y-auto">
-        {notes === null ? (
-          <p className="px-4 py-8 text-center text-xs text-muted">Loading your notes…</p>
-        ) : visible.length === 0 ? (
-          <EmptyState
-            kind={emptyKind}
-            action={
-              searching ? { label: 'Clear search', onClick: () => changeQuery('') } : undefined
-            }
-          />
-        ) : (
-          <NoteList
-            notes={visible}
-            terms={terms}
-            view={noteView}
-            inTrash={view === 'trash'}
-            retentionDays={settings.trashRetentionDays}
-            actions={{
-              onEdit: beginEdit,
-              onCopy: (note) => void copyNote(note),
-              onTogglePin: (note) => void togglePin(note),
-              onTrash: (note) => void moveToTrash(note),
-              onRestore: (note) => void restore(note),
-              onDeleteForever: (note) => void removeForever(note),
-              onOpenSource: openSource,
+      {listCollapsed ? null : (
+        <>
+          <FilterBar
+            view={view}
+            counts={counts}
+            query={query}
+            noteView={noteView}
+            searchRef={searchRef}
+            onChangeView={(next) => {
+              setView(next);
+              setConfirmClear(false);
             }}
+            onChangeQuery={changeQuery}
+            onChangeNoteView={changeNoteView}
           />
-        )}
-      </div>
+
+          <div className="min-h-[8rem] flex-[2] overflow-y-auto">
+            {notes === null ? (
+              <p className="px-4 py-8 text-center text-xs text-muted">Loading your notes…</p>
+            ) : visible.length === 0 ? (
+              <EmptyState
+                kind={emptyKind}
+                action={
+                  searching ? { label: 'Clear search', onClick: () => changeQuery('') } : undefined
+                }
+              />
+            ) : (
+              <NoteList
+                notes={visible}
+                terms={terms}
+                view={noteView}
+                inTrash={view === 'trash'}
+                retentionDays={settings.trashRetentionDays}
+                actions={{
+                  onEdit: beginEdit,
+                  onCopy: (note) => void copyNote(note),
+                  onTogglePin: (note) => void togglePin(note),
+                  onTrash: (note) => void moveToTrash(note),
+                  onRestore: (note) => void restore(note),
+                  onDeleteForever: (note) => void removeForever(note),
+                  onOpenSource: openSource,
+                }}
+              />
+            )}
+          </div>
+        </>
+      )}
 
       {confirmClear ? (
         <div className="mx-3 mb-2 rounded-md bg-soft p-2.5 text-xs">

@@ -188,7 +188,7 @@ describe('editing', () => {
     await createNote(store, { text: 'original' });
     const [note] = await store.listNotes();
 
-    area.poke(`note:${note.id}`, { ...note, text: 'theirs', html: '<p>theirs</p>', rev: 9 });
+    area.poke(`note:${note.id}`, { ...note, text: 'theirs', html: '<p>theirs</p>', rev: 9, contentRev: 9 });
 
     const attempt = await editNote(store, note.id, { html: '<p>mine</p>', text: 'mine' }, note.rev);
     expect(attempt.ok).toBe(false);
@@ -216,7 +216,7 @@ describe('editing', () => {
 
 describe('sorting', () => {
   it('puts pinned notes first, then most recently updated', () => {
-    const base = { id: '', html: '', text: '', kind: 'thought', createdAt: 0, rev: 1, schemaVersion: 2 } as const;
+    const base = { id: '', html: '', text: '', kind: 'thought', createdAt: 0, rev: 1, contentRev: 1, schemaVersion: 2 } as const;
     const sorted = sortNotes([
       { ...base, id: 'a', pinned: false, updatedAt: 300 },
       { ...base, id: 'b', pinned: true, updatedAt: 100 },
@@ -224,5 +224,116 @@ describe('sorting', () => {
       { ...base, id: 'd', pinned: true, updatedAt: 200 },
     ]);
     expect(sorted.map((n) => n.id)).toEqual(['d', 'b', 'c', 'a']);
+  });
+});
+
+describe('bulk actions against a changing store', () => {
+  it('clearing keeps an edit made in another window after the list was read', async () => {
+    const { store } = freshStore();
+    await createNote(store, { text: 'the original' });
+    const rendered = await store.listNotes();
+
+    // Another window edits the note after this panel rendered its list.
+    await editNote(store, rendered[0].id, { html: '<p>edited elsewhere</p>', text: 'edited elsewhere' }, rendered[0].rev);
+
+    const result = await clearUnpinned(store, rendered);
+    expect(result.ok).toBe(true);
+    const [after] = await store.listNotes();
+    expect(after.text).toBe('edited elsewhere');
+    expect(isTrashed(after)).toBe(true);
+  });
+
+  it('clearing skips a note pinned in another window meanwhile', async () => {
+    const { store } = freshStore();
+    await createNote(store, { text: 'about to be pinned' });
+    const rendered = await store.listNotes();
+    await setPinned(store, rendered[0].id, true);
+
+    const result = await clearUnpinned(store, rendered);
+    expect(result.ok && result.value).toEqual([]);
+    expect(isActive((await store.listNotes())[0])).toBe(true);
+  });
+
+  it('undo does not roll back an edit made to a trashed note', async () => {
+    const { store } = freshStore();
+    await createNote(store, { text: 'trashed' });
+    const cleared = await clearUnpinned(store, await store.listNotes());
+    if (!cleared.ok) throw new Error('clear failed');
+    await restoreMany(store, cleared.value);
+    const [after] = await store.listNotes();
+    expect(isActive(after)).toBe(true);
+    expect(after.rev).toBe(3);
+  });
+});
+
+describe('records from a newer version', () => {
+  it('are never written back with this build’s older shape', async () => {
+    const future = {
+      id: 'future-1',
+      html: '<p>x</p>',
+      text: 'x',
+      kind: 'thought',
+      createdAt: 1,
+      updatedAt: 1,
+      pinned: false,
+      rev: 1,
+      schemaVersion: 99,
+      colour: 'teal',
+    };
+    const area = new FakeArea({ 'note:future-1': future });
+    const store = new NoteStore(area);
+
+    const pinned = await setPinned(store, 'future-1', true);
+    expect(pinned.ok).toBe(false);
+    const cleared = await clearUnpinned(store, await store.listNotes());
+    expect(cleared.ok && cleared.value).toEqual([]);
+    expect(area.raw('note:future-1')).toEqual(future);
+  });
+});
+
+describe('what counts as a conflicting change', () => {
+  const editing = async () => {
+    const { store, area } = freshStore();
+    await createNote(store, { text: 'being edited' });
+    const [note] = await store.listNotes();
+    return { store, area, note };
+  };
+
+  it('pinning the note elsewhere does not make an open edit stale', async () => {
+    const { store, note } = await editing();
+    await setPinned(store, note.id, true);
+
+    const saved = await editNote(store, note.id, { html: '<p>mine</p>', text: 'mine' }, note.contentRev);
+    expect(saved.ok).toBe(true);
+    const [after] = await store.listNotes();
+    expect(after.text).toBe('mine');
+    // The pin made elsewhere survives the save.
+    expect(after.pinned).toBe(true);
+  });
+
+  it('a change to the text elsewhere still does', async () => {
+    const { store, note } = await editing();
+    await editNote(store, note.id, { html: '<p>theirs</p>', text: 'theirs' }, note.contentRev);
+
+    const saved = await editNote(store, note.id, { html: '<p>mine</p>', text: 'mine' }, note.contentRev);
+    expect(saved.ok).toBe(false);
+    if (!saved.ok) expect(saved.reason).toBe('conflict');
+  });
+
+  it('moving the note to Trash elsewhere is treated as a conflict', async () => {
+    const { store, note } = await editing();
+    await trashNote(store, note.id);
+
+    const saved = await editNote(store, note.id, { html: '<p>mine</p>', text: 'mine' }, note.contentRev);
+    expect(saved.ok).toBe(false);
+    if (saved.ok) return;
+    expect(saved.reason).toBe('conflict');
+    expect(saved.message).toContain('Trash');
+  });
+
+  it('pinning bumps the revision but not the content revision', async () => {
+    const { store, note } = await editing();
+    const pinned = await setPinned(store, note.id, true);
+    expect(pinned.ok && [pinned.value.rev, pinned.value.contentRev]).toEqual([2, 1]);
   });
 });

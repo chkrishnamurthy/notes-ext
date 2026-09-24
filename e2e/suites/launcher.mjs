@@ -14,7 +14,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { Session, targets, waitFor } from '../cdp.mjs';
-import { ID, OPTIONS, check, clickReal, openPage, report, settle, shot } from '../driver.mjs';
+import { ID, OPTIONS, check, clickReal, inShell, openPage, report, settle, shot } from '../driver.mjs';
 
 const OUT = process.env.FORNOW_SHOTS ?? '.';
 const PORT = process.env.FORNOW_CDP_PORT ?? 9222;
@@ -246,20 +246,25 @@ console.log('\n# Clicking it');
 await clickReal(s, 'button', { shadowHost: '#for-now-launcher-host' });
 await settle(s, 1800);
 
-const opened = await s.evalJson(`
-  const overlay = document.getElementById('for-now-overlay-host');
-  const launcher = document.getElementById('for-now-launcher-host');
-  if (!overlay) return { opened: false };
-  const frame = overlay.shadowRoot.querySelector('.fn-frame');
-  const r = frame.getBoundingClientRect();
-  return {
-    opened: true,
-    visible: getComputedStyle(frame).visibility === 'visible',
-    heightShare: r.height / window.innerHeight,
-    launcherOpacity: Number(launcher.style.opacity || '1'),
-    launcherClickable: launcher.style.pointerEvents !== 'none',
-  };
-`);
+const opened = await (async () => {
+  const shell = await inShell(s, `
+    const frame = this.querySelector('.fn-frame');
+    const r = frame.getBoundingClientRect();
+    return {
+      visible: getComputedStyle(frame).visibility === 'visible',
+      heightShare: r.height / window.innerHeight,
+    };
+  `);
+  if (!shell) return { opened: false };
+  const launcher = await s.evalJson(`
+    const launcher = document.getElementById('for-now-launcher-host');
+    return {
+      launcherOpacity: Number(launcher.style.opacity || '1'),
+      launcherClickable: launcher.style.pointerEvents !== 'none',
+    };
+  `);
+  return { opened: true, ...shell, ...launcher };
+})();
 check('clicking the button opens the panel', opened.opened === true);
 check('the panel finishes opening', opened.visible === true);
 check('the panel takes nearly the full height', opened.heightShare >= 0.92,

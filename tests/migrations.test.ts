@@ -61,6 +61,24 @@ describe('record migration', () => {
     expect(migrateRecord({ id: 'x', text: 'no source' }).kind).toBe('thought');
   });
 
+  it('starts the content revision where the single revision was', () => {
+    const v2 = {
+      id: 'v2',
+      html: '<p>x</p>',
+      text: 'x',
+      kind: 'thought',
+      createdAt: 1,
+      updatedAt: 1,
+      pinned: true,
+      rev: 7,
+      schemaVersion: 2,
+    };
+    const migrated = migrateRecord({ ...v2 });
+    expect(migrated.contentRev).toBe(7);
+    expect(migrated.rev).toBe(7);
+    expect(migrated.schemaVersion).toBe(3);
+  });
+
   it('leaves a record from a newer build alone', () => {
     const future = { id: 'f', body: 'x', schemaVersion: SCHEMA_VERSION + 5, somethingNew: true };
     expect(migrateRecord({ ...future })).toEqual(future);
@@ -138,5 +156,29 @@ describe('runMigrations', () => {
     const report = await runMigrations(store, area);
     expect(report.unreadable).toBe(1);
     expect(area.keys()).toContain('note:junk');
+  });
+
+  it('never rewrites a record from a newer build', async () => {
+    // After a rollback: the store holds a note a later version wrote, with a
+    // field this build has never heard of.
+    const future = {
+      id: 'future-1',
+      html: '<p>from the future</p>',
+      text: 'from the future',
+      kind: 'thought',
+      createdAt: 1,
+      updatedAt: 1,
+      pinned: false,
+      rev: 4,
+      schemaVersion: SCHEMA_VERSION + 1,
+      colour: 'teal',
+    };
+    const area = new FakeArea({ 'note:future-1': future });
+    const store = new NoteStore(area);
+
+    const report = await runMigrations(store, area);
+    expect(report.newer).toBe(1);
+    expect(report.migrated).toBe(0);
+    expect(area.raw('note:future-1')).toEqual(future);
   });
 });

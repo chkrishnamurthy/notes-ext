@@ -224,6 +224,7 @@ describe('merge import', () => {
       createdAt: 1,
       pinned: false,
       rev: 1,
+      contentRev: 1,
       schemaVersion: SCHEMA_VERSION,
     } as const;
     const summary = planMerge(
@@ -249,5 +250,69 @@ describe('merge import', () => {
 
     const result = await importBackup(store, parsed, 'merge');
     expect(result).toMatchObject({ ok: false, reason: 'quota' });
+  });
+});
+
+describe('replace import', () => {
+  it('replaces every existing note with the backup', async () => {
+    const source = freshStore();
+    await createNote(source.store, { text: 'from the backup' });
+    const json = serializeBackup(await source.store.listNotes());
+
+    const target = freshStore();
+    await createNote(target.store, { text: 'already here' });
+    await createNote(target.store, { text: 'also already here' });
+
+    const result = await importBackup(target.store, parseBackup(json), 'replace');
+    expect(result.ok && result.value.removed).toBe(2);
+    expect((await target.store.listNotes()).map((n) => n.text)).toEqual(['from the backup']);
+  });
+
+  it('keeps every existing note when writing the backup fails', async () => {
+    const source = freshStore();
+    await createNote(source.store, { text: 'from the backup' });
+    const json = serializeBackup(await source.store.listNotes());
+
+    const target = freshStore();
+    await createNote(target.store, { text: 'must survive' });
+    await createNote(target.store, { text: 'must survive too' });
+    target.area.failNextWrites = quotaError();
+
+    const result = await importBackup(target.store, parseBackup(json), 'replace');
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.reason).toBe('quota');
+
+    target.area.failNextWrites = null;
+    const texts = (await target.store.listNotes()).map((n) => n.text).sort();
+    expect(texts).toEqual(['must survive', 'must survive too']);
+  });
+
+  it('overwrites a note the backup also contains rather than duplicating it', async () => {
+    const store = freshStore();
+    await createNote(store.store, { text: 'the original' });
+    const [note] = await store.store.listNotes();
+    const json = serializeBackup([{ ...note, text: 'the backed-up copy', html: '<p>the backed-up copy</p>' }]);
+
+    await importBackup(store.store, parseBackup(json), 'replace');
+    const after = await store.store.listNotes();
+    expect(after).toHaveLength(1);
+    expect(after[0].text).toBe('the backed-up copy');
+  });
+});
+
+describe('importing records from a newer version', () => {
+  it('skips them rather than stripping what this build does not understand', () => {
+    const json = JSON.stringify({
+      app: 'for-now',
+      kind: 'backup',
+      schemaVersion: SCHEMA_VERSION,
+      notes: [
+        { id: 'ok', html: '<p>fine</p>', text: 'fine', createdAt: 1, updatedAt: 1, rev: 1, schemaVersion: SCHEMA_VERSION },
+        { id: 'new', html: '<p>newer</p>', text: 'newer', createdAt: 1, updatedAt: 1, rev: 1, schemaVersion: SCHEMA_VERSION + 1 },
+      ],
+    });
+    const parsed = parseBackup(json);
+    expect(parsed.notes.map((n) => n.id)).toEqual(['ok']);
+    expect(parsed.skipped).toBe(1);
   });
 });

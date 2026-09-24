@@ -4,6 +4,7 @@ import Link from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
 import TaskList from '@tiptap/extension-task-list';
 import TaskItem from '@tiptap/extension-task-item';
+import { Maximize2, Minimize2 } from 'lucide-react';
 import { useCallback, useEffect, useRef } from 'react';
 
 import { EditorToolbar } from './EditorToolbar';
@@ -43,6 +44,8 @@ export function NoteEditor({
   onCopyDraft,
   onKeepBoth,
   onEditorReady,
+  listCollapsed,
+  onToggleList,
 }: {
   value: EditorValue;
   /**
@@ -64,6 +67,9 @@ export function NoteEditor({
   onCopyDraft: () => void;
   onKeepBoth: () => void;
   onEditorReady?: (editor: Editor | null) => void;
+  /** Whether the notes list below is folded away; absent hides the toggle. */
+  listCollapsed?: boolean;
+  onToggleList?: () => void;
 }) {
   const editing = editingId !== null;
   // Committing reads the latest content, so the handler is kept in a ref
@@ -165,14 +171,25 @@ export function NoteEditor({
   return (
     <section
       aria-label={editing ? 'Edit note' : 'New note'}
-      className="flex min-h-0 flex-1 flex-col overflow-hidden border-b border-line"
+      className="fn-editor flex min-h-0 flex-1 flex-col overflow-hidden border-b border-line"
     >
       <EditorToolbar editor={editor} onAddLink={addLink} />
 
       {/* The editor is the tallest thing in the panel and scrolls on its own,
-          so a long note never pushes the Add button out of reach. */}
-      <div className="min-h-0 flex-1 overflow-y-auto px-4 py-3">
-        <EditorContent editor={editor} />
+          so a long note never pushes the Add button out of reach. The whole
+          area is the writing surface: the editable element fills it, and a
+          click on the padding around it still puts the caret in the note. */}
+      <div
+        className="flex min-h-0 flex-1 cursor-text flex-col overflow-y-auto px-4 py-3"
+        onMouseDown={(event) => {
+          if (!editor || event.target !== event.currentTarget) return;
+          // Without this the click would land on the wrapper and blur the
+          // editor straight after we focus it.
+          event.preventDefault();
+          editor.commands.focus('end');
+        }}
+      >
+        <EditorContent editor={editor} className="flex flex-1 flex-col" />
       </div>
 
       {saveError ? (
@@ -201,6 +218,18 @@ export function NoteEditor({
           {status}
         </p>
         <div className="flex shrink-0 items-center gap-1.5">
+          {onToggleList ? (
+            <button
+              type="button"
+              className="fn-tool"
+              aria-label={listCollapsed ? 'Show notes list' : 'Expand writing area'}
+              aria-expanded={!listCollapsed}
+              title={listCollapsed ? 'Show notes list' : 'Expand writing area (hides the notes list)'}
+              onClick={onToggleList}
+            >
+              {listCollapsed ? <Minimize2 aria-hidden="true" /> : <Maximize2 aria-hidden="true" />}
+            </button>
+          ) : null}
           {editing ? (
             <button type="button" className="fn-btn fn-btn-small" onClick={onCancelEdit}>
               Cancel

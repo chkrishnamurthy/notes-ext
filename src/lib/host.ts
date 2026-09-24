@@ -1,13 +1,17 @@
 /**
  * The bridge between the notes UI and whichever shell it is running in.
  *
- * The same React app is mounted in two places: the native side panel (an
- * extension page, with the full `chrome.*` surface) and an overlay injected
- * into a web page (a content script, where `chrome.tabs` does not exist). The
- * UI must not know or care which, so everything that differs goes through
- * here, and anything a content script cannot call is routed to the service
- * worker instead.
+ * The same React app is mounted in two places: the native side panel, and an
+ * extension page framed inside the overlay a content script puts on a web page.
+ * Both are extension pages with the full `chrome.*` surface; what differs is
+ * how they close. The UI must not know or care which, so that goes through
+ * here.
  */
+
+/** Sent by the framed panel to the shell around it, asking it to close. */
+export const OVERLAY_CLOSE = 'for-now:close';
+/** Sent by the shell to the framed panel once it has finished opening. */
+export const OVERLAY_OPENED = 'for-now:opened';
 
 export type Surface = 'sidepanel' | 'overlay';
 
@@ -75,14 +79,23 @@ export function sidePanelHost(): HostBridge {
   };
 }
 
-export function overlayHost(close: () => void, themeRoot: HTMLElement): HostBridge {
+/**
+ * The panel inside the overlay's iframe. Opening tabs works exactly as it does
+ * in the side panel; closing is the shell's job, since only it can play the
+ * genie, so the frame asks its parent.
+ */
+export function framedOverlayHost(): HostBridge {
+  const base = sidePanelHost();
   return {
     surface: 'overlay',
-    themeRoot,
-    // A content script has no `chrome.tabs`, so both of these are the worker's
-    // job. Opening a tab from here would otherwise silently do nothing.
-    openTab: (url) => askWorker({ type: 'open-tab', url }),
-    openOptions: () => askWorker({ type: 'open-options' }),
-    requestClose: close,
+    themeRoot: document.documentElement,
+    openTab: base.openTab,
+    openOptions: base.openOptions,
+    requestClose() {
+      // The message carries nothing private, so it does not matter that the
+      // page's own scripts can see it too. The shell checks it came from this
+      // frame before acting on it.
+      window.parent.postMessage({ type: OVERLAY_CLOSE }, '*');
+    },
   };
 }

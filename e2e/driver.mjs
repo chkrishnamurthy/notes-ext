@@ -270,3 +270,58 @@ export function report() {
     process.exitCode = 1;
   }
 }
+
+// ---------------------------------------------------------------------------
+// The overlay
+// ---------------------------------------------------------------------------
+
+function findNode(node, match) {
+  if (match(node)) return node;
+  for (const child of [...(node.children ?? []), ...(node.shadowRoots ?? [])]) {
+    const found = findNode(child, match);
+    if (found) return found;
+  }
+  return null;
+}
+
+/**
+ * Run `body` with `this` bound to the overlay's shadow root, and return its
+ * JSON value — or null when there is no overlay.
+ *
+ * The root is closed, so `host.shadowRoot` is null from the page, which is the
+ * point. DevTools can still pierce it, which is how the tests get in.
+ */
+export async function inShell(s, body) {
+  const { root } = await s.send('DOM.getDocument', { depth: -1, pierce: true });
+  const host = findNode(root, (n) => (n.attributes ?? []).includes('for-now-overlay-host'));
+  const shadow = host?.shadowRoots?.[0];
+  if (!shadow) return null;
+  const { object } = await s.send('DOM.resolveNode', { backendNodeId: shadow.backendNodeId });
+  const result = await s.send('Runtime.callFunctionOn', {
+    objectId: object.objectId,
+    functionDeclaration: `async function () { ${body} }`,
+    awaitPromise: true,
+    returnByValue: true,
+  });
+  if (result.exceptionDetails) {
+    throw new Error(result.exceptionDetails.exception?.description ?? 'shell evaluation failed');
+  }
+  return result.result.value;
+}
+
+/**
+ * A session inside the overlay's iframe: the panel itself, an extension page
+ * running out of process from the page it floats over.
+ */
+export async function overlayPanel() {
+  const target = await waitFor(
+    async () => (await targets()).find((t) => t.type === 'iframe' && t.url.endsWith('/overlay.html')),
+    { label: 'the overlay panel frame' },
+  );
+  const panel = await Session.open(target.webSocketDebuggerUrl);
+  await panel.send('Runtime.enable');
+  await waitFor(async () => panel.evalJson('return !!document.querySelector(".fn-prose");'), {
+    label: 'the overlay panel to render',
+  });
+  return panel;
+}

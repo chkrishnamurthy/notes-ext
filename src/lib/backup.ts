@@ -8,7 +8,7 @@
  */
 
 import { sanitizeHtml } from './richtext';
-import { SCHEMA_VERSION, parseNote, type Note } from './schema';
+import { SCHEMA_VERSION, isFromNewerVersion, parseNote, type Note } from './schema';
 import { migrateRecord } from './migrations';
 import type { NoteStore, WriteResult } from './storage';
 
@@ -104,6 +104,12 @@ export function parseBackup(raw: string, now = Date.now()): ParsedBackup {
       continue;
     }
     const record = entry as Record<string, unknown>;
+    // A record newer than this build cannot be imported without losing the
+    // parts this build does not understand, so it is counted, not mangled.
+    if (isFromNewerVersion(record)) {
+      skipped += 1;
+      continue;
+    }
     // The file's version wins when a record does not carry its own.
     if (typeof record.schemaVersion !== 'number') record.schemaVersion = schemaVersion;
     const note = parseNote(migrateRecord(record), now);
@@ -173,7 +179,12 @@ export function mergeNotes(existing: Note[], incoming: Note[]): Note[] {
       continue;
     }
     if (note.updatedAt > current.updatedAt) {
-      writes.push({ ...note, rev: Math.max(current.rev + 1, note.rev) });
+      writes.push({
+        ...note,
+        rev: Math.max(current.rev + 1, note.rev),
+        // Moves on too, so an edit open on this note sees the import.
+        contentRev: Math.max(current.contentRev + 1, note.contentRev),
+      });
     }
   }
   return writes;
@@ -188,13 +199,11 @@ export async function importBackup(
     return { ok: false, reason: 'unknown', message: parsed.error ?? 'Invalid backup.' };
   }
 
-  const existing = await store.listNotes();
-
   if (mode === 'replace') {
-    const cleared = await store.clearAllNotes();
-    if (!cleared.ok) return cleared;
-    const written = await store.putNotes(parsed.notes);
-    if (!written.ok) return written;
+    // One step, written before anything is removed: a replace that fails part
+    // way must leave the user's current notes exactly as they were.
+    const replaced = await store.replaceAllNotes(parsed.notes);
+    if (!replaced.ok) return replaced;
     return {
       ok: true,
       value: {
@@ -202,11 +211,12 @@ export async function importBackup(
         updated: 0,
         unchanged: 0,
         skipped: parsed.skipped,
-        removed: cleared.value,
+        removed: replaced.value,
       },
     };
   }
 
+  const existing = await store.listNotes();
   const summary = planMerge(existing, parsed.notes);
   const writes = mergeNotes(existing, parsed.notes);
   const written = await store.putNotes(writes);

@@ -26,6 +26,8 @@ export default defineConfig({
     rollupOptions: {
       input: {
         sidepanel: resolve(rootDir, 'src/sidepanel.html'),
+        // The same panel, framed inside the in-page overlay.
+        overlay: resolve(rootDir, 'src/overlay.html'),
         options: resolve(rootDir, 'src/options.html'),
         'service-worker': resolve(rootDir, 'src/background/service-worker.ts'),
       },

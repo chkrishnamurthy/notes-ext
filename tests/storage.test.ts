@@ -34,12 +34,12 @@ describe('NoteStore', () => {
     await store.putNote(note);
 
     // Another window commits first, bumping the revision.
-    area.poke(noteKey(note.id), { ...note, text: 'from the other window', html: '<p>from the other window</p>', rev: 2 });
+    area.poke(noteKey(note.id), { ...note, text: 'from the other window', html: '<p>from the other window</p>', rev: 2, contentRev: 2 });
 
     const result = await store.updateNote(
       note.id,
       (current) => ({ ...current, text: 'mine' }),
-      note.rev,
+      note.contentRev,
     );
 
     expect(result.ok).toBe(false);

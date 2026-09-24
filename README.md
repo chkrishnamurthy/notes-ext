@@ -36,7 +36,7 @@ to pick the change up.
 | Format text | The toolbar, or type it: `- ` a list, `1. ` a numbered list, `# ` a heading, `> ` a quote, ``` a code block, `**bold**` |
 | Keep a snippet | The code-block button — whitespace is preserved exactly |
 | Switch layout | The list / card icons at the right of the filter row |
-| Save a selection | Select text on any page → right-click → **Save selection to For Now** |
+| Save a selection | Select text on any page → right-click → **Save selection to For Now**. Links, bold and italic, lists and code blocks are kept |
 | Save a link | Right-click a link → **Save link to For Now** |
 | Get a button on every page | Settings → **Quick-open button**. Off by default; turning it on asks Chrome for site access |
 | Save a page | Right-click a page → **Save this page to For Now** |
@@ -64,9 +64,11 @@ src/
     capture.ts      what a context-menu click becomes
     time.ts         grouping and relative timestamps
   background/     the service worker: menus, capture, panel routing, start-up
-  content/        overlay.tsx  the injected panel: shadow root, frame, genie
+  content/        overlay.ts   the in-page shell: closed shadow root, iframe, genie
                   launcher.ts  the quick-open button, ~3 kB, no framework
+                  capture.ts   reads a saved selection as rich text, ~3 kB
   sidepanel/      the React panel and the TipTap editor
+  overlay/        the same panel, as the page framed inside the overlay
   options/        settings and backup
 ```
 
@@ -77,7 +79,9 @@ The same React app runs in two places, and it does not know which:
 - **An overlay injected into the page.** The everyday surface. It floats over
   the page as a card in the bottom-right, and animates in and out with a genie
   effect. Injected on the toolbar click under `activeTab`, so it needs **no
-  host permission** — the install prompt stays clean.
+  host permission** — the install prompt stays clean. The panel inside is an
+  extension page (`overlay.html`) in an iframe; only the window around it is
+  part of the page. See *The page cannot read your notes* below.
 - **The native side panel.** The fallback for pages Chrome will not let a
   content script touch: `chrome://` pages, the Web Store, the new tab page.
   `src/lib/inject.ts` decides which you get.
@@ -122,14 +126,36 @@ stays on the compositor. `prefers-reduced-motion` gets a plain fade.
 The geometry is pure and unit-tested; the DOM work around it is deliberately
 thin.
 
+### The page cannot read your notes
+
+Anything rendered into a page's DOM belongs to that page: a shadow root keeps
+CSS out but not scripts. An open root is one property away, key events typed
+inside it bubble to the page's listeners, and its buttons answer
+`element.click()`. So the overlay never renders notes into the page at all.
+
+- The panel is **`overlay.html` in an iframe**, which runs on the extension's
+  origin. A cross-origin frame is the one thing a page cannot read, listen to
+  or script.
+- The iframe sits in a **closed** shadow root, so the page cannot find it or
+  learn its URL (`host.shadowRoot` is null, `window.frames` is empty).
+- `overlay.html` is web-accessible with **`use_dynamic_url`**, so it answers
+  only on an id that changes every session. A page cannot frame the panel
+  itself to clickjack it, or probe for it to detect the extension.
+- The panel asks to close over `postMessage`, and the shell obeys only messages
+  whose source is its own frame. Closing hands focus back to the page, so the
+  hidden panel never swallows keys meant for the page.
+
+The genie slices are cut from an empty copy of the frame rather than the live
+panel, since cloning the panel's contents is exactly what the frame prevents.
+
 ### Living on someone else's page
 
 Four problems that only show up in a real browser. Every one of them was found
 by the hostile-page test rather than by reading the code, and every one of them
 looks completely fine on an ordinary page:
 
-- The overlay mounts in a **shadow root**, so the host page cannot restyle it
-  and it cannot restyle the host page. That means the colour tokens have to be
+- The overlay's shell mounts in a **shadow root**, so the host page cannot
+  restyle it and it cannot restyle the host page. That means the colour tokens have to be
   declared on `:host` as well as `:root` — `:root` matches nothing inside a
   shadow root, and without the second selector every colour silently resolves
   to an invalid value.
@@ -245,8 +271,8 @@ visibly; screenshots land in `e2e/screenshots`.
 | `panel` | Capture → search → clear → Undo, rich-text formatting and markdown shortcuts, code whitespace, list and card views, editing, a failed save and its retry, narrow and short layouts, accessibility |
 | `worker` | Menu registration, permissions, worker termination and cold start, no duplicate menus, no data reset |
 | `options` | A real export download, a full import round trip, rejecting a foreign file, retention and theme |
-| `conflicts` | Draft restoration across a panel reopen, and two windows editing one note |
-| `overlay` | Injecting into a real page, shadow-root isolation in both directions, immunity to a hostile host stylesheet and a 10px root font, the genie running and cleaning up, and routing through the worker |
+| `conflicts` | Draft restoration across a panel reopen, one unfinished draft followed live by every open panel, and an edit refused (and kept) when the note changed underneath it |
+| `overlay` | Injecting into a real page, that a hostile page cannot read the notes, hear keys typed into them, reach the shell or frame the panel itself, the keyboard returning to the page on close, shadow-root isolation in both directions, immunity to a hostile host stylesheet and a 10px root font, the genie running and cleaning up, and opening tabs from inside the frame |
 | `launcher` | That the shipped manifest still asks for nothing, the Settings switch registering and unregistering the content script, and the button surviving a page that tries to rotate, fade, stretch and recolour it |
 
 ## Not in this version
