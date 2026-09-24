@@ -1,0 +1,851 @@
+{
+  "extName": {
+    "message": "For Now"
+  },
+  "extDescription": {
+    "message": "今すぐ必要なメモのためのサイドパネル。整理せずに保存、場所を覚えずに検索、失う心配なく片付け。"
+  },
+  "actionTitle": {
+    "message": "For Now — メモを開く"
+  },
+  "commandOpen": {
+    "message": "For Now のメモを開く"
+  },
+  "menuSaveSelection": {
+    "message": "選択範囲を For Now に保存"
+  },
+  "menuSaveLink": {
+    "message": "リンクを For Now に保存"
+  },
+  "menuSavePage": {
+    "message": "このページを For Now に保存"
+  },
+  "captureNothing": {
+    "message": "そのクリックでは保存するものがありませんでした。"
+  },
+  "notSavedQuotaShort": {
+    "message": "保存されていません — このデバイスにメモを保存する空き容量がありません。バックアップを書き出して、メモをいくつか片付けてください。"
+  },
+  "notSavedQuota": {
+    "message": "保存されていません — このデバイスにメモを保存する空き容量がありません。設定からバックアップを書き出して、メモをいくつか片付けてください。"
+  },
+  "notSavedReason": {
+    "message": "保存されていません — $1"
+  },
+  "launcherTitle": {
+    "message": "For Now — メモを開く (Alt+Shift+N)"
+  },
+  "overlayFrameTitle": {
+    "message": "For Now のメモ"
+  },
+  "resizeLabel": {
+    "message": "メモパネルのサイズを変更"
+  },
+  "resizeHint": {
+    "message": "ドラッグでサイズを変更。ダブルクリックで元に戻します。"
+  },
+  "settingsPageTitle": {
+    "message": "For Now — 設定とバックアップ"
+  },
+  "noteNeedsText": {
+    "message": "メモにはテキストが必要です。"
+  },
+  "conflictCopy": {
+    "message": "競合したコピー"
+  },
+  "conflictCopyOf": {
+    "message": "競合したコピー · $1"
+  },
+  "errorNewerNote": {
+    "message": "このメモは新しいバージョンの For Now で保存されています。変更するには拡張機能を更新してください。"
+  },
+  "errorNoteGone": {
+    "message": "そのメモはこのデバイスにもうありません。"
+  },
+  "errorChangedElsewhere": {
+    "message": "編集中に、このメモが別のウィンドウで変更されました。"
+  },
+  "errorTrashedElsewhere": {
+    "message": "編集中に、このメモが別のウィンドウでゴミ箱に移動されました。"
+  },
+  "errorUnknown": {
+    "message": "不明なエラー"
+  },
+  "backupNotJson": {
+    "message": "このファイルは有効な JSON ではありません。"
+  },
+  "backupNotBackup": {
+    "message": "このファイルは For Now のバックアップではありません。"
+  },
+  "backupNotOurs": {
+    "message": "このファイルは For Now から書き出されたものではありません。"
+  },
+  "backupNoNotes": {
+    "message": "このバックアップにはメモの一覧がありません。"
+  },
+  "backupNewer": {
+    "message": "このバックアップは新しいバージョンの For Now で作成されています。拡張機能を更新してから、もう一度読み込んでください。"
+  },
+  "backupInvalid": {
+    "message": "無効なバックアップです。"
+  },
+  "timeJustNow": {
+    "message": "たった今"
+  },
+  "timeToday": {
+    "message": "今日 · $1"
+  },
+  "timeYesterday": {
+    "message": "昨日 · $1"
+  },
+  "groupPinned": {
+    "message": "固定"
+  },
+  "groupToday": {
+    "message": "今日"
+  },
+  "groupYesterday": {
+    "message": "昨日"
+  },
+  "groupEarlier": {
+    "message": "それ以前"
+  },
+  "groupRecentlyCleared": {
+    "message": "最近片付けたメモ"
+  },
+  "mdExportedOne": {
+    "message": "メモ 1 件、$1 に書き出し。"
+  },
+  "mdExportedOther": {
+    "message": "メモ $1 件、$2 に書き出し。"
+  },
+  "mdPinned": {
+    "message": "固定"
+  },
+  "settingsAndBackup": {
+    "message": "設定とバックアップ"
+  },
+  "settingsOpenFailed": {
+    "message": "設定を開けませんでした。Chrome の拡張機能メニューから開いてください。"
+  },
+  "closeNotes": {
+    "message": "メモを閉じる"
+  },
+  "nearQuota": {
+    "message": "メモが、このデバイスで使える 10 MB のうち $1 を使っています。バックアップを書き出して、不要なものを片付けてください。"
+  },
+  "savedOnDevice": {
+    "message": "このデバイスに保存しました。"
+  },
+  "changesSaved": {
+    "message": "変更をこのデバイスに保存しました。"
+  },
+  "conflictKeepText": {
+    "message": "$1 入力したテキストはそのまま残っています。"
+  },
+  "keptSeparate": {
+    "message": "別のメモとして残しました。両方のバージョンがメモにあります。"
+  },
+  "copied": {
+    "message": "クリップボードにコピーしました。"
+  },
+  "copyFailed": {
+    "message": "コピーできませんでした。テキストを選択してください。"
+  },
+  "copiedMarkdown": {
+    "message": "Markdown としてコピーしました。"
+  },
+  "tagged": {
+    "message": "タグ「$1」を付けました。"
+  },
+  "tagRemoved": {
+    "message": "タグを外しました。"
+  },
+  "unpinned": {
+    "message": "固定を解除しました。"
+  },
+  "pinnedSkip": {
+    "message": "固定しました。一括の片付けではこのメモは対象外になります。"
+  },
+  "movedToTrash": {
+    "message": "ゴミ箱に移動しました · $1 日間は復元できます"
+  },
+  "undo": {
+    "message": "元に戻す"
+  },
+  "restored": {
+    "message": "復元しました。"
+  },
+  "restoredToNotes": {
+    "message": "メモに復元しました。"
+  },
+  "deletedForever": {
+    "message": "削除しました。このメモは復元できません。"
+  },
+  "movedManyOne": {
+    "message": "メモ 1 件をゴミ箱に移動しました · $1 日間は復元できます"
+  },
+  "movedManyOther": {
+    "message": "メモ $1 件をゴミ箱に移動しました · $2 日間は復元できます"
+  },
+  "openPageFailed": {
+    "message": "そのページを開けませんでした。"
+  },
+  "editCancelled": {
+    "message": "編集をキャンセルしました。元のメモは変更されていません。"
+  },
+  "draftCopied": {
+    "message": "下書きをクリップボードにコピーしました。"
+  },
+  "draftCopyFailed": {
+    "message": "下書きをコピーできませんでした。"
+  },
+  "taggedFilter": {
+    "message": "タグ $1"
+  },
+  "stopTagFilter": {
+    "message": "$1 での絞り込みを解除"
+  },
+  "showAllTags": {
+    "message": "すべてのタグを表示"
+  },
+  "loadingNotes": {
+    "message": "メモを読み込んでいます…"
+  },
+  "clearSearch": {
+    "message": "検索をクリア"
+  },
+  "confirmClearOne": {
+    "message": "固定していないメモ 1 件をゴミ箱に移動しますか?固定したメモは残ります。元に戻せます。"
+  },
+  "confirmClearOther": {
+    "message": "固定していないメモ $1 件をゴミ箱に移動しますか?固定したメモは残ります。元に戻せます。"
+  },
+  "moveToTrash": {
+    "message": "ゴミ箱に移動"
+  },
+  "cancel": {
+    "message": "キャンセル"
+  },
+  "inTrashCount": {
+    "message": "ゴミ箱に $1 件"
+  },
+  "notesOnDeviceOne": {
+    "message": "メモ 1 件 · このデバイス内"
+  },
+  "notesOnDeviceOther": {
+    "message": "メモ $1 件 · このデバイス内"
+  },
+  "clearUnpinned": {
+    "message": "固定していないメモを片付け…"
+  },
+  "editorPlaceholder": {
+    "message": "ひとまずここに置いておきましょう。「- 」でリスト、「# 」で見出し。"
+  },
+  "noteBody": {
+    "message": "メモの本文"
+  },
+  "linkPrompt": {
+    "message": "リンクのアドレス"
+  },
+  "linkInvalid": {
+    "message": "リンクは http://、https://、mailto: のいずれかで始めてください。"
+  },
+  "statusSaving": {
+    "message": "保存しています…"
+  },
+  "statusError": {
+    "message": "保存されていません。入力したテキストは残っています。"
+  },
+  "statusEditing": {
+    "message": "変更を保存するまで、元のメモはそのまま残ります。"
+  },
+  "statusDraft": {
+    "message": "下書きをこのデバイスに保存しました。"
+  },
+  "statusIdle": {
+    "message": "メモは片付けるまで残ります。"
+  },
+  "editNote": {
+    "message": "メモを編集"
+  },
+  "newNote": {
+    "message": "新しいメモ"
+  },
+  "saveSeparate": {
+    "message": "自分の内容を別のメモとして保存"
+  },
+  "retrySave": {
+    "message": "もう一度保存"
+  },
+  "copyDraft": {
+    "message": "下書きをコピー"
+  },
+  "showList": {
+    "message": "メモ一覧を表示"
+  },
+  "expandWriting": {
+    "message": "入力欄を広げる"
+  },
+  "expandWritingHint": {
+    "message": "入力欄を広げる(メモ一覧を隠します)"
+  },
+  "saveChanges": {
+    "message": "変更を保存"
+  },
+  "addNote": {
+    "message": "メモを追加"
+  },
+  "textFormatting": {
+    "message": "テキストの書式"
+  },
+  "toolBold": {
+    "message": "太字"
+  },
+  "toolItalic": {
+    "message": "斜体"
+  },
+  "toolStrike": {
+    "message": "取り消し線"
+  },
+  "toolHeadingLarge": {
+    "message": "大見出し"
+  },
+  "toolHeadingSmall": {
+    "message": "小見出し"
+  },
+  "toolBulletList": {
+    "message": "箇条書き"
+  },
+  "toolNumberedList": {
+    "message": "番号付きリスト"
+  },
+  "toolChecklist": {
+    "message": "チェックリスト"
+  },
+  "toolInlineCode": {
+    "message": "インラインコード"
+  },
+  "toolCodeBlock": {
+    "message": "コードブロック"
+  },
+  "toolQuote": {
+    "message": "引用"
+  },
+  "toolRedo": {
+    "message": "やり直す"
+  },
+  "addLink": {
+    "message": "リンクを追加"
+  },
+  "removeLink": {
+    "message": "リンクを削除"
+  },
+  "tabAll": {
+    "message": "すべて"
+  },
+  "tabPinned": {
+    "message": "固定"
+  },
+  "tabTrash": {
+    "message": "ゴミ箱"
+  },
+  "tabCountSr": {
+    "message": "、メモ $1 件"
+  },
+  "notesViews": {
+    "message": "メモの表示"
+  },
+  "searchLabel": {
+    "message": "メモ、タグ、テキスト、出典を検索"
+  },
+  "searchPlaceholder": {
+    "message": "検索"
+  },
+  "noteLayout": {
+    "message": "メモのレイアウト"
+  },
+  "listView": {
+    "message": "リスト表示"
+  },
+  "cardView": {
+    "message": "カード表示"
+  },
+  "matchingOne": {
+    "message": "一致するメモ 1 件"
+  },
+  "matchingOther": {
+    "message": "一致するメモ $1 件"
+  },
+  "quickThought": {
+    "message": "ひらめきメモ"
+  },
+  "savedInApp": {
+    "message": "For Now に保存"
+  },
+  "tagFilterTitle": {
+    "message": "タグ「$1」のメモだけを表示"
+  },
+  "tagChipLabel": {
+    "message": "タグ: $1。このタグのメモだけを表示"
+  },
+  "restore": {
+    "message": "復元"
+  },
+  "deleteForever": {
+    "message": "完全に削除"
+  },
+  "openSource": {
+    "message": "出典を開く"
+  },
+  "copy": {
+    "message": "コピー"
+  },
+  "copyMarkdown": {
+    "message": "Markdown としてコピー"
+  },
+  "changeTag": {
+    "message": "タグを変更"
+  },
+  "addTag": {
+    "message": "タグを追加"
+  },
+  "pin": {
+    "message": "固定"
+  },
+  "unpin": {
+    "message": "固定を解除"
+  },
+  "clear": {
+    "message": "片付ける"
+  },
+  "editNoteLabel": {
+    "message": "メモを編集: $1"
+  },
+  "tagInputLabel": {
+    "message": "このメモのタグ。Enter で保存、Escape でキャンセル、空欄で削除"
+  },
+  "tagPlaceholder": {
+    "message": "タグを 1 つ(例: 仕事)"
+  },
+  "recoverSoon": {
+    "message": "まもなく削除"
+  },
+  "recoverOne": {
+    "message": "復元できるのはあと 1 日"
+  },
+  "recoverOther": {
+    "message": "復元できるのはあと $1 日"
+  },
+  "emptyAllTitle": {
+    "message": "考えごとのための小さなスペース。"
+  },
+  "emptyAllBody": {
+    "message": "上にひとこと書くか、ページのテキストを選択して「選択範囲を For Now に保存」を選んでください。"
+  },
+  "emptyPinnedTitle": {
+    "message": "役立つものを手元に。"
+  },
+  "emptyPinnedBody": {
+    "message": "メモを固定すると、一番上に表示され、一括の片付けの対象外になります。"
+  },
+  "emptyTrashTitle": {
+    "message": "ゴミ箱は空です"
+  },
+  "emptyTrashBody": {
+    "message": "片付けたメモは、削除されるまでここで待機します。"
+  },
+  "emptySearchTitle": {
+    "message": "一致するメモはありません"
+  },
+  "emptySearchBody": {
+    "message": "メモの本文、タグ、出典にある言葉で試してください。"
+  },
+  "optTitle": {
+    "message": "For Now の設定"
+  },
+  "optSubtitle": {
+    "message": "外観、バックアップ、プライバシー · すべてこのデバイス内に保存"
+  },
+  "optSaved": {
+    "message": "設定をこのデバイスに保存しました。"
+  },
+  "optSaveFailed": {
+    "message": "設定を保存できませんでした — $1"
+  },
+  "launcherOffDone": {
+    "message": "クイック起動ボタンをオフにし、サイトへのアクセス権を Chrome に返しました。"
+  },
+  "launcherDeclined": {
+    "message": "サイトへのアクセスが拒否されたため、ボタンはオフのままです。ツールバーのアイコンと Alt+Shift+N は引き続き使えます。"
+  },
+  "launcherOnDone": {
+    "message": "クイック起動ボタンをオンにしました。すべてのページの右下に表示されます。"
+  },
+  "launcherRefused": {
+    "message": "Chrome が権限のリクエストを拒否しました。何も変更されていません。"
+  },
+  "exportedOne": {
+    "message": "メモ 1 件を書き出しました(ゴミ箱を含む)。"
+  },
+  "exportedOther": {
+    "message": "メモ $1 件を書き出しました(ゴミ箱を含む)。"
+  },
+  "exportedMdOne": {
+    "message": "メモ 1 件を Markdown で書き出しました。ゴミ箱は含まれません。"
+  },
+  "exportedMdOther": {
+    "message": "メモ $1 件を Markdown で書き出しました。ゴミ箱は含まれません。"
+  },
+  "backupUnreadable": {
+    "message": "そのバックアップを読み取れませんでした。"
+  },
+  "importFailed": {
+    "message": "読み込みに失敗しました — $1。何も変更されていません。"
+  },
+  "importAdded": {
+    "message": "読み込み: 追加 $1 件"
+  },
+  "importUpdated": {
+    "message": "更新 $1 件"
+  },
+  "importCurrent": {
+    "message": "最新のまま $1 件"
+  },
+  "importReplaced": {
+    "message": "置き換え $1 件"
+  },
+  "importSkipped": {
+    "message": "読み取れずスキップ $1 件"
+  },
+  "secAppearance": {
+    "message": "外観"
+  },
+  "secAppearanceDesc": {
+    "message": "色、モード、メモの文字。変更はサイドパネル、ページ上のパネル、このページにすぐ反映されます。"
+  },
+  "secStorage": {
+    "message": "メモの保存場所"
+  },
+  "secStorageNav": {
+    "message": "ストレージ"
+  },
+  "secStorageDesc": {
+    "message": "何が保存され、どれだけ容量を使い、ディスクのどこにあるか。"
+  },
+  "storageP1": {
+    "message": "メモは $1 によってこのデバイスに保存されます。アカウントはなく、何もアップロードされません。これはパソコン上のローカルストレージで、暗号化された金庫ではありません — あなたの Chrome プロファイルを使える人なら誰でもこれらのメモを読めます。"
+  },
+  "storageP2": {
+    "message": "ディスク上では、Chrome プロファイルのフォルダ内の $1 に LevelDB データベースとして保存されています。テキストは暗号化されていません。"
+  },
+  "storageWarn": {
+    "message": "拡張機能を削除すると、そのローカルのメモも削除されます。アンインストール、Chrome のリセット、パソコンの移行の前にバックアップを書き出してください。"
+  },
+  "statActive": {
+    "message": "有効なメモ"
+  },
+  "statTrash": {
+    "message": "ゴミ箱"
+  },
+  "statUsed": {
+    "message": "使用容量"
+  },
+  "statUsedValue": {
+    "message": "$1 / $2"
+  },
+  "storageBar": {
+    "message": "ストレージ使用率 $1 パーセント"
+  },
+  "storageUnder1": {
+    "message": "1% 未満"
+  },
+  "storageShare": {
+    "message": "Chrome がこの拡張機能に割り当てた容量の $1。"
+  },
+  "secBackup": {
+    "message": "バックアップ"
+  },
+  "secBackupDesc": {
+    "message": "ゴミ箱を含むすべてのメモを入れた JSON ファイル。読み込むと復元でき、別のパソコンへの移行にも使えます。"
+  },
+  "backupMdNote": {
+    "message": "Obsidian、文書、メールなど別の場所でメモを読むには、Markdown で書き出してください。このファイルは閲覧用で、復元には使えません(読み込み直せません)。"
+  },
+  "exportBackup": {
+    "message": "バックアップを書き出す"
+  },
+  "chooseBackup": {
+    "message": "バックアップファイルを選択…"
+  },
+  "exportMarkdown": {
+    "message": "Markdown で書き出す"
+  },
+  "backupFileLabel": {
+    "message": "読み込むバックアップファイル"
+  },
+  "pendingReadOne": {
+    "message": "メモ 1 件を読み取り"
+  },
+  "pendingReadOther": {
+    "message": "メモ $1 件を読み取り"
+  },
+  "pendingSkipped": {
+    "message": " · 読み取れずスキップ $1 件"
+  },
+  "pendingSchema": {
+    "message": " · スキーマ v$1"
+  },
+  "mergeInto": {
+    "message": "今のメモと統合"
+  },
+  "replaceAll": {
+    "message": "すべて置き換え"
+  },
+  "mergeExplainOne": {
+    "message": "統合では、各メモのより新しく編集された方を残します。置き換えでは、先にこのデバイスのメモ 1 件を削除します。"
+  },
+  "mergeExplainOther": {
+    "message": "統合では、各メモのより新しく編集された方を残します。置き換えでは、先にこのデバイスのメモ $1 件を削除します。"
+  },
+  "secTrash": {
+    "message": "ゴミ箱"
+  },
+  "secTrashDesc": {
+    "message": "メモを片付けるとゴミ箱に移動します。固定したメモは一括の片付けの対象になりません。"
+  },
+  "keepFor": {
+    "message": "片付けたメモの保持期間"
+  },
+  "daysOption": {
+    "message": "$1 日"
+  },
+  "trashAfter": {
+    "message": "期間を過ぎると、ゴミ箱のメモは完全に削除されます。"
+  },
+  "secQuickOpen": {
+    "message": "クイック起動ボタン"
+  },
+  "secQuickOpenDesc": {
+    "message": "各ページの右下に置く小さなボタン。ワンクリックでパネルを開けます。"
+  },
+  "quickOpenP1": {
+    "message": "初期状態でオフなのには理由があります。ページにボタンを表示するには、そのページで拡張機能を実行する権限が必要で、すべてのページに表示するにはすべてのサイトへのアクセスが必要になるからです。オンにすると Chrome にその権限をリクエストし、オフにするとすぐに返します。"
+  },
+  "quickOpenStrong": {
+    "message": "収集される情報は何も変わりません。"
+  },
+  "quickOpenP2": {
+    "message": "ボタンはページの内容を読まず、何も送信しません — アイコンを表示してクリックを待つだけです。"
+  },
+  "quickOpenToggle": {
+    "message": "ページにクイック起動ボタンを表示"
+  },
+  "quickOpenToggleHint": {
+    "message": "パネルはこのボタンから開き、パネルを開いている間ボタンは脇に退きます。"
+  },
+  "quickOpenRevoked": {
+    "message": "オンになっていますが、Chrome でサイトへのアクセスが取り消されたため、ボタンは表示されていません。もう一度チェックすると元に戻ります。"
+  },
+  "secKeyboard": {
+    "message": "キーボード"
+  },
+  "secKeyboardDesc": {
+    "message": "パネルで使えるショートカット。"
+  },
+  "keyOpen": {
+    "message": "パネルを開く"
+  },
+  "keySearch": {
+    "message": "メモを検索"
+  },
+  "keyCommit": {
+    "message": "メモを追加、または編集を保存"
+  },
+  "keyEscape": {
+    "message": "編集、検索、パネルから一段ずつ戻る"
+  },
+  "keyConflict": {
+    "message": "Alt+Shift+N はすでに Chrome で使われている場合があります。Chrome のショートカット設定で確認・変更してください。"
+  },
+  "keyOpenSettings": {
+    "message": "Chrome のショートカット設定を開く"
+  },
+  "secPrivacy": {
+    "message": "プライバシー"
+  },
+  "secPrivacyDesc": {
+    "message": "この拡張機能がすること、しないこと。"
+  },
+  "privacy1": {
+    "message": "アカウントなし、サーバーなし、アナリティクスなし、ネットワーク通信なし。"
+  },
+  "privacy2": {
+    "message": "記録されるのは明示的に保存したものだけです — 閲覧しただけのページは記録されません。"
+  },
+  "privacy3": {
+    "message": "リンクのプレビューやファビコンは取得しないため、リンクを保存しても何も漏れません。"
+  },
+  "privacy4": {
+    "message": "書式付きのメモは、保存前と表示前に小さな許可リストに沿って整理されます。スクリプト、スタイル、埋め込みは残らず、コードブロックはテキストとして表示され、実行されることはありません。"
+  },
+  "privacy5": {
+    "message": "シークレット ウィンドウでは拡張機能は無効です。"
+  },
+  "settingsSections": {
+    "message": "設定のセクション"
+  },
+  "mode": {
+    "message": "モード"
+  },
+  "modeSystem": {
+    "message": "システム"
+  },
+  "modeLight": {
+    "message": "ライト"
+  },
+  "modeDark": {
+    "message": "ダーク"
+  },
+  "modeFollowing": {
+    "message": "システムに合わせる(現在: $1)"
+  },
+  "modeAlways": {
+    "message": "常に $1"
+  },
+  "lightTheme": {
+    "message": "ライトテーマ"
+  },
+  "lightThemeHint": {
+    "message": "ライトモードで使用"
+  },
+  "darkTheme": {
+    "message": "ダークテーマ"
+  },
+  "darkThemeHint": {
+    "message": "ダークモードで使用"
+  },
+  "accent": {
+    "message": "アクセントカラー"
+  },
+  "accentHint": {
+    "message": "ボタン、リンク、チェックボックス、ハイライト"
+  },
+  "accentDefault": {
+    "message": "パレットの既定"
+  },
+  "accentCustom": {
+    "message": "カスタム"
+  },
+  "accentOwn": {
+    "message": "各パレット固有のアクセントを使います。"
+  },
+  "accentAdjusted": {
+    "message": "ボタンやリンクがライトでもダークでも読みやすいよう、必要な部分を少し調整しています。"
+  },
+  "accentAsPicked": {
+    "message": "選んだ色のままで、ライトでもダークでも読みやすい色です。"
+  },
+  "noteFont": {
+    "message": "メモのフォント"
+  },
+  "noteFontHint": {
+    "message": "エディタと保存したメモ"
+  },
+  "fontSans": {
+    "message": "ゴシック"
+  },
+  "fontSerif": {
+    "message": "明朝"
+  },
+  "fontMono": {
+    "message": "等幅"
+  },
+  "textSize": {
+    "message": "文字サイズ"
+  },
+  "sizeSmall": {
+    "message": "小"
+  },
+  "sizeMedium": {
+    "message": "中"
+  },
+  "sizeLarge": {
+    "message": "大"
+  },
+  "resetAppearance": {
+    "message": "外観をリセット"
+  },
+  "preview": {
+    "message": "プレビュー"
+  },
+  "previewMode": {
+    "message": "プレビューのモード"
+  },
+  "colorBlue": {
+    "message": "青"
+  },
+  "colorTeal": {
+    "message": "ティール"
+  },
+  "colorGreen": {
+    "message": "緑"
+  },
+  "colorAmber": {
+    "message": "琥珀"
+  },
+  "colorRed": {
+    "message": "赤"
+  },
+  "colorViolet": {
+    "message": "紫"
+  },
+  "colorPink": {
+    "message": "ピンク"
+  },
+  "paletteSage": {
+    "message": "温かみのある白に落ち着いた緑。"
+  },
+  "palettePaper": {
+    "message": "生成りの紙に万年筆のブルー。"
+  },
+  "paletteSlate": {
+    "message": "クールなグレーと澄んだ青。"
+  },
+  "paletteHeather": {
+    "message": "くすんだモーブ。柔らかく、コントラストは高め。"
+  },
+  "paletteOchre": {
+    "message": "羊皮紙と琥珀。長い夜のために。"
+  },
+  "paletteGraphite": {
+    "message": "高コントラストの純粋な白と黒。"
+  },
+  "previewHeading": {
+    "message": "火曜の朝会"
+  },
+  "previewShip": {
+    "message": "$1 をリリース、$2 を参照。"
+  },
+  "previewFix": {
+    "message": "オーバーレイ修正"
+  },
+  "previewTheNotes": {
+    "message": "メモ"
+  },
+  "previewTask1": {
+    "message": "テーマ案を確認"
+  },
+  "previewTask2": {
+    "message": "パレットを選ぶ"
+  },
+  "previewDraft": {
+    "message": "下書きを保存しました。"
+  },
+  "previewAll": {
+    "message": "すべて 3"
+  },
+  "previewNote": {
+    "message": "フライトのチェックインは 09:40 から"
+  }
+}

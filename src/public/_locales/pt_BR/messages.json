@@ -1,0 +1,851 @@
+{
+  "extName": {
+    "message": "For Now"
+  },
+  "extDescription": {
+    "message": "Um painel lateral para as notas que você precisa agora. Salve sem arquivar, ache sem lembrar onde, limpe sem perder nada."
+  },
+  "actionTitle": {
+    "message": "For Now — abrir notas"
+  },
+  "commandOpen": {
+    "message": "Abrir as notas do For Now"
+  },
+  "menuSaveSelection": {
+    "message": "Salvar seleção no For Now"
+  },
+  "menuSaveLink": {
+    "message": "Salvar link no For Now"
+  },
+  "menuSavePage": {
+    "message": "Salvar esta página no For Now"
+  },
+  "captureNothing": {
+    "message": "Não havia nada para salvar com esse clique."
+  },
+  "notSavedQuotaShort": {
+    "message": "Não salvo — este dispositivo está sem espaço para notas. Exporte um backup e limpe algumas notas."
+  },
+  "notSavedQuota": {
+    "message": "Não salvo — este dispositivo está sem espaço para notas. Exporte um backup em Configurações e depois limpe algumas notas."
+  },
+  "notSavedReason": {
+    "message": "Não salvo — $1"
+  },
+  "launcherTitle": {
+    "message": "For Now — abrir notas (Alt+Shift+N)"
+  },
+  "overlayFrameTitle": {
+    "message": "Notas do For Now"
+  },
+  "resizeLabel": {
+    "message": "Redimensionar o painel de notas"
+  },
+  "resizeHint": {
+    "message": "Arraste para redimensionar. Clique duas vezes para redefinir."
+  },
+  "settingsPageTitle": {
+    "message": "For Now — Configurações e backup"
+  },
+  "noteNeedsText": {
+    "message": "Uma nota precisa de algum texto."
+  },
+  "conflictCopy": {
+    "message": "Cópia em conflito"
+  },
+  "conflictCopyOf": {
+    "message": "Cópia em conflito · $1"
+  },
+  "errorNewerNote": {
+    "message": "Esta nota foi salva por uma versão mais nova do For Now. Atualize a extensão para alterá-la."
+  },
+  "errorNoteGone": {
+    "message": "Essa nota não existe mais neste dispositivo."
+  },
+  "errorChangedElsewhere": {
+    "message": "Esta nota mudou em outra janela enquanto você editava."
+  },
+  "errorTrashedElsewhere": {
+    "message": "Esta nota foi movida para a lixeira em outra janela enquanto você editava."
+  },
+  "errorUnknown": {
+    "message": "Erro desconhecido"
+  },
+  "backupNotJson": {
+    "message": "Esse arquivo não é um JSON válido."
+  },
+  "backupNotBackup": {
+    "message": "Esse arquivo não é um backup do For Now."
+  },
+  "backupNotOurs": {
+    "message": "Esse arquivo não foi exportado pelo For Now."
+  },
+  "backupNoNotes": {
+    "message": "Esse backup não tem uma lista de notas."
+  },
+  "backupNewer": {
+    "message": "Esse backup foi feito por uma versão mais nova do For Now. Atualize a extensão e importe de novo."
+  },
+  "backupInvalid": {
+    "message": "Backup inválido."
+  },
+  "timeJustNow": {
+    "message": "Agora mesmo"
+  },
+  "timeToday": {
+    "message": "Hoje · $1"
+  },
+  "timeYesterday": {
+    "message": "Ontem · $1"
+  },
+  "groupPinned": {
+    "message": "Fixadas"
+  },
+  "groupToday": {
+    "message": "Hoje"
+  },
+  "groupYesterday": {
+    "message": "Ontem"
+  },
+  "groupEarlier": {
+    "message": "Anteriores"
+  },
+  "groupRecentlyCleared": {
+    "message": "Limpas recentemente"
+  },
+  "mdExportedOne": {
+    "message": "1 nota, exportada em $1."
+  },
+  "mdExportedOther": {
+    "message": "$1 notas, exportadas em $2."
+  },
+  "mdPinned": {
+    "message": "Fixada"
+  },
+  "settingsAndBackup": {
+    "message": "Configurações e backup"
+  },
+  "settingsOpenFailed": {
+    "message": "Não foi possível abrir as configurações. Tente pelo menu de extensões do Chrome."
+  },
+  "closeNotes": {
+    "message": "Fechar notas"
+  },
+  "nearQuota": {
+    "message": "As notas estão usando $1 dos 10 MB que este dispositivo permite. Exporte um backup e limpe o que não precisa mais."
+  },
+  "savedOnDevice": {
+    "message": "Salvo neste dispositivo."
+  },
+  "changesSaved": {
+    "message": "Alterações salvas neste dispositivo."
+  },
+  "conflictKeepText": {
+    "message": "$1 Seu texto continua aqui."
+  },
+  "keptSeparate": {
+    "message": "Mantida como nota separada. As duas versões estão nas suas notas."
+  },
+  "copied": {
+    "message": "Copiado para a área de transferência."
+  },
+  "copyFailed": {
+    "message": "Não foi possível copiar. Selecione o texto."
+  },
+  "copiedMarkdown": {
+    "message": "Copiado como Markdown."
+  },
+  "tagged": {
+    "message": "Marcada como $1."
+  },
+  "tagRemoved": {
+    "message": "Tag removida."
+  },
+  "unpinned": {
+    "message": "Desafixada."
+  },
+  "pinnedSkip": {
+    "message": "Fixada. A limpeza em massa vai ignorar esta nota."
+  },
+  "movedToTrash": {
+    "message": "Movida para a lixeira · recuperável por $1 dias"
+  },
+  "undo": {
+    "message": "Desfazer"
+  },
+  "restored": {
+    "message": "Restaurada."
+  },
+  "restoredToNotes": {
+    "message": "Restaurada nas suas notas."
+  },
+  "deletedForever": {
+    "message": "Excluída. Essa não pode ser recuperada."
+  },
+  "movedManyOne": {
+    "message": "1 nota movida para a lixeira · recuperável por $1 dias"
+  },
+  "movedManyOther": {
+    "message": "$1 notas movidas para a lixeira · recuperáveis por $2 dias"
+  },
+  "openPageFailed": {
+    "message": "Não foi possível abrir essa página."
+  },
+  "editCancelled": {
+    "message": "Edição cancelada. A nota original não mudou."
+  },
+  "draftCopied": {
+    "message": "Rascunho copiado para a área de transferência."
+  },
+  "draftCopyFailed": {
+    "message": "Não foi possível copiar o rascunho."
+  },
+  "taggedFilter": {
+    "message": "Tag $1"
+  },
+  "stopTagFilter": {
+    "message": "Parar de filtrar por $1"
+  },
+  "showAllTags": {
+    "message": "Mostrar todas as tags"
+  },
+  "loadingNotes": {
+    "message": "Carregando suas notas…"
+  },
+  "clearSearch": {
+    "message": "Limpar busca"
+  },
+  "confirmClearOne": {
+    "message": "Mover 1 nota não fixada para a lixeira? As fixadas ficam. Dá para desfazer."
+  },
+  "confirmClearOther": {
+    "message": "Mover $1 notas não fixadas para a lixeira? As fixadas ficam. Dá para desfazer."
+  },
+  "moveToTrash": {
+    "message": "Mover para a lixeira"
+  },
+  "cancel": {
+    "message": "Cancelar"
+  },
+  "inTrashCount": {
+    "message": "$1 na lixeira"
+  },
+  "notesOnDeviceOne": {
+    "message": "1 nota · neste dispositivo"
+  },
+  "notesOnDeviceOther": {
+    "message": "$1 notas · neste dispositivo"
+  },
+  "clearUnpinned": {
+    "message": "Limpar não fixadas…"
+  },
+  "editorPlaceholder": {
+    "message": "Deixe aqui por enquanto. Digite “- ” para uma lista, “# ” para um título."
+  },
+  "noteBody": {
+    "message": "Texto da nota"
+  },
+  "linkPrompt": {
+    "message": "Endereço do link"
+  },
+  "linkInvalid": {
+    "message": "Os links devem começar com http://, https:// ou mailto:."
+  },
+  "statusSaving": {
+    "message": "Salvando…"
+  },
+  "statusError": {
+    "message": "Não salvo. Seu texto continua aqui."
+  },
+  "statusEditing": {
+    "message": "A nota original é mantida até você salvar as alterações."
+  },
+  "statusDraft": {
+    "message": "Rascunho salvo neste dispositivo."
+  },
+  "statusIdle": {
+    "message": "As notas ficam até você limpá-las."
+  },
+  "editNote": {
+    "message": "Editar nota"
+  },
+  "newNote": {
+    "message": "Nova nota"
+  },
+  "saveSeparate": {
+    "message": "Salvar a minha como nota separada"
+  },
+  "retrySave": {
+    "message": "Tentar salvar de novo"
+  },
+  "copyDraft": {
+    "message": "Copiar rascunho"
+  },
+  "showList": {
+    "message": "Mostrar lista de notas"
+  },
+  "expandWriting": {
+    "message": "Expandir área de escrita"
+  },
+  "expandWritingHint": {
+    "message": "Expandir área de escrita (oculta a lista de notas)"
+  },
+  "saveChanges": {
+    "message": "Salvar alterações"
+  },
+  "addNote": {
+    "message": "Adicionar nota"
+  },
+  "textFormatting": {
+    "message": "Formatação de texto"
+  },
+  "toolBold": {
+    "message": "Negrito"
+  },
+  "toolItalic": {
+    "message": "Itálico"
+  },
+  "toolStrike": {
+    "message": "Tachado"
+  },
+  "toolHeadingLarge": {
+    "message": "Título grande"
+  },
+  "toolHeadingSmall": {
+    "message": "Título pequeno"
+  },
+  "toolBulletList": {
+    "message": "Lista com marcadores"
+  },
+  "toolNumberedList": {
+    "message": "Lista numerada"
+  },
+  "toolChecklist": {
+    "message": "Lista de tarefas"
+  },
+  "toolInlineCode": {
+    "message": "Código em linha"
+  },
+  "toolCodeBlock": {
+    "message": "Bloco de código"
+  },
+  "toolQuote": {
+    "message": "Citação"
+  },
+  "toolRedo": {
+    "message": "Refazer"
+  },
+  "addLink": {
+    "message": "Adicionar link"
+  },
+  "removeLink": {
+    "message": "Remover link"
+  },
+  "tabAll": {
+    "message": "Todas"
+  },
+  "tabPinned": {
+    "message": "Fixadas"
+  },
+  "tabTrash": {
+    "message": "Lixeira"
+  },
+  "tabCountSr": {
+    "message": ", $1 notas"
+  },
+  "notesViews": {
+    "message": "Visualizações de notas"
+  },
+  "searchLabel": {
+    "message": "Buscar em notas, tags, texto e fontes"
+  },
+  "searchPlaceholder": {
+    "message": "Buscar"
+  },
+  "noteLayout": {
+    "message": "Layout das notas"
+  },
+  "listView": {
+    "message": "Lista"
+  },
+  "cardView": {
+    "message": "Cartões"
+  },
+  "matchingOne": {
+    "message": "1 nota encontrada"
+  },
+  "matchingOther": {
+    "message": "$1 notas encontradas"
+  },
+  "quickThought": {
+    "message": "Ideia rápida"
+  },
+  "savedInApp": {
+    "message": "Salva no For Now"
+  },
+  "tagFilterTitle": {
+    "message": "Mostrar só as notas com a tag $1"
+  },
+  "tagChipLabel": {
+    "message": "Tag: $1. Mostrar só as notas com esta tag"
+  },
+  "restore": {
+    "message": "Restaurar"
+  },
+  "deleteForever": {
+    "message": "Excluir para sempre"
+  },
+  "openSource": {
+    "message": "Abrir fonte"
+  },
+  "copy": {
+    "message": "Copiar"
+  },
+  "copyMarkdown": {
+    "message": "Copiar como Markdown"
+  },
+  "changeTag": {
+    "message": "Mudar tag"
+  },
+  "addTag": {
+    "message": "Adicionar tag"
+  },
+  "pin": {
+    "message": "Fixar"
+  },
+  "unpin": {
+    "message": "Desafixar"
+  },
+  "clear": {
+    "message": "Limpar"
+  },
+  "editNoteLabel": {
+    "message": "Editar nota: $1"
+  },
+  "tagInputLabel": {
+    "message": "Tag desta nota. Enter para salvar, Esc para cancelar, vazio para remover"
+  },
+  "tagPlaceholder": {
+    "message": "Uma tag, ex.: trabalho"
+  },
+  "recoverSoon": {
+    "message": "será removida em breve"
+  },
+  "recoverOne": {
+    "message": "1 dia para recuperar"
+  },
+  "recoverOther": {
+    "message": "$1 dias para recuperar"
+  },
+  "emptyAllTitle": {
+    "message": "Um cantinho para pensar."
+  },
+  "emptyAllBody": {
+    "message": "Anote uma ideia acima ou selecione texto em qualquer página e escolha “Salvar seleção no For Now”."
+  },
+  "emptyPinnedTitle": {
+    "message": "Deixe o que é útil por perto."
+  },
+  "emptyPinnedBody": {
+    "message": "Fixe uma nota para mantê-la no topo e fora da limpeza em massa."
+  },
+  "emptyTrashTitle": {
+    "message": "Nada na lixeira"
+  },
+  "emptyTrashBody": {
+    "message": "As notas limpas esperam aqui antes de serem removidas."
+  },
+  "emptySearchTitle": {
+    "message": "Nenhuma nota encontrada"
+  },
+  "emptySearchBody": {
+    "message": "Tente uma palavra da nota, da tag ou da fonte."
+  },
+  "optTitle": {
+    "message": "Configurações do For Now"
+  },
+  "optSubtitle": {
+    "message": "Aparência, backup e privacidade · tudo fica neste dispositivo"
+  },
+  "optSaved": {
+    "message": "Configurações salvas neste dispositivo."
+  },
+  "optSaveFailed": {
+    "message": "Não foi possível salvar as configurações — $1"
+  },
+  "launcherOffDone": {
+    "message": "Botão de acesso rápido desativado, e o acesso aos sites devolvido ao Chrome."
+  },
+  "launcherDeclined": {
+    "message": "O acesso aos sites foi recusado, então o botão continua desativado. O ícone da barra e Alt+Shift+N continuam funcionando."
+  },
+  "launcherOnDone": {
+    "message": "Botão de acesso rápido ativado. Ele aparece no canto inferior direito de todas as páginas."
+  },
+  "launcherRefused": {
+    "message": "O Chrome recusou o pedido de permissão. Nada foi alterado."
+  },
+  "exportedOne": {
+    "message": "1 nota exportada, lixeira incluída."
+  },
+  "exportedOther": {
+    "message": "$1 notas exportadas, lixeira incluída."
+  },
+  "exportedMdOne": {
+    "message": "1 nota exportada como Markdown. A lixeira fica de fora."
+  },
+  "exportedMdOther": {
+    "message": "$1 notas exportadas como Markdown. A lixeira fica de fora."
+  },
+  "backupUnreadable": {
+    "message": "Não foi possível ler esse backup."
+  },
+  "importFailed": {
+    "message": "A importação falhou — $1. Nada foi alterado."
+  },
+  "importAdded": {
+    "message": "Importado: $1 adicionadas"
+  },
+  "importUpdated": {
+    "message": "$1 atualizadas"
+  },
+  "importCurrent": {
+    "message": "$1 já atualizadas"
+  },
+  "importReplaced": {
+    "message": "$1 substituídas"
+  },
+  "importSkipped": {
+    "message": "$1 ilegíveis e ignoradas"
+  },
+  "secAppearance": {
+    "message": "Aparência"
+  },
+  "secAppearanceDesc": {
+    "message": "Cores, modo e texto das notas. As mudanças valem na hora para o painel lateral, o painel na página e esta página."
+  },
+  "secStorage": {
+    "message": "Onde suas notas ficam"
+  },
+  "secStorageNav": {
+    "message": "Armazenamento"
+  },
+  "secStorageDesc": {
+    "message": "O que é guardado, quanto espaço ocupa e onde fica no disco."
+  },
+  "storageP1": {
+    "message": "As notas são guardadas neste dispositivo pelo $1. Não há conta e nada é enviado. É armazenamento local no seu computador, não um cofre criptografado — qualquer pessoa que use seu perfil do Chrome pode ler estas notas."
+  },
+  "storageP2": {
+    "message": "No disco, é a pasta do seu perfil do Chrome, em $1, como um banco de dados LevelDB. O texto não é criptografado."
+  },
+  "storageWarn": {
+    "message": "Remover a extensão apaga as notas locais dela. Exporte um backup antes de desinstalar, redefinir o Chrome ou trocar de computador."
+  },
+  "statActive": {
+    "message": "Notas ativas"
+  },
+  "statTrash": {
+    "message": "Na lixeira"
+  },
+  "statUsed": {
+    "message": "Espaço usado"
+  },
+  "statUsedValue": {
+    "message": "$1 de $2"
+  },
+  "storageBar": {
+    "message": "Armazenamento $1 por cento usado"
+  },
+  "storageUnder1": {
+    "message": "Menos de 1%"
+  },
+  "storageShare": {
+    "message": "$1 do espaço que o Chrome dá a esta extensão."
+  },
+  "secBackup": {
+    "message": "Backup"
+  },
+  "secBackupDesc": {
+    "message": "Um arquivo JSON com todas as notas, lixeira incluída. Importe para restaurar ou para mudar de computador."
+  },
+  "backupMdNote": {
+    "message": "Para ler suas notas em outro lugar — Obsidian, um documento, um e-mail — exporte como Markdown. Esse arquivo é para leitura, não para restaurar: ele não pode ser importado de volta."
+  },
+  "exportBackup": {
+    "message": "Exportar backup"
+  },
+  "chooseBackup": {
+    "message": "Escolher um arquivo de backup…"
+  },
+  "exportMarkdown": {
+    "message": "Exportar como Markdown"
+  },
+  "backupFileLabel": {
+    "message": "Arquivo de backup para importar"
+  },
+  "pendingReadOne": {
+    "message": "1 nota lida"
+  },
+  "pendingReadOther": {
+    "message": "$1 notas lidas"
+  },
+  "pendingSkipped": {
+    "message": " · $1 ilegíveis e ignoradas"
+  },
+  "pendingSchema": {
+    "message": " · esquema v$1"
+  },
+  "mergeInto": {
+    "message": "Mesclar com minhas notas"
+  },
+  "replaceAll": {
+    "message": "Substituir tudo"
+  },
+  "mergeExplainOne": {
+    "message": "Mesclar mantém a cópia de cada nota editada mais recentemente. Substituir apaga antes a nota deste dispositivo."
+  },
+  "mergeExplainOther": {
+    "message": "Mesclar mantém a cópia de cada nota editada mais recentemente. Substituir apaga antes as $1 notas deste dispositivo."
+  },
+  "secTrash": {
+    "message": "Lixeira"
+  },
+  "secTrashDesc": {
+    "message": "Limpar uma nota a move para a lixeira. Notas fixadas nunca entram na limpeza em massa."
+  },
+  "keepFor": {
+    "message": "Manter notas limpas por"
+  },
+  "daysOption": {
+    "message": "$1 dias"
+  },
+  "trashAfter": {
+    "message": "Depois disso, as notas da lixeira são removidas para sempre."
+  },
+  "secQuickOpen": {
+    "message": "Botão de acesso rápido"
+  },
+  "secQuickOpenDesc": {
+    "message": "Um botão pequeno no canto inferior direito de cada página, para o painel ficar a um clique."
+  },
+  "quickOpenP1": {
+    "message": "Ele vem desativado por um motivo: para desenhar um botão numa página, a extensão precisa de permissão para rodar nela, e a única forma de tê-lo em todas é com acesso a todos os sites. Ativar pede esse acesso ao Chrome. Desativar devolve o acesso na hora."
+  },
+  "quickOpenStrong": {
+    "message": "Isso não muda nada no que é coletado."
+  },
+  "quickOpenP2": {
+    "message": "O botão não lê o conteúdo da página e não envia nada — ele desenha um ícone e espera um clique."
+  },
+  "quickOpenToggle": {
+    "message": "Mostrar o botão de acesso rápido nas páginas"
+  },
+  "quickOpenToggleHint": {
+    "message": "O painel sai dele, e ele se afasta enquanto o painel está aberto."
+  },
+  "quickOpenRevoked": {
+    "message": "Ativado, mas o acesso aos sites foi revogado no Chrome, então o botão não aparece. Marque de novo para restaurá-lo."
+  },
+  "secKeyboard": {
+    "message": "Teclado"
+  },
+  "secKeyboardDesc": {
+    "message": "Atalhos que funcionam no painel."
+  },
+  "keyOpen": {
+    "message": "Abrir o painel"
+  },
+  "keySearch": {
+    "message": "Buscar notas"
+  },
+  "keyCommit": {
+    "message": "Adicionar uma nota ou salvar uma edição"
+  },
+  "keyEscape": {
+    "message": "Sair de uma edição, de uma busca ou do painel, um passo por vez"
+  },
+  "keyConflict": {
+    "message": "O Chrome pode já usar Alt+Shift+N. Verifique e mude nos atalhos do Chrome."
+  },
+  "keyOpenSettings": {
+    "message": "Abrir os atalhos do Chrome"
+  },
+  "secPrivacy": {
+    "message": "Privacidade"
+  },
+  "secPrivacyDesc": {
+    "message": "O que a extensão faz e o que não faz."
+  },
+  "privacy1": {
+    "message": "Sem conta, sem servidor, sem análises e sem requisições de rede."
+  },
+  "privacy2": {
+    "message": "Só o que você salva de propósito é capturado — nunca uma página que você só visita."
+  },
+  "privacy3": {
+    "message": "Prévias e ícones de links não são baixados, então salvar um link não revela nada."
+  },
+  "privacy4": {
+    "message": "Notas formatadas passam por uma pequena lista de permissões antes de serem salvas e de novo antes de serem exibidas. Scripts, estilos e incorporações nunca sobrevivem, e blocos de código aparecem como texto, nunca são executados."
+  },
+  "privacy5": {
+    "message": "A extensão fica desativada nas janelas anônimas."
+  },
+  "settingsSections": {
+    "message": "Seções das configurações"
+  },
+  "mode": {
+    "message": "Modo"
+  },
+  "modeSystem": {
+    "message": "Sistema"
+  },
+  "modeLight": {
+    "message": "Claro"
+  },
+  "modeDark": {
+    "message": "Escuro"
+  },
+  "modeFollowing": {
+    "message": "Seguindo o sistema, agora $1"
+  },
+  "modeAlways": {
+    "message": "Sempre $1"
+  },
+  "lightTheme": {
+    "message": "Tema claro"
+  },
+  "lightThemeHint": {
+    "message": "Usado no modo claro"
+  },
+  "darkTheme": {
+    "message": "Tema escuro"
+  },
+  "darkThemeHint": {
+    "message": "Usado no modo escuro"
+  },
+  "accent": {
+    "message": "Cor de destaque"
+  },
+  "accentHint": {
+    "message": "Botões, links, caixas de seleção e realces"
+  },
+  "accentDefault": {
+    "message": "Padrão da paleta"
+  },
+  "accentCustom": {
+    "message": "Personalizada"
+  },
+  "accentOwn": {
+    "message": "Cada paleta usa seu próprio destaque."
+  },
+  "accentAdjusted": {
+    "message": "Ajustada levemente onde preciso para que botões e links fiquem legíveis no claro e no escuro."
+  },
+  "accentAsPicked": {
+    "message": "Legível como escolhida, no claro e no escuro."
+  },
+  "noteFont": {
+    "message": "Fonte das notas"
+  },
+  "noteFontHint": {
+    "message": "O editor e suas notas salvas"
+  },
+  "fontSans": {
+    "message": "Sans"
+  },
+  "fontSerif": {
+    "message": "Serif"
+  },
+  "fontMono": {
+    "message": "Mono"
+  },
+  "textSize": {
+    "message": "Tamanho do texto"
+  },
+  "sizeSmall": {
+    "message": "Pequeno"
+  },
+  "sizeMedium": {
+    "message": "Médio"
+  },
+  "sizeLarge": {
+    "message": "Grande"
+  },
+  "resetAppearance": {
+    "message": "Redefinir aparência"
+  },
+  "preview": {
+    "message": "Prévia"
+  },
+  "previewMode": {
+    "message": "Modo da prévia"
+  },
+  "colorBlue": {
+    "message": "Azul"
+  },
+  "colorTeal": {
+    "message": "Verde-azulado"
+  },
+  "colorGreen": {
+    "message": "Verde"
+  },
+  "colorAmber": {
+    "message": "Âmbar"
+  },
+  "colorRed": {
+    "message": "Vermelho"
+  },
+  "colorViolet": {
+    "message": "Violeta"
+  },
+  "colorPink": {
+    "message": "Rosa"
+  },
+  "paletteSage": {
+    "message": "Verde tranquilo sobre branco quente."
+  },
+  "palettePaper": {
+    "message": "Papel creme e azul de caneta-tinteiro."
+  },
+  "paletteSlate": {
+    "message": "Cinzas frios e um azul nítido."
+  },
+  "paletteHeather": {
+    "message": "Malva suave, mas com alto contraste."
+  },
+  "paletteOchre": {
+    "message": "Pergaminho e âmbar, para noites longas."
+  },
+  "paletteGraphite": {
+    "message": "Alto contraste, preto e branco puros."
+  },
+  "previewHeading": {
+    "message": "Reunião de terça"
+  },
+  "previewShip": {
+    "message": "Lançar a $1, ver $2."
+  },
+  "previewFix": {
+    "message": "correção do painel"
+  },
+  "previewTheNotes": {
+    "message": "as notas"
+  },
+  "previewTask1": {
+    "message": "Revisar o plano de temas"
+  },
+  "previewTask2": {
+    "message": "Escolher uma paleta"
+  },
+  "previewDraft": {
+    "message": "Rascunho salvo."
+  },
+  "previewAll": {
+    "message": "Todas 3"
+  },
+  "previewNote": {
+    "message": "O check-in do voo abre às 09:40"
+  }
+}

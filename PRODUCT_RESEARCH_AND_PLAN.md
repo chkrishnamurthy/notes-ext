@@ -263,6 +263,8 @@ Sources: [context-menu API](https://developer.chrome.com/docs/extensions/referen
 
 The proposed MVP should not need `<all_urls>`, browsing history, clipboard-read, identity, notifications, scripting, or broad `tabs` permissions. Normal paste remains user-controlled. Verify gesture-triggered copying before adding a clipboard permission.
 
+> **As built (24 Sep 2026):** two deliberate departures from this list. `scripting` was added so the in-page overlay and the rich-selection reader can be injected into the tab the user clicked, under `activeTab`; it carries no install warning. `<all_urls>` appears only under `optional_host_permissions`, requested at the moment the user turns on the quick-open button and released when they turn it off. The install prompt still asks for no host access. See the README's *Permissions* section.
+
 ### 9.5 Browser support and restricted pages
 
 A practical proposed minimum is **Chrome 141**, which supports programmatic panel closing. Supporting older versions is possible with Chrome's native close control; opening through `sidePanel.open()` dates to Chrome 116. [API availability](https://developer.chrome.com/docs/extensions/reference/api/sidePanel).

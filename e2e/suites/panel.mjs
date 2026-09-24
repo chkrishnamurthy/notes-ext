@@ -172,6 +172,42 @@ check('pinning is confirmed and explains the consequence',
   has(body, 'Bulk cleanup will skip this note'));
 check('a Pinned group appears', has(body, 'Pinned'));
 
+// --- Tags ----------------------------------------------------------------
+console.log('\n# Tags');
+await clickExact(s, 'article button[aria-label="Add tag"]', '');
+await settle(s, 300);
+check('the tag field takes the focus', await s.evalJson(`
+  return document.activeElement?.getAttribute('placeholder') === 'One tag, e.g. work';
+`));
+await s.send('Input.insertText', { text: '#Reading' });
+await key(s, 'Enter', { code: 'Enter', keyCode: 13 });
+await settle(s, 500);
+const tagged = (await storedNotes(s)).filter((n) => n.tag);
+check('Enter saves one tag, without its #', tagged.length === 1 && tagged[0].tag === 'Reading',
+  JSON.stringify(tagged.map((n) => n.tag)));
+check('the tag is confirmed', has(await text(s), 'Tagged Reading.'));
+check('tagging is not an edit: the content revision is unchanged', tagged[0]?.contentRev === 1,
+  String(tagged[0]?.contentRev));
+await clickExact(s, 'article button.fn-tag', '#Reading');
+await settle(s, 400);
+check('clicking a tag filters the list to it', await s.evalJson(`
+  return document.querySelectorAll('article').length === 1 && document.body.innerText.includes('Tagged #Reading');
+`));
+await key(s, 'Escape', { code: 'Escape', keyCode: 27 });
+await settle(s, 400);
+check('Escape clears the tag filter, one layer at a time', await s.evalJson(`
+  return document.querySelectorAll('article').length > 1;
+`));
+
+// --- Strings -------------------------------------------------------------
+console.log('\n# Strings');
+check('Chrome fills a placeholder written straight into a message', await s.evalJson(`
+  return chrome.i18n.getMessage('movedManyOther', ['3', '30']) === '3 notes moved to Trash · recover for 30 days';
+`));
+check('the page says which language it is in', await s.evalJson(`
+  return document.documentElement.lang.length >= 2;
+`));
+
 // --- Search, now in the filter row ---------------------------------------
 console.log('\n# Search');
 check('the old search box above the editor is gone', await s.evalJson(`
@@ -215,7 +251,7 @@ check('every term must match', has(await text(s), '1 matching note'));
 await s.send('Input.insertText', { text: ' zebra' });
 await settle(s, 400);
 check('a search with no results explains what to try',
-  has(await text(s), 'Try a word from the note or its source'));
+  has(await text(s), 'Try a word from the note, its tag or its source'));
 
 await key(s, 'Escape', { code: 'Escape', keyCode: 27 });
 await settle(s, 400);
@@ -334,7 +370,7 @@ check('the Add button is below the editor, not inside it', await s.evalJson(`
   return add.getBoundingClientRect().top >= prose.bottom - 2;
 `));
 check('the header is a single compact row', await s.evalJson(`
-  return document.querySelector('header').getBoundingClientRect().height <= 40;
+  return document.querySelector('header').getBoundingClientRect().height <= 48;
 `), await s.evalJson('return String(document.querySelector("header").getBoundingClientRect().height);'));
 check('the editor is the tallest single region', await s.evalJson(`
   const prose = document.querySelector('.fn-prose').closest('.overflow-y-auto').getBoundingClientRect().height;

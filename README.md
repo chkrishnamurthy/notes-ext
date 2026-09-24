@@ -31,7 +31,7 @@ to pick the change up.
 | To do this | Do this |
 | --- | --- |
 | Open the panel | Click the toolbar icon, press **Alt+Shift+N**, or use the quick-open button on the page. It genies up out of the bottom-right corner |
-| Close the panel | Click outside it, press **Escape**, or use the × — it genies back down into the corner |
+| Close the panel | Press **Escape** or use the × — it genies back down into the corner. Clicking the page moves the keyboard there but leaves the panel open, so you can read and write side by side |
 | Add a thought | Type in the composer, then **Ctrl/Cmd+Enter** |
 | Format text | The toolbar, or type it: `- ` a list, `1. ` a numbered list, `# ` a heading, `> ` a quote, ``` a code block, `**bold**` |
 | Keep a snippet | The code-block button — whitespace is preserved exactly |
@@ -42,12 +42,20 @@ to pick the change up.
 | Save a page | Right-click a page → **Save this page to For Now** |
 | Find something | **Ctrl/Cmd+K**, or the search box in the filter row, below the editor |
 | Edit a note | Click its text |
+| Tag a note | **Add tag** on the note. One tag per note, never asked for when you save; empty the field to remove it |
+| See one tag's notes | Click the tag on any note. **Escape** or the × shows everything again. Search matches tags too |
+| Copy a note as Markdown | **Copy as Markdown** on the note |
 | Clear one note | **Clear** on the note, then **Undo** if that was a mistake |
 | Finish a task | **Clear unpinned…** — pinned notes are never included |
 | Back up | The gear icon → **Export backup** |
+| Take your notes elsewhere | The gear icon → **Export as Markdown** — one readable `.md` file for Obsidian, a document or an email. It is for reading, not restoring |
 
 **Escape** steps back one layer at a time: it dismisses an error, then a
-confirmation, then an edit, then a search, and only then closes the panel.
+confirmation, then an edit, then a search, then a tag filter, and only then
+closes the panel.
+
+The interface follows Chrome's language: English, Hindi, Spanish, Portuguese
+(Brazil), German, French, Indonesian or Japanese.
 
 ## How it is built
 
@@ -56,8 +64,10 @@ src/
   lib/            everything with rules in it, and all of it browser-free
     schema.ts       the Note shape, schema version, and untrusted-input parsing
     richtext.ts     the HTML allowlist sanitizer and the plain-text projection
+    markdown.ts     note HTML to Markdown, and the Markdown export
+    i18n.ts         t() and plural() over chrome.i18n
     storage.ts      the repository over chrome.storage.local
-    notes.ts        create / edit / pin / trash / restore / purge
+    notes.ts        create / edit / pin / tag / trash / restore / purge
     search.ts       matching, highlighting, snippets
     backup.ts       export, import validation, merge
     migrations.ts   per-record schema upgrades
@@ -69,12 +79,14 @@ src/
                   capture.ts   reads a saved selection as rich text, ~3 kB
   sidepanel/      the React panel and the TipTap editor
   overlay/        the same panel, as the page framed inside the overlay
+  popup/          the same panel again, as the toolbar popup on Chrome's own pages
   options/        settings and backup
+  public/_locales/  every user-facing string, one messages.json per language
 ```
 
-### Two shells, one panel
+### Three shells, one panel
 
-The same React app runs in two places, and it does not know which:
+The same React app runs in three places, and it does not know which:
 
 - **An overlay injected into the page.** The everyday surface. It floats over
   the page as a card in the bottom-right, and animates in and out with a genie
@@ -82,9 +94,16 @@ The same React app runs in two places, and it does not know which:
   host permission** — the install prompt stays clean. The panel inside is an
   extension page (`overlay.html`) in an iframe; only the window around it is
   part of the page. See *The page cannot read your notes* below.
-- **The native side panel.** The fallback for pages Chrome will not let a
-  content script touch: `chrome://` pages, the Web Store, the new tab page.
-  `src/lib/inject.ts` decides which you get.
+- **The toolbar popup.** For pages Chrome will not let a content script
+  touch: `chrome://` pages, the Web Store, the new tab page. It floats over the
+  page like the overlay instead of docking beside it and squeezing it. The
+  worker attaches the popup to the tab only for the moment it takes to open,
+  so the next click on an ordinary page still gets the overlay. Unlike the
+  overlay, Chrome closes it on any click outside, and that cannot be changed.
+- **The native side panel.** The last resort, when even the popup cannot open
+  (no focused window, for instance).
+
+`src/lib/inject.ts` decides whether a page can take the overlay.
 
 Everything that differs between them — opening a tab, opening settings,
 closing, where the `data-theme` attribute belongs — goes through
@@ -147,6 +166,11 @@ inside it bubble to the page's listeners, and its buttons answer
 
 The genie slices are cut from an empty copy of the frame rather than the live
 panel, since cloning the panel's contents is exactly what the frame prevents.
+
+Clicking the page does not close the panel: it moves the keyboard to the page,
+so you can copy from the page into a note without reopening it. Tab stays
+trapped inside the panel while it has focus, so the keyboard never wanders into
+a page nobody can see it on.
 
 ### Living on someone else's page
 
@@ -213,6 +237,49 @@ their text survives; `<script>`, `<style>`, `<iframe>` and friends are removed
 with their contents, because for those the contents *are* the payload. Links
 are limited to `http`, `https` and `mailto`.
 
+Markdown only goes *out* (`src/lib/markdown.ts`), for Copy as Markdown and the
+Markdown export. Because it only ever meets what the sanitizer allows, it can be
+small: headings, emphasis, strikethrough, links, bullet, numbered and check
+lists, quotes and fenced code. Code keeps its whitespace exactly and gets a
+fence longer than any run of backticks inside it. Text that would otherwise
+turn into formatting (`*`, `_`, a `# ` at the start of a line) is escaped.
+Underline has no Markdown form, so it comes out as plain text.
+
+### Tags
+
+Each note can have **one** optional tag. That is deliberate: several tags per
+note is a filing system, and this product exists so you do not need one. A tag
+is added after the fact and is never asked for when you save. Tags compare
+without regard to case, a leading `#` is dropped, and they are capped at 32
+characters. Changing a tag is not an edit — it leaves `contentRev` alone — so it
+never makes an edit open in another window look stale. Adding the field bumped
+the schema to v4. That bump matters more than the field: it marks tagged
+records as newer, so an older build leaves them alone instead of rewriting them
+without the tag.
+
+### Languages
+
+Every user-facing string is in `src/public/_locales/<locale>/messages.json`,
+including the manifest's name and description and the context-menu titles.
+`src/lib/i18n.ts` reads them through `chrome.i18n`, which works the same in
+the panel, the options page, the service worker and the content scripts. The
+catalogue is never bundled into the code: the quick-open button runs on every
+page load and stays about 4 kB.
+
+Chrome's messages have no plural forms, so each counted string comes as a
+`…One` / `…Other` pair and `plural()` picks between them. Placeholders are
+`$1`…`$9` written straight into the message. `tParts()` returns a message split
+around embedded elements (a `<code>` path, a `<strong>` phrase), so a
+translation can move them wherever its grammar needs.
+
+`tests/i18n.test.ts` fails if a locale is missing a key, drops or adds a
+placeholder, or has a name or description over the Web Store's limits (45 and
+132 characters). The product name is not translated.
+
+The translations were machine-drafted and have **not** been reviewed by native
+speakers. Have them checked before the store listing goes live in each
+language.
+
 ### Where the data is
 
 Everything lives in `chrome.storage.local`, one note per key (`note:<id>`),
@@ -236,8 +303,10 @@ are in the MVP rather than a later nicety.
 ### Permissions
 
 `storage`, `sidePanel`, `contextMenus`, `activeTab`, `scripting` — and nothing
-else. **No host permissions**, no declared content script, no network access at
-all (`connect-src 'none'`). Captures come from context-menu payloads, so the
+else. **No host permissions**, no content script declared in the manifest, no
+network access at all (`connect-src 'none'`). `scripting` is how the overlay and
+the selection reader are injected under `activeTab`, and how the quick-open
+button is registered once you switch it on. Captures come from context-menu payloads, so the
 extension never watches pages you merely visit. Incognito is disabled.
 
 `<all_urls>` appears once, under `optional_host_permissions`. It is not granted
@@ -249,8 +318,8 @@ reads no page content and sends nothing anywhere.
 ## Testing
 
 ```sh
-npm test       # 151 unit tests, including the sanitizer and the genie geometry
-npm run e2e    # 6 suites, 236 checks, against a real Chrome
+npm test       # 268 unit tests, including the sanitizer, Markdown and the genie geometry
+npm run e2e    # 7 suites, 323 checks, against a real Chrome
 npm run verify # build + both
 ```
 
@@ -268,12 +337,20 @@ visibly; screenshots land in `e2e/screenshots`.
 
 | Suite | Covers |
 | --- | --- |
-| `panel` | Capture → search → clear → Undo, rich-text formatting and markdown shortcuts, code whitespace, list and card views, editing, a failed save and its retry, narrow and short layouts, accessibility |
+| `panel` | Capture → search → clear → Undo, rich-text formatting and markdown shortcuts, code whitespace, list and card views, tagging and filtering by tag, editing, a failed save and its retry, narrow and short layouts, message placeholders in real Chrome, accessibility |
 | `worker` | Menu registration, permissions, worker termination and cold start, no duplicate menus, no data reset |
-| `options` | A real export download, a full import round trip, rejecting a foreign file, retention and theme |
+| `options` | A real export download, a full import round trip, rejecting a foreign file, retention, and appearance: palettes, accent, font and text size |
 | `conflicts` | Draft restoration across a panel reopen, one unfinished draft followed live by every open panel, and an edit refused (and kept) when the note changed underneath it |
-| `overlay` | Injecting into a real page, that a hostile page cannot read the notes, hear keys typed into them, reach the shell or frame the panel itself, the keyboard returning to the page on close, shadow-root isolation in both directions, immunity to a hostile host stylesheet and a 10px root font, the genie running and cleaning up, and opening tabs from inside the frame |
+| `overlay` | Injecting into a real page, that a hostile page cannot read the notes, hear keys typed into them, reach the shell or frame the panel itself, the panel staying open when the page is clicked, the keyboard returning to the page on close, shadow-root isolation in both directions, immunity to a hostile host stylesheet and a 10px root font, the genie running and cleaning up, and opening tabs from inside the frame |
 | `launcher` | That the shipped manifest still asks for nothing, the Settings switch registering and unregistering the content script, and the button surviving a page that tries to rotate, fade, stretch and recolour it |
+| `popup` | The toolbar click on a Chrome page opening the panel as a popup rather than the side panel, sized within Chrome's popup limits, with the editor focused, and detached again afterwards |
+
+The `conflicts` suite is **flaky**, and it was flaky before tags and
+localisation too (checked against the earlier commit). About half of runs fail
+one of *an unfinished thought shows up in the other panel*, *committing it from
+either panel makes one note*, or *the edit is saved and the pin is kept*. That
+could be the fixed timing waits, or a real race between two panels. It has not
+been diagnosed yet.
 
 ## Not in this version
 

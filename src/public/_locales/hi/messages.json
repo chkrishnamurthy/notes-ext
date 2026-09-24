@@ -1,0 +1,851 @@
+{
+  "extName": {
+    "message": "For Now"
+  },
+  "extDescription": {
+    "message": "अभी काम आने वाले नोट्स के लिए साइड पैनल। बिना छांटे सहेजें, बिना याद रखे खोजें, बिना कुछ खोए साफ़ करें।"
+  },
+  "actionTitle": {
+    "message": "For Now — नोट्स खोलें"
+  },
+  "commandOpen": {
+    "message": "For Now नोट्स खोलें"
+  },
+  "menuSaveSelection": {
+    "message": "चुना गया टेक्स्ट For Now में सहेजें"
+  },
+  "menuSaveLink": {
+    "message": "लिंक For Now में सहेजें"
+  },
+  "menuSavePage": {
+    "message": "यह पेज For Now में सहेजें"
+  },
+  "captureNothing": {
+    "message": "उस क्लिक से सहेजने के लिए कुछ नहीं मिला।"
+  },
+  "notSavedQuotaShort": {
+    "message": "सहेजा नहीं गया — इस डिवाइस पर नोट्स के लिए जगह नहीं बची। बैकअप एक्सपोर्ट करें और कुछ नोट्स हटाएं।"
+  },
+  "notSavedQuota": {
+    "message": "सहेजा नहीं गया — इस डिवाइस पर नोट्स के लिए जगह नहीं बची। सेटिंग्स से बैकअप एक्सपोर्ट करें, फिर कुछ नोट्स हटाएं।"
+  },
+  "notSavedReason": {
+    "message": "सहेजा नहीं गया — $1"
+  },
+  "launcherTitle": {
+    "message": "For Now — नोट्स खोलें (Alt+Shift+N)"
+  },
+  "overlayFrameTitle": {
+    "message": "For Now नोट्स"
+  },
+  "resizeLabel": {
+    "message": "नोट्स पैनल का आकार बदलें"
+  },
+  "resizeHint": {
+    "message": "आकार बदलने के लिए खींचें। रीसेट के लिए डबल-क्लिक करें।"
+  },
+  "settingsPageTitle": {
+    "message": "For Now — सेटिंग्स और बैकअप"
+  },
+  "noteNeedsText": {
+    "message": "नोट में कुछ टेक्स्ट होना चाहिए।"
+  },
+  "conflictCopy": {
+    "message": "टकराव वाली कॉपी"
+  },
+  "conflictCopyOf": {
+    "message": "टकराव वाली कॉपी · $1"
+  },
+  "errorNewerNote": {
+    "message": "यह नोट For Now के नए वर्ज़न से सहेजा गया था। इसे बदलने के लिए एक्सटेंशन अपडेट करें।"
+  },
+  "errorNoteGone": {
+    "message": "वह नोट अब इस डिवाइस पर मौजूद नहीं है।"
+  },
+  "errorChangedElsewhere": {
+    "message": "आपके संपादन के दौरान यह नोट किसी दूसरी विंडो में बदल गया।"
+  },
+  "errorTrashedElsewhere": {
+    "message": "आपके संपादन के दौरान यह नोट किसी दूसरी विंडो में ट्रैश में चला गया।"
+  },
+  "errorUnknown": {
+    "message": "अज्ञात त्रुटि"
+  },
+  "backupNotJson": {
+    "message": "यह फ़ाइल मान्य JSON नहीं है।"
+  },
+  "backupNotBackup": {
+    "message": "यह फ़ाइल For Now का बैकअप नहीं है।"
+  },
+  "backupNotOurs": {
+    "message": "यह फ़ाइल For Now से एक्सपोर्ट नहीं की गई थी।"
+  },
+  "backupNoNotes": {
+    "message": "इस बैकअप में नोट्स की सूची नहीं है।"
+  },
+  "backupNewer": {
+    "message": "यह बैकअप For Now के नए वर्ज़न से बना है। एक्सटेंशन अपडेट करें, फिर दोबारा इंपोर्ट करें।"
+  },
+  "backupInvalid": {
+    "message": "अमान्य बैकअप।"
+  },
+  "timeJustNow": {
+    "message": "अभी-अभी"
+  },
+  "timeToday": {
+    "message": "आज · $1"
+  },
+  "timeYesterday": {
+    "message": "कल · $1"
+  },
+  "groupPinned": {
+    "message": "पिन किए गए"
+  },
+  "groupToday": {
+    "message": "आज"
+  },
+  "groupYesterday": {
+    "message": "कल"
+  },
+  "groupEarlier": {
+    "message": "पहले के"
+  },
+  "groupRecentlyCleared": {
+    "message": "हाल ही में हटाए गए"
+  },
+  "mdExportedOne": {
+    "message": "1 नोट, $1 को एक्सपोर्ट किया गया।"
+  },
+  "mdExportedOther": {
+    "message": "$1 नोट्स, $2 को एक्सपोर्ट किए गए।"
+  },
+  "mdPinned": {
+    "message": "पिन किया गया"
+  },
+  "settingsAndBackup": {
+    "message": "सेटिंग्स और बैकअप"
+  },
+  "settingsOpenFailed": {
+    "message": "सेटिंग्स नहीं खुल सकीं। Chrome के एक्सटेंशन मेन्यू से खोलकर देखें।"
+  },
+  "closeNotes": {
+    "message": "नोट्स बंद करें"
+  },
+  "nearQuota": {
+    "message": "नोट्स इस डिवाइस पर मिलने वाले 10 MB में से $1 इस्तेमाल कर रहे हैं। बैकअप एक्सपोर्ट करें और जो ज़रूरी नहीं है उसे हटाएं।"
+  },
+  "savedOnDevice": {
+    "message": "इस डिवाइस पर सहेजा गया।"
+  },
+  "changesSaved": {
+    "message": "बदलाव इस डिवाइस पर सहेजे गए।"
+  },
+  "conflictKeepText": {
+    "message": "$1 आपका टेक्स्ट अब भी यहीं है।"
+  },
+  "keptSeparate": {
+    "message": "अलग नोट के रूप में रखा गया। दोनों वर्ज़न आपके नोट्स में हैं।"
+  },
+  "copied": {
+    "message": "क्लिपबोर्ड पर कॉपी किया गया।"
+  },
+  "copyFailed": {
+    "message": "कॉपी नहीं हो सका। टेक्स्ट को चुनकर कॉपी करें।"
+  },
+  "copiedMarkdown": {
+    "message": "Markdown के रूप में कॉपी किया गया।"
+  },
+  "tagged": {
+    "message": "टैग $1 लगाया गया।"
+  },
+  "tagRemoved": {
+    "message": "टैग हटाया गया।"
+  },
+  "unpinned": {
+    "message": "अनपिन किया गया।"
+  },
+  "pinnedSkip": {
+    "message": "पिन किया गया। एक साथ सफ़ाई में यह नोट नहीं हटेगा।"
+  },
+  "movedToTrash": {
+    "message": "ट्रैश में भेजा गया · $1 दिन तक वापस लाया जा सकता है"
+  },
+  "undo": {
+    "message": "पहले जैसा करें"
+  },
+  "restored": {
+    "message": "वापस लाया गया।"
+  },
+  "restoredToNotes": {
+    "message": "आपके नोट्स में वापस लाया गया।"
+  },
+  "deletedForever": {
+    "message": "मिटा दिया गया। इसे वापस नहीं लाया जा सकता।"
+  },
+  "movedManyOne": {
+    "message": "1 नोट ट्रैश में भेजा गया · $1 दिन तक वापस लाया जा सकता है"
+  },
+  "movedManyOther": {
+    "message": "$1 नोट्स ट्रैश में भेजे गए · $2 दिन तक वापस लाए जा सकते हैं"
+  },
+  "openPageFailed": {
+    "message": "वह पेज नहीं खुल सका।"
+  },
+  "editCancelled": {
+    "message": "संपादन रद्द किया गया। मूल नोट में कोई बदलाव नहीं हुआ।"
+  },
+  "draftCopied": {
+    "message": "ड्राफ़्ट क्लिपबोर्ड पर कॉपी किया गया।"
+  },
+  "draftCopyFailed": {
+    "message": "ड्राफ़्ट कॉपी नहीं हो सका।"
+  },
+  "taggedFilter": {
+    "message": "टैग $1"
+  },
+  "stopTagFilter": {
+    "message": "$1 से फ़िल्टर करना बंद करें"
+  },
+  "showAllTags": {
+    "message": "सभी टैग दिखाएं"
+  },
+  "loadingNotes": {
+    "message": "आपके नोट्स लोड हो रहे हैं…"
+  },
+  "clearSearch": {
+    "message": "खोज साफ़ करें"
+  },
+  "confirmClearOne": {
+    "message": "बिना पिन वाला 1 नोट ट्रैश में भेजें? पिन किए गए नोट्स बने रहेंगे। आप इसे पहले जैसा कर सकते हैं।"
+  },
+  "confirmClearOther": {
+    "message": "बिना पिन वाले $1 नोट्स ट्रैश में भेजें? पिन किए गए नोट्स बने रहेंगे। आप इसे पहले जैसा कर सकते हैं।"
+  },
+  "moveToTrash": {
+    "message": "ट्रैश में भेजें"
+  },
+  "cancel": {
+    "message": "रद्द करें"
+  },
+  "inTrashCount": {
+    "message": "ट्रैश में $1"
+  },
+  "notesOnDeviceOne": {
+    "message": "1 नोट · इस डिवाइस पर"
+  },
+  "notesOnDeviceOther": {
+    "message": "$1 नोट्स · इस डिवाइस पर"
+  },
+  "clearUnpinned": {
+    "message": "बिना पिन वाले हटाएं…"
+  },
+  "editorPlaceholder": {
+    "message": "फ़िलहाल यहां रख लें। सूची के लिए “- ”, शीर्षक के लिए “# ” लिखें।"
+  },
+  "noteBody": {
+    "message": "नोट का टेक्स्ट"
+  },
+  "linkPrompt": {
+    "message": "लिंक का पता"
+  },
+  "linkInvalid": {
+    "message": "लिंक http://, https:// या mailto: से शुरू होने चाहिए।"
+  },
+  "statusSaving": {
+    "message": "सहेजा जा रहा है…"
+  },
+  "statusError": {
+    "message": "सहेजा नहीं गया। आपका टेक्स्ट अब भी यहीं है।"
+  },
+  "statusEditing": {
+    "message": "बदलाव सहेजने तक मूल नोट बना रहेगा।"
+  },
+  "statusDraft": {
+    "message": "ड्राफ़्ट इस डिवाइस पर सहेजा गया।"
+  },
+  "statusIdle": {
+    "message": "नोट्स तब तक रहेंगे जब तक आप उन्हें हटाते नहीं।"
+  },
+  "editNote": {
+    "message": "नोट संपादित करें"
+  },
+  "newNote": {
+    "message": "नया नोट"
+  },
+  "saveSeparate": {
+    "message": "मेरा वर्ज़न अलग नोट के रूप में सहेजें"
+  },
+  "retrySave": {
+    "message": "फिर से सहेजें"
+  },
+  "copyDraft": {
+    "message": "ड्राफ़्ट कॉपी करें"
+  },
+  "showList": {
+    "message": "नोट्स की सूची दिखाएं"
+  },
+  "expandWriting": {
+    "message": "लिखने की जगह बड़ी करें"
+  },
+  "expandWritingHint": {
+    "message": "लिखने की जगह बड़ी करें (नोट्स की सूची छिप जाएगी)"
+  },
+  "saveChanges": {
+    "message": "बदलाव सहेजें"
+  },
+  "addNote": {
+    "message": "नोट जोड़ें"
+  },
+  "textFormatting": {
+    "message": "टेक्स्ट फ़ॉर्मैटिंग"
+  },
+  "toolBold": {
+    "message": "बोल्ड"
+  },
+  "toolItalic": {
+    "message": "इटैलिक"
+  },
+  "toolStrike": {
+    "message": "स्ट्राइकथ्रू"
+  },
+  "toolHeadingLarge": {
+    "message": "बड़ा शीर्षक"
+  },
+  "toolHeadingSmall": {
+    "message": "छोटा शीर्षक"
+  },
+  "toolBulletList": {
+    "message": "बुलेट सूची"
+  },
+  "toolNumberedList": {
+    "message": "क्रमांकित सूची"
+  },
+  "toolChecklist": {
+    "message": "चेकलिस्ट"
+  },
+  "toolInlineCode": {
+    "message": "इनलाइन कोड"
+  },
+  "toolCodeBlock": {
+    "message": "कोड ब्लॉक"
+  },
+  "toolQuote": {
+    "message": "उद्धरण"
+  },
+  "toolRedo": {
+    "message": "फिर से करें"
+  },
+  "addLink": {
+    "message": "लिंक जोड़ें"
+  },
+  "removeLink": {
+    "message": "लिंक हटाएं"
+  },
+  "tabAll": {
+    "message": "सभी"
+  },
+  "tabPinned": {
+    "message": "पिन किए गए"
+  },
+  "tabTrash": {
+    "message": "ट्रैश"
+  },
+  "tabCountSr": {
+    "message": ", $1 नोट्स"
+  },
+  "notesViews": {
+    "message": "नोट्स के व्यू"
+  },
+  "searchLabel": {
+    "message": "नोट्स, टैग, टेक्स्ट और स्रोत खोजें"
+  },
+  "searchPlaceholder": {
+    "message": "खोजें"
+  },
+  "noteLayout": {
+    "message": "नोट्स का लेआउट"
+  },
+  "listView": {
+    "message": "सूची व्यू"
+  },
+  "cardView": {
+    "message": "कार्ड व्यू"
+  },
+  "matchingOne": {
+    "message": "1 मिलता-जुलता नोट"
+  },
+  "matchingOther": {
+    "message": "$1 मिलते-जुलते नोट्स"
+  },
+  "quickThought": {
+    "message": "झटपट विचार"
+  },
+  "savedInApp": {
+    "message": "For Now में सहेजा गया"
+  },
+  "tagFilterTitle": {
+    "message": "सिर्फ़ $1 टैग वाले नोट्स दिखाएं"
+  },
+  "tagChipLabel": {
+    "message": "टैग: $1। सिर्फ़ इस टैग वाले नोट्स दिखाएं"
+  },
+  "restore": {
+    "message": "वापस लाएं"
+  },
+  "deleteForever": {
+    "message": "हमेशा के लिए मिटाएं"
+  },
+  "openSource": {
+    "message": "स्रोत खोलें"
+  },
+  "copy": {
+    "message": "कॉपी करें"
+  },
+  "copyMarkdown": {
+    "message": "Markdown के रूप में कॉपी करें"
+  },
+  "changeTag": {
+    "message": "टैग बदलें"
+  },
+  "addTag": {
+    "message": "टैग जोड़ें"
+  },
+  "pin": {
+    "message": "पिन करें"
+  },
+  "unpin": {
+    "message": "अनपिन करें"
+  },
+  "clear": {
+    "message": "हटाएं"
+  },
+  "editNoteLabel": {
+    "message": "नोट संपादित करें: $1"
+  },
+  "tagInputLabel": {
+    "message": "इस नोट का टैग। सहेजने के लिए Enter, रद्द करने के लिए Escape, हटाने के लिए खाली छोड़ें"
+  },
+  "tagPlaceholder": {
+    "message": "एक टैग, जैसे काम"
+  },
+  "recoverSoon": {
+    "message": "जल्द ही मिटेगा"
+  },
+  "recoverOne": {
+    "message": "वापस लाने के लिए 1 दिन बाकी"
+  },
+  "recoverOther": {
+    "message": "वापस लाने के लिए $1 दिन बाकी"
+  },
+  "emptyAllTitle": {
+    "message": "सोचने के लिए थोड़ी-सी जगह।"
+  },
+  "emptyAllBody": {
+    "message": "ऊपर कोई विचार लिखें, या किसी भी पेज पर टेक्स्ट चुनकर “चुना गया टेक्स्ट For Now में सहेजें” चुनें।"
+  },
+  "emptyPinnedTitle": {
+    "message": "काम की चीज़ें पास रखें।"
+  },
+  "emptyPinnedBody": {
+    "message": "किसी नोट को पिन करें ताकि वह सबसे ऊपर रहे और एक साथ सफ़ाई से बचा रहे।"
+  },
+  "emptyTrashTitle": {
+    "message": "ट्रैश खाली है"
+  },
+  "emptyTrashBody": {
+    "message": "हटाए गए नोट्स मिटने से पहले यहां रहते हैं।"
+  },
+  "emptySearchTitle": {
+    "message": "कोई मिलता-जुलता नोट नहीं"
+  },
+  "emptySearchBody": {
+    "message": "नोट, उसके टैग या स्रोत का कोई शब्द आज़माएं।"
+  },
+  "optTitle": {
+    "message": "For Now सेटिंग्स"
+  },
+  "optSubtitle": {
+    "message": "रूप-रंग, बैकअप और निजता · सब कुछ इसी डिवाइस पर रहता है"
+  },
+  "optSaved": {
+    "message": "सेटिंग्स इस डिवाइस पर सहेजी गईं।"
+  },
+  "optSaveFailed": {
+    "message": "सेटिंग्स सहेजी नहीं जा सकीं — $1"
+  },
+  "launcherOffDone": {
+    "message": "क्विक-ओपन बटन बंद किया गया, और साइट एक्सेस Chrome को लौटा दिया गया।"
+  },
+  "launcherDeclined": {
+    "message": "साइट एक्सेस नहीं दिया गया, इसलिए बटन बंद रहेगा। टूलबार आइकन और Alt+Shift+N अब भी काम करते हैं।"
+  },
+  "launcherOnDone": {
+    "message": "क्विक-ओपन बटन चालू किया गया। यह हर पेज के नीचे दाईं ओर दिखेगा।"
+  },
+  "launcherRefused": {
+    "message": "Chrome ने अनुमति का अनुरोध अस्वीकार कर दिया। कुछ नहीं बदला।"
+  },
+  "exportedOne": {
+    "message": "1 नोट एक्सपोर्ट किया गया, ट्रैश सहित।"
+  },
+  "exportedOther": {
+    "message": "$1 नोट्स एक्सपोर्ट किए गए, ट्रैश सहित।"
+  },
+  "exportedMdOne": {
+    "message": "1 नोट Markdown के रूप में एक्सपोर्ट किया गया। ट्रैश शामिल नहीं है।"
+  },
+  "exportedMdOther": {
+    "message": "$1 नोट्स Markdown के रूप में एक्सपोर्ट किए गए। ट्रैश शामिल नहीं है।"
+  },
+  "backupUnreadable": {
+    "message": "वह बैकअप पढ़ा नहीं जा सका।"
+  },
+  "importFailed": {
+    "message": "इंपोर्ट विफल रहा — $1। कुछ नहीं बदला।"
+  },
+  "importAdded": {
+    "message": "इंपोर्ट किया गया: $1 जोड़े गए"
+  },
+  "importUpdated": {
+    "message": "$1 अपडेट हुए"
+  },
+  "importCurrent": {
+    "message": "$1 पहले से नए"
+  },
+  "importReplaced": {
+    "message": "$1 बदले गए"
+  },
+  "importSkipped": {
+    "message": "$1 पढ़े नहीं जा सके और छोड़े गए"
+  },
+  "secAppearance": {
+    "message": "रूप-रंग"
+  },
+  "secAppearanceDesc": {
+    "message": "रंग, मोड और नोट का टेक्स्ट। बदलाव साइड पैनल, पेज वाले पैनल और इस पेज पर तुरंत लागू होते हैं।"
+  },
+  "secStorage": {
+    "message": "आपके नोट्स कहां रहते हैं"
+  },
+  "secStorageNav": {
+    "message": "स्टोरेज"
+  },
+  "secStorageDesc": {
+    "message": "क्या सहेजा जाता है, कितनी जगह लेता है, और डिस्क पर कहां रहता है।"
+  },
+  "storageP1": {
+    "message": "नोट्स इस डिवाइस पर $1 के ज़रिए सहेजे जाते हैं। कोई अकाउंट नहीं है और कुछ भी अपलोड नहीं होता। यह आपके कंप्यूटर का लोकल स्टोरेज है, कोई एन्क्रिप्टेड तिजोरी नहीं — जो भी आपकी Chrome प्रोफ़ाइल इस्तेमाल कर सकता है, वह ये नोट्स पढ़ सकता है।"
+  },
+  "storageP2": {
+    "message": "डिस्क पर यह आपकी Chrome प्रोफ़ाइल फ़ोल्डर में $1 के अंदर एक LevelDB डेटाबेस है। टेक्स्ट एन्क्रिप्टेड नहीं है।"
+  },
+  "storageWarn": {
+    "message": "एक्सटेंशन हटाने से उसके लोकल नोट्स मिट जाते हैं। अनइंस्टॉल करने, Chrome रीसेट करने या दूसरे कंप्यूटर पर जाने से पहले बैकअप एक्सपोर्ट करें।"
+  },
+  "statActive": {
+    "message": "सक्रिय नोट्स"
+  },
+  "statTrash": {
+    "message": "ट्रैश में"
+  },
+  "statUsed": {
+    "message": "इस्तेमाल हुई जगह"
+  },
+  "statUsedValue": {
+    "message": "$2 में से $1"
+  },
+  "storageBar": {
+    "message": "स्टोरेज $1 प्रतिशत इस्तेमाल हुआ"
+  },
+  "storageUnder1": {
+    "message": "1% से कम"
+  },
+  "storageShare": {
+    "message": "Chrome इस एक्सटेंशन को जितनी जगह देता है, उसका $1।"
+  },
+  "secBackup": {
+    "message": "बैकअप"
+  },
+  "secBackupDesc": {
+    "message": "ट्रैश सहित सभी नोट्स वाली एक सादी JSON फ़ाइल। वापस लाने या दूसरे कंप्यूटर पर ले जाने के लिए इसे इंपोर्ट करें।"
+  },
+  "backupMdNote": {
+    "message": "अपने नोट्स कहीं और पढ़ने के लिए — Obsidian, किसी दस्तावेज़ या ईमेल में — उन्हें Markdown के रूप में एक्सपोर्ट करें। वह फ़ाइल पढ़ने के लिए है, वापस लाने के लिए नहीं: उसे दोबारा इंपोर्ट नहीं किया जा सकता।"
+  },
+  "exportBackup": {
+    "message": "बैकअप एक्सपोर्ट करें"
+  },
+  "chooseBackup": {
+    "message": "बैकअप फ़ाइल चुनें…"
+  },
+  "exportMarkdown": {
+    "message": "Markdown के रूप में एक्सपोर्ट करें"
+  },
+  "backupFileLabel": {
+    "message": "इंपोर्ट करने के लिए बैकअप फ़ाइल"
+  },
+  "pendingReadOne": {
+    "message": "1 नोट पढ़ा गया"
+  },
+  "pendingReadOther": {
+    "message": "$1 नोट्स पढ़े गए"
+  },
+  "pendingSkipped": {
+    "message": " · $1 पढ़े नहीं जा सके और छोड़े गए"
+  },
+  "pendingSchema": {
+    "message": " · स्कीमा v$1"
+  },
+  "mergeInto": {
+    "message": "मेरे नोट्स में मिलाएं"
+  },
+  "replaceAll": {
+    "message": "सब कुछ बदलें"
+  },
+  "mergeExplainOne": {
+    "message": "मिलाने पर हर नोट की वही कॉपी रहती है जिसे हाल में संपादित किया गया। बदलने पर पहले इस डिवाइस का 1 नोट मिटाया जाता है।"
+  },
+  "mergeExplainOther": {
+    "message": "मिलाने पर हर नोट की वही कॉपी रहती है जिसे हाल में संपादित किया गया। बदलने पर पहले इस डिवाइस के $1 नोट्स मिटाए जाते हैं।"
+  },
+  "secTrash": {
+    "message": "ट्रैश"
+  },
+  "secTrashDesc": {
+    "message": "नोट हटाने पर वह ट्रैश में जाता है। पिन किए गए नोट्स एक साथ सफ़ाई में कभी शामिल नहीं होते।"
+  },
+  "keepFor": {
+    "message": "हटाए गए नोट्स इतने समय रखें"
+  },
+  "daysOption": {
+    "message": "$1 दिन"
+  },
+  "trashAfter": {
+    "message": "उसके बाद ट्रैश के नोट्स हमेशा के लिए मिट जाते हैं।"
+  },
+  "secQuickOpen": {
+    "message": "क्विक-ओपन बटन"
+  },
+  "secQuickOpenDesc": {
+    "message": "हर पेज के नीचे दाईं ओर एक छोटा बटन, ताकि पैनल बस एक क्लिक दूर रहे।"
+  },
+  "quickOpenP1": {
+    "message": "यह शुरू में बंद रहता है, और इसकी वजह है: किसी पेज पर बटन दिखाने के लिए एक्सटेंशन को उस पेज पर चलने की अनुमति चाहिए, और इसे हर जगह दिखाने का एक ही तरीका है — हर साइट का एक्सेस। इसे चालू करने पर Chrome से वह एक्सेस मांगा जाता है। बंद करने पर एक्सेस तुरंत लौटा दिया जाता है।"
+  },
+  "quickOpenStrong": {
+    "message": "इससे जमा की जाने वाली जानकारी में कुछ नहीं बदलता।"
+  },
+  "quickOpenP2": {
+    "message": "बटन पेज का कोई कंटेंट नहीं पढ़ता और कहीं कुछ नहीं भेजता — यह बस एक आइकन दिखाता है और क्लिक का इंतज़ार करता है।"
+  },
+  "quickOpenToggle": {
+    "message": "पेजों पर क्विक-ओपन बटन दिखाएं"
+  },
+  "quickOpenToggleHint": {
+    "message": "पैनल इसी से खुलता है, और पैनल खुला रहने तक बटन एक तरफ़ हट जाता है।"
+  },
+  "quickOpenRevoked": {
+    "message": "चालू है, लेकिन Chrome में साइट एक्सेस वापस ले लिया गया है, इसलिए बटन नहीं दिख रहा। इसे वापस लाने के लिए फिर से टिक करें।"
+  },
+  "secKeyboard": {
+    "message": "कीबोर्ड"
+  },
+  "secKeyboardDesc": {
+    "message": "पैनल में काम करने वाले शॉर्टकट।"
+  },
+  "keyOpen": {
+    "message": "पैनल खोलें"
+  },
+  "keySearch": {
+    "message": "नोट्स खोजें"
+  },
+  "keyCommit": {
+    "message": "नोट जोड़ें या संपादन सहेजें"
+  },
+  "keyEscape": {
+    "message": "संपादन, खोज या पैनल से एक-एक कदम पीछे जाएं"
+  },
+  "keyConflict": {
+    "message": "हो सकता है Chrome पहले से Alt+Shift+N इस्तेमाल करता हो। Chrome की शॉर्टकट सेटिंग्स में जांचें और बदलें।"
+  },
+  "keyOpenSettings": {
+    "message": "Chrome की शॉर्टकट सेटिंग्स खोलें"
+  },
+  "secPrivacy": {
+    "message": "निजता"
+  },
+  "secPrivacyDesc": {
+    "message": "एक्सटेंशन क्या करता है, और क्या नहीं करता।"
+  },
+  "privacy1": {
+    "message": "न अकाउंट, न सर्वर, न एनालिटिक्स, न कोई नेटवर्क अनुरोध।"
+  },
+  "privacy2": {
+    "message": "सिर्फ़ वही सहेजा जाता है जो आप खुद सहेजते हैं — कभी कोई ऐसा पेज नहीं जिसे आपने सिर्फ़ खोला हो।"
+  },
+  "privacy3": {
+    "message": "लिंक प्रीव्यू और फ़ेविकॉन नहीं लाए जाते, इसलिए लिंक सहेजने से कुछ पता नहीं चलता।"
+  },
+  "privacy4": {
+    "message": "फ़ॉर्मैट किए गए नोट्स सहेजने से पहले और दिखाने से पहले दोबारा एक छोटी अनुमति-सूची तक सीमित किए जाते हैं। स्क्रिप्ट, स्टाइल और एम्बेड कभी नहीं बचते, और कोड ब्लॉक टेक्स्ट के रूप में दिखते हैं, कभी चलाए नहीं जाते।"
+  },
+  "privacy5": {
+    "message": "गुप्त (इनकॉग्निटो) विंडो में एक्सटेंशन बंद रहता है।"
+  },
+  "settingsSections": {
+    "message": "सेटिंग्स के हिस्से"
+  },
+  "mode": {
+    "message": "मोड"
+  },
+  "modeSystem": {
+    "message": "सिस्टम"
+  },
+  "modeLight": {
+    "message": "लाइट"
+  },
+  "modeDark": {
+    "message": "डार्क"
+  },
+  "modeFollowing": {
+    "message": "आपके सिस्टम के अनुसार, अभी $1"
+  },
+  "modeAlways": {
+    "message": "हमेशा $1"
+  },
+  "lightTheme": {
+    "message": "लाइट थीम"
+  },
+  "lightThemeHint": {
+    "message": "लाइट मोड में इस्तेमाल होती है"
+  },
+  "darkTheme": {
+    "message": "डार्क थीम"
+  },
+  "darkThemeHint": {
+    "message": "डार्क मोड में इस्तेमाल होती है"
+  },
+  "accent": {
+    "message": "एक्सेंट रंग"
+  },
+  "accentHint": {
+    "message": "बटन, लिंक, चेकबॉक्स और हाइलाइट"
+  },
+  "accentDefault": {
+    "message": "पैलेट का डिफ़ॉल्ट"
+  },
+  "accentCustom": {
+    "message": "कस्टम"
+  },
+  "accentOwn": {
+    "message": "हर पैलेट अपना एक्सेंट इस्तेमाल करता है।"
+  },
+  "accentAdjusted": {
+    "message": "ज़रूरत के हिसाब से थोड़ा बदला गया, ताकि बटन और लिंक लाइट और डार्क दोनों में पढ़े जा सकें।"
+  },
+  "accentAsPicked": {
+    "message": "जैसा चुना गया, वैसा ही लाइट और डार्क दोनों में पढ़ने लायक है।"
+  },
+  "noteFont": {
+    "message": "नोट का फ़ॉन्ट"
+  },
+  "noteFontHint": {
+    "message": "एडिटर और आपके सहेजे गए नोट्स"
+  },
+  "fontSans": {
+    "message": "Sans"
+  },
+  "fontSerif": {
+    "message": "Serif"
+  },
+  "fontMono": {
+    "message": "Mono"
+  },
+  "textSize": {
+    "message": "टेक्स्ट का आकार"
+  },
+  "sizeSmall": {
+    "message": "छोटा"
+  },
+  "sizeMedium": {
+    "message": "मध्यम"
+  },
+  "sizeLarge": {
+    "message": "बड़ा"
+  },
+  "resetAppearance": {
+    "message": "रूप-रंग रीसेट करें"
+  },
+  "preview": {
+    "message": "प्रीव्यू"
+  },
+  "previewMode": {
+    "message": "प्रीव्यू मोड"
+  },
+  "colorBlue": {
+    "message": "नीला"
+  },
+  "colorTeal": {
+    "message": "टील"
+  },
+  "colorGreen": {
+    "message": "हरा"
+  },
+  "colorAmber": {
+    "message": "एम्बर"
+  },
+  "colorRed": {
+    "message": "लाल"
+  },
+  "colorViolet": {
+    "message": "बैंगनी"
+  },
+  "colorPink": {
+    "message": "गुलाबी"
+  },
+  "paletteSage": {
+    "message": "गर्म सफ़ेद पर शांत हरा।"
+  },
+  "palettePaper": {
+    "message": "हल्का क्रीम कागज़, फ़ाउंटेन-पेन जैसा नीला।"
+  },
+  "paletteSlate": {
+    "message": "ठंडे स्लेटी रंग और साफ़ नीला।"
+  },
+  "paletteHeather": {
+    "message": "हल्का मॉव, नर्म पर अच्छे कंट्रास्ट वाला।"
+  },
+  "paletteOchre": {
+    "message": "चर्मपत्र और एम्बर, लंबी शामों के लिए।"
+  },
+  "paletteGraphite": {
+    "message": "हाई कंट्रास्ट, शुद्ध काला और सफ़ेद।"
+  },
+  "previewHeading": {
+    "message": "मंगलवार की स्टैंडअप"
+  },
+  "previewShip": {
+    "message": "$1 शिप करें, $2 देखें।"
+  },
+  "previewFix": {
+    "message": "ओवरले फ़िक्स"
+  },
+  "previewTheNotes": {
+    "message": "नोट्स"
+  },
+  "previewTask1": {
+    "message": "थीम प्लान देखें"
+  },
+  "previewTask2": {
+    "message": "पैलेट चुनें"
+  },
+  "previewDraft": {
+    "message": "ड्राफ़्ट सहेजा गया।"
+  },
+  "previewAll": {
+    "message": "सभी 3"
+  },
+  "previewNote": {
+    "message": "फ़्लाइट चेक-इन 09:40 पर खुलता है"
+  }
+}

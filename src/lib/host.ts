@@ -104,8 +104,9 @@ export function framedOverlayHost(): HostBridge {
 /**
  * The panel as the toolbar popup, shown on Chrome's own pages (New Tab,
  * Settings, the Web Store…) where Chrome allows no overlay. It floats over the
- * page instead of docking beside it, and Chrome closes it on a click outside,
- * just as the overlay does. Closing it from inside is simply closing the page.
+ * page instead of docking beside it. Unlike the overlay, Chrome closes it on a
+ * click outside, and there is no way to ask it not to. Closing it from inside
+ * is simply closing the page.
  */
 export function popupHost(): HostBridge {
   const base = sidePanelHost();

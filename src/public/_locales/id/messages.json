@@ -1,0 +1,851 @@
+{
+  "extName": {
+    "message": "For Now"
+  },
+  "extDescription": {
+    "message": "Panel samping untuk catatan yang Anda perlukan sekarang. Simpan tanpa memilah, temukan tanpa mengingat, hapus tanpa kehilangan."
+  },
+  "actionTitle": {
+    "message": "For Now — buka catatan"
+  },
+  "commandOpen": {
+    "message": "Buka catatan For Now"
+  },
+  "menuSaveSelection": {
+    "message": "Simpan pilihan ke For Now"
+  },
+  "menuSaveLink": {
+    "message": "Simpan tautan ke For Now"
+  },
+  "menuSavePage": {
+    "message": "Simpan halaman ini ke For Now"
+  },
+  "captureNothing": {
+    "message": "Tidak ada yang bisa disimpan dari klik itu."
+  },
+  "notSavedQuotaShort": {
+    "message": "Tidak tersimpan — ruang untuk catatan di perangkat ini habis. Ekspor cadangan lalu hapus beberapa catatan."
+  },
+  "notSavedQuota": {
+    "message": "Tidak tersimpan — ruang untuk catatan di perangkat ini habis. Ekspor cadangan dari Setelan, lalu hapus beberapa catatan."
+  },
+  "notSavedReason": {
+    "message": "Tidak tersimpan — $1"
+  },
+  "launcherTitle": {
+    "message": "For Now — buka catatan (Alt+Shift+N)"
+  },
+  "overlayFrameTitle": {
+    "message": "Catatan For Now"
+  },
+  "resizeLabel": {
+    "message": "Ubah ukuran panel catatan"
+  },
+  "resizeHint": {
+    "message": "Seret untuk mengubah ukuran. Klik dua kali untuk mengatur ulang."
+  },
+  "settingsPageTitle": {
+    "message": "For Now — Setelan dan cadangan"
+  },
+  "noteNeedsText": {
+    "message": "Catatan perlu berisi teks."
+  },
+  "conflictCopy": {
+    "message": "Salinan konflik"
+  },
+  "conflictCopyOf": {
+    "message": "Salinan konflik · $1"
+  },
+  "errorNewerNote": {
+    "message": "Catatan ini disimpan oleh versi For Now yang lebih baru. Perbarui ekstensi untuk mengubahnya."
+  },
+  "errorNoteGone": {
+    "message": "Catatan itu sudah tidak ada di perangkat ini."
+  },
+  "errorChangedElsewhere": {
+    "message": "Catatan ini diubah di jendela lain saat Anda sedang mengeditnya."
+  },
+  "errorTrashedElsewhere": {
+    "message": "Catatan ini dipindahkan ke Sampah di jendela lain saat Anda sedang mengeditnya."
+  },
+  "errorUnknown": {
+    "message": "Kesalahan tidak diketahui"
+  },
+  "backupNotJson": {
+    "message": "File itu bukan JSON yang valid."
+  },
+  "backupNotBackup": {
+    "message": "File itu bukan cadangan For Now."
+  },
+  "backupNotOurs": {
+    "message": "File itu tidak diekspor oleh For Now."
+  },
+  "backupNoNotes": {
+    "message": "Cadangan itu tidak memiliki daftar catatan."
+  },
+  "backupNewer": {
+    "message": "Cadangan itu dibuat oleh versi For Now yang lebih baru. Perbarui ekstensi, lalu impor lagi."
+  },
+  "backupInvalid": {
+    "message": "Cadangan tidak valid."
+  },
+  "timeJustNow": {
+    "message": "Baru saja"
+  },
+  "timeToday": {
+    "message": "Hari ini · $1"
+  },
+  "timeYesterday": {
+    "message": "Kemarin · $1"
+  },
+  "groupPinned": {
+    "message": "Disematkan"
+  },
+  "groupToday": {
+    "message": "Hari ini"
+  },
+  "groupYesterday": {
+    "message": "Kemarin"
+  },
+  "groupEarlier": {
+    "message": "Sebelumnya"
+  },
+  "groupRecentlyCleared": {
+    "message": "Baru dihapus"
+  },
+  "mdExportedOne": {
+    "message": "1 catatan, diekspor $1."
+  },
+  "mdExportedOther": {
+    "message": "$1 catatan, diekspor $2."
+  },
+  "mdPinned": {
+    "message": "Disematkan"
+  },
+  "settingsAndBackup": {
+    "message": "Setelan dan cadangan"
+  },
+  "settingsOpenFailed": {
+    "message": "Tidak dapat membuka setelan. Coba dari menu ekstensi di Chrome."
+  },
+  "closeNotes": {
+    "message": "Tutup catatan"
+  },
+  "nearQuota": {
+    "message": "Catatan memakai $1 dari 10 MB yang diizinkan perangkat ini. Ekspor cadangan dan hapus yang tidak diperlukan lagi."
+  },
+  "savedOnDevice": {
+    "message": "Tersimpan di perangkat ini."
+  },
+  "changesSaved": {
+    "message": "Perubahan tersimpan di perangkat ini."
+  },
+  "conflictKeepText": {
+    "message": "$1 Teks Anda masih ada di sini."
+  },
+  "keptSeparate": {
+    "message": "Disimpan sebagai catatan terpisah. Kedua versi ada di catatan Anda."
+  },
+  "copied": {
+    "message": "Disalin ke papan klip."
+  },
+  "copyFailed": {
+    "message": "Tidak dapat menyalin. Pilih teksnya secara manual."
+  },
+  "copiedMarkdown": {
+    "message": "Disalin sebagai Markdown."
+  },
+  "tagged": {
+    "message": "Diberi tag $1."
+  },
+  "tagRemoved": {
+    "message": "Tag dihapus."
+  },
+  "unpinned": {
+    "message": "Sematan dilepas."
+  },
+  "pinnedSkip": {
+    "message": "Disematkan. Pembersihan massal akan melewati catatan ini."
+  },
+  "movedToTrash": {
+    "message": "Dipindahkan ke Sampah · dapat dipulihkan selama $1 hari"
+  },
+  "undo": {
+    "message": "Urungkan"
+  },
+  "restored": {
+    "message": "Dipulihkan."
+  },
+  "restoredToNotes": {
+    "message": "Dipulihkan ke catatan Anda."
+  },
+  "deletedForever": {
+    "message": "Dihapus. Catatan itu tidak dapat dipulihkan."
+  },
+  "movedManyOne": {
+    "message": "1 catatan dipindahkan ke Sampah · dapat dipulihkan selama $1 hari"
+  },
+  "movedManyOther": {
+    "message": "$1 catatan dipindahkan ke Sampah · dapat dipulihkan selama $2 hari"
+  },
+  "openPageFailed": {
+    "message": "Tidak dapat membuka halaman itu."
+  },
+  "editCancelled": {
+    "message": "Pengeditan dibatalkan. Catatan asli tidak berubah."
+  },
+  "draftCopied": {
+    "message": "Draf disalin ke papan klip."
+  },
+  "draftCopyFailed": {
+    "message": "Tidak dapat menyalin draf."
+  },
+  "taggedFilter": {
+    "message": "Tag $1"
+  },
+  "stopTagFilter": {
+    "message": "Berhenti memfilter menurut $1"
+  },
+  "showAllTags": {
+    "message": "Tampilkan semua tag"
+  },
+  "loadingNotes": {
+    "message": "Memuat catatan Anda…"
+  },
+  "clearSearch": {
+    "message": "Hapus pencarian"
+  },
+  "confirmClearOne": {
+    "message": "Pindahkan 1 catatan yang tidak disematkan ke Sampah? Catatan yang disematkan tetap ada. Anda bisa mengurungkannya."
+  },
+  "confirmClearOther": {
+    "message": "Pindahkan $1 catatan yang tidak disematkan ke Sampah? Catatan yang disematkan tetap ada. Anda bisa mengurungkannya."
+  },
+  "moveToTrash": {
+    "message": "Pindahkan ke Sampah"
+  },
+  "cancel": {
+    "message": "Batal"
+  },
+  "inTrashCount": {
+    "message": "$1 di Sampah"
+  },
+  "notesOnDeviceOne": {
+    "message": "1 catatan · di perangkat ini"
+  },
+  "notesOnDeviceOther": {
+    "message": "$1 catatan · di perangkat ini"
+  },
+  "clearUnpinned": {
+    "message": "Hapus yang tidak disematkan…"
+  },
+  "editorPlaceholder": {
+    "message": "Simpan di sini untuk sementara. Ketik “- ” untuk daftar, “# ” untuk judul."
+  },
+  "noteBody": {
+    "message": "Isi catatan"
+  },
+  "linkPrompt": {
+    "message": "Alamat tautan"
+  },
+  "linkInvalid": {
+    "message": "Tautan harus diawali http://, https:// atau mailto:."
+  },
+  "statusSaving": {
+    "message": "Menyimpan…"
+  },
+  "statusError": {
+    "message": "Tidak tersimpan. Teks Anda masih ada di sini."
+  },
+  "statusEditing": {
+    "message": "Catatan asli tetap disimpan sampai Anda menyimpan perubahan."
+  },
+  "statusDraft": {
+    "message": "Draf tersimpan di perangkat ini."
+  },
+  "statusIdle": {
+    "message": "Catatan tetap ada sampai Anda menghapusnya."
+  },
+  "editNote": {
+    "message": "Edit catatan"
+  },
+  "newNote": {
+    "message": "Catatan baru"
+  },
+  "saveSeparate": {
+    "message": "Simpan milik saya sebagai catatan terpisah"
+  },
+  "retrySave": {
+    "message": "Coba simpan lagi"
+  },
+  "copyDraft": {
+    "message": "Salin draf"
+  },
+  "showList": {
+    "message": "Tampilkan daftar catatan"
+  },
+  "expandWriting": {
+    "message": "Perluas area menulis"
+  },
+  "expandWritingHint": {
+    "message": "Perluas area menulis (menyembunyikan daftar catatan)"
+  },
+  "saveChanges": {
+    "message": "Simpan perubahan"
+  },
+  "addNote": {
+    "message": "Tambah catatan"
+  },
+  "textFormatting": {
+    "message": "Format teks"
+  },
+  "toolBold": {
+    "message": "Tebal"
+  },
+  "toolItalic": {
+    "message": "Miring"
+  },
+  "toolStrike": {
+    "message": "Coret"
+  },
+  "toolHeadingLarge": {
+    "message": "Judul besar"
+  },
+  "toolHeadingSmall": {
+    "message": "Judul kecil"
+  },
+  "toolBulletList": {
+    "message": "Daftar berpoin"
+  },
+  "toolNumberedList": {
+    "message": "Daftar bernomor"
+  },
+  "toolChecklist": {
+    "message": "Daftar periksa"
+  },
+  "toolInlineCode": {
+    "message": "Kode sebaris"
+  },
+  "toolCodeBlock": {
+    "message": "Blok kode"
+  },
+  "toolQuote": {
+    "message": "Kutipan"
+  },
+  "toolRedo": {
+    "message": "Ulangi"
+  },
+  "addLink": {
+    "message": "Tambah tautan"
+  },
+  "removeLink": {
+    "message": "Hapus tautan"
+  },
+  "tabAll": {
+    "message": "Semua"
+  },
+  "tabPinned": {
+    "message": "Disematkan"
+  },
+  "tabTrash": {
+    "message": "Sampah"
+  },
+  "tabCountSr": {
+    "message": ", $1 catatan"
+  },
+  "notesViews": {
+    "message": "Tampilan catatan"
+  },
+  "searchLabel": {
+    "message": "Cari catatan, tag, teks, dan sumber"
+  },
+  "searchPlaceholder": {
+    "message": "Cari"
+  },
+  "noteLayout": {
+    "message": "Tata letak catatan"
+  },
+  "listView": {
+    "message": "Tampilan daftar"
+  },
+  "cardView": {
+    "message": "Tampilan kartu"
+  },
+  "matchingOne": {
+    "message": "1 catatan cocok"
+  },
+  "matchingOther": {
+    "message": "$1 catatan cocok"
+  },
+  "quickThought": {
+    "message": "Ide singkat"
+  },
+  "savedInApp": {
+    "message": "Disimpan di For Now"
+  },
+  "tagFilterTitle": {
+    "message": "Hanya tampilkan catatan dengan tag $1"
+  },
+  "tagChipLabel": {
+    "message": "Tag: $1. Hanya tampilkan catatan dengan tag ini"
+  },
+  "restore": {
+    "message": "Pulihkan"
+  },
+  "deleteForever": {
+    "message": "Hapus selamanya"
+  },
+  "openSource": {
+    "message": "Buka sumber"
+  },
+  "copy": {
+    "message": "Salin"
+  },
+  "copyMarkdown": {
+    "message": "Salin sebagai Markdown"
+  },
+  "changeTag": {
+    "message": "Ubah tag"
+  },
+  "addTag": {
+    "message": "Tambah tag"
+  },
+  "pin": {
+    "message": "Sematkan"
+  },
+  "unpin": {
+    "message": "Lepas sematan"
+  },
+  "clear": {
+    "message": "Hapus"
+  },
+  "editNoteLabel": {
+    "message": "Edit catatan: $1"
+  },
+  "tagInputLabel": {
+    "message": "Tag untuk catatan ini. Enter untuk menyimpan, Escape untuk batal, kosongkan untuk menghapus"
+  },
+  "tagPlaceholder": {
+    "message": "Satu tag, mis. kerja"
+  },
+  "recoverSoon": {
+    "message": "segera dihapus"
+  },
+  "recoverOne": {
+    "message": "1 hari lagi untuk dipulihkan"
+  },
+  "recoverOther": {
+    "message": "$1 hari lagi untuk dipulihkan"
+  },
+  "emptyAllTitle": {
+    "message": "Sedikit ruang untuk berpikir."
+  },
+  "emptyAllBody": {
+    "message": "Tulis ide di atas, atau pilih teks di halaman mana pun dan pilih “Simpan pilihan ke For Now”."
+  },
+  "emptyPinnedTitle": {
+    "message": "Simpan yang berguna tetap dekat."
+  },
+  "emptyPinnedBody": {
+    "message": "Sematkan catatan agar tetap di atas dan tidak ikut pembersihan massal."
+  },
+  "emptyTrashTitle": {
+    "message": "Sampah kosong"
+  },
+  "emptyTrashBody": {
+    "message": "Catatan yang dihapus menunggu di sini sebelum dihapus permanen."
+  },
+  "emptySearchTitle": {
+    "message": "Tidak ada catatan yang cocok"
+  },
+  "emptySearchBody": {
+    "message": "Coba kata dari catatan, tag, atau sumbernya."
+  },
+  "optTitle": {
+    "message": "Setelan For Now"
+  },
+  "optSubtitle": {
+    "message": "Tampilan, cadangan, dan privasi · semuanya tetap di perangkat ini"
+  },
+  "optSaved": {
+    "message": "Setelan tersimpan di perangkat ini."
+  },
+  "optSaveFailed": {
+    "message": "Tidak dapat menyimpan setelan — $1"
+  },
+  "launcherOffDone": {
+    "message": "Tombol buka cepat dimatikan, dan akses situs dikembalikan ke Chrome."
+  },
+  "launcherDeclined": {
+    "message": "Akses situs ditolak, jadi tombol tetap mati. Ikon toolbar dan Alt+Shift+N tetap berfungsi."
+  },
+  "launcherOnDone": {
+    "message": "Tombol buka cepat dinyalakan. Tombol muncul di kanan bawah setiap halaman."
+  },
+  "launcherRefused": {
+    "message": "Chrome menolak permintaan izin. Tidak ada yang diubah."
+  },
+  "exportedOne": {
+    "message": "1 catatan diekspor, termasuk Sampah."
+  },
+  "exportedOther": {
+    "message": "$1 catatan diekspor, termasuk Sampah."
+  },
+  "exportedMdOne": {
+    "message": "1 catatan diekspor sebagai Markdown. Sampah tidak disertakan."
+  },
+  "exportedMdOther": {
+    "message": "$1 catatan diekspor sebagai Markdown. Sampah tidak disertakan."
+  },
+  "backupUnreadable": {
+    "message": "Cadangan itu tidak dapat dibaca."
+  },
+  "importFailed": {
+    "message": "Impor gagal — $1. Tidak ada yang diubah."
+  },
+  "importAdded": {
+    "message": "Diimpor: $1 ditambahkan"
+  },
+  "importUpdated": {
+    "message": "$1 diperbarui"
+  },
+  "importCurrent": {
+    "message": "$1 sudah terbaru"
+  },
+  "importReplaced": {
+    "message": "$1 diganti"
+  },
+  "importSkipped": {
+    "message": "$1 tidak terbaca dan dilewati"
+  },
+  "secAppearance": {
+    "message": "Tampilan"
+  },
+  "secAppearanceDesc": {
+    "message": "Warna, mode, dan teks catatan. Perubahan langsung berlaku di panel samping, panel di halaman, dan halaman ini."
+  },
+  "secStorage": {
+    "message": "Tempat catatan Anda disimpan"
+  },
+  "secStorageNav": {
+    "message": "Penyimpanan"
+  },
+  "secStorageDesc": {
+    "message": "Apa yang disimpan, berapa banyak ruang yang dipakai, dan di mana letaknya di disk."
+  },
+  "storageP1": {
+    "message": "Catatan disimpan di perangkat ini oleh $1. Tidak ada akun dan tidak ada yang diunggah. Ini penyimpanan lokal di komputer Anda, bukan brankas terenkripsi — siapa pun yang dapat memakai profil Chrome Anda dapat membaca catatan ini."
+  },
+  "storageP2": {
+    "message": "Di disk, itu adalah folder profil Chrome Anda, di $1, sebagai database LevelDB. Teksnya tidak dienkripsi."
+  },
+  "storageWarn": {
+    "message": "Menghapus ekstensi akan menghapus catatan lokalnya. Ekspor cadangan sebelum mencopot pemasangan, mereset Chrome, atau pindah komputer."
+  },
+  "statActive": {
+    "message": "Catatan aktif"
+  },
+  "statTrash": {
+    "message": "Di Sampah"
+  },
+  "statUsed": {
+    "message": "Penyimpanan terpakai"
+  },
+  "statUsedValue": {
+    "message": "$1 dari $2"
+  },
+  "storageBar": {
+    "message": "Penyimpanan terpakai $1 persen"
+  },
+  "storageUnder1": {
+    "message": "Di bawah 1%"
+  },
+  "storageShare": {
+    "message": "$1 dari ruang yang diberikan Chrome untuk ekstensi ini."
+  },
+  "secBackup": {
+    "message": "Cadangan"
+  },
+  "secBackupDesc": {
+    "message": "File JSON biasa berisi semua catatan, termasuk Sampah. Impor untuk memulihkan, atau untuk pindah ke komputer lain."
+  },
+  "backupMdNote": {
+    "message": "Untuk membaca catatan di tempat lain — Obsidian, dokumen, email — ekspor sebagai Markdown. File itu untuk dibaca, bukan untuk memulihkan: file itu tidak dapat diimpor kembali."
+  },
+  "exportBackup": {
+    "message": "Ekspor cadangan"
+  },
+  "chooseBackup": {
+    "message": "Pilih file cadangan…"
+  },
+  "exportMarkdown": {
+    "message": "Ekspor sebagai Markdown"
+  },
+  "backupFileLabel": {
+    "message": "File cadangan untuk diimpor"
+  },
+  "pendingReadOne": {
+    "message": "1 catatan terbaca"
+  },
+  "pendingReadOther": {
+    "message": "$1 catatan terbaca"
+  },
+  "pendingSkipped": {
+    "message": " · $1 tidak terbaca dan dilewati"
+  },
+  "pendingSchema": {
+    "message": " · skema v$1"
+  },
+  "mergeInto": {
+    "message": "Gabungkan ke catatan saya"
+  },
+  "replaceAll": {
+    "message": "Ganti semuanya"
+  },
+  "mergeExplainOne": {
+    "message": "Menggabungkan menyimpan salinan catatan yang terakhir diedit. Mengganti menghapus dulu 1 catatan di perangkat ini."
+  },
+  "mergeExplainOther": {
+    "message": "Menggabungkan menyimpan salinan catatan yang terakhir diedit. Mengganti menghapus dulu $1 catatan di perangkat ini."
+  },
+  "secTrash": {
+    "message": "Sampah"
+  },
+  "secTrashDesc": {
+    "message": "Menghapus catatan memindahkannya ke Sampah. Catatan yang disematkan tidak pernah ikut pembersihan massal."
+  },
+  "keepFor": {
+    "message": "Simpan catatan yang dihapus selama"
+  },
+  "daysOption": {
+    "message": "$1 hari"
+  },
+  "trashAfter": {
+    "message": "Setelah itu, catatan di Sampah dihapus permanen."
+  },
+  "secQuickOpen": {
+    "message": "Tombol buka cepat"
+  },
+  "secQuickOpenDesc": {
+    "message": "Tombol kecil di kanan bawah setiap halaman, agar panel hanya sejauh satu klik."
+  },
+  "quickOpenP1": {
+    "message": "Tombol ini mati secara default karena suatu alasan: untuk menggambar tombol di halaman, ekstensi perlu izin berjalan di halaman itu, dan satu-satunya cara agar ada di mana-mana adalah akses ke semua situs. Menyalakannya meminta akses itu ke Chrome. Mematikannya langsung mengembalikan akses tersebut."
+  },
+  "quickOpenStrong": {
+    "message": "Ini tidak mengubah apa pun tentang data yang dikumpulkan."
+  },
+  "quickOpenP2": {
+    "message": "Tombol ini tidak membaca konten halaman dan tidak mengirim apa pun — tombol ini hanya menggambar ikon dan menunggu klik."
+  },
+  "quickOpenToggle": {
+    "message": "Tampilkan tombol buka cepat di halaman"
+  },
+  "quickOpenToggleHint": {
+    "message": "Panel muncul dari tombol ini, dan tombol menyingkir saat panel terbuka."
+  },
+  "quickOpenRevoked": {
+    "message": "Dinyalakan, tetapi akses situs telah dicabut di Chrome, jadi tombol tidak muncul. Centang lagi untuk memulihkannya."
+  },
+  "secKeyboard": {
+    "message": "Keyboard"
+  },
+  "secKeyboardDesc": {
+    "message": "Pintasan yang berfungsi di panel."
+  },
+  "keyOpen": {
+    "message": "Buka panel"
+  },
+  "keySearch": {
+    "message": "Cari catatan"
+  },
+  "keyCommit": {
+    "message": "Tambah catatan atau simpan editan"
+  },
+  "keyEscape": {
+    "message": "Mundur selangkah dari editan, pencarian, atau panel"
+  },
+  "keyConflict": {
+    "message": "Chrome mungkin sudah memakai Alt+Shift+N. Periksa dan ubah di setelan pintasan Chrome."
+  },
+  "keyOpenSettings": {
+    "message": "Buka setelan pintasan Chrome"
+  },
+  "secPrivacy": {
+    "message": "Privasi"
+  },
+  "secPrivacyDesc": {
+    "message": "Apa yang dilakukan ekstensi ini, dan apa yang tidak."
+  },
+  "privacy1": {
+    "message": "Tanpa akun, tanpa server, tanpa analitik, dan tanpa permintaan jaringan."
+  },
+  "privacy2": {
+    "message": "Hanya yang Anda simpan secara sengaja yang direkam — tidak pernah halaman yang hanya Anda kunjungi."
+  },
+  "privacy3": {
+    "message": "Pratinjau tautan dan favicon tidak diambil, jadi menyimpan tautan tidak mengungkapkan apa pun."
+  },
+  "privacy4": {
+    "message": "Catatan berformat disaring ke daftar izin kecil sebelum disimpan dan lagi sebelum ditampilkan. Skrip, gaya, dan sematan tidak pernah lolos, dan blok kode ditampilkan sebagai teks, tidak pernah dijalankan."
+  },
+  "privacy5": {
+    "message": "Ekstensi ini dinonaktifkan di jendela Samaran."
+  },
+  "settingsSections": {
+    "message": "Bagian setelan"
+  },
+  "mode": {
+    "message": "Mode"
+  },
+  "modeSystem": {
+    "message": "Sistem"
+  },
+  "modeLight": {
+    "message": "Terang"
+  },
+  "modeDark": {
+    "message": "Gelap"
+  },
+  "modeFollowing": {
+    "message": "Mengikuti sistem Anda, saat ini $1"
+  },
+  "modeAlways": {
+    "message": "Selalu $1"
+  },
+  "lightTheme": {
+    "message": "Tema terang"
+  },
+  "lightThemeHint": {
+    "message": "Dipakai di mode terang"
+  },
+  "darkTheme": {
+    "message": "Tema gelap"
+  },
+  "darkThemeHint": {
+    "message": "Dipakai di mode gelap"
+  },
+  "accent": {
+    "message": "Warna aksen"
+  },
+  "accentHint": {
+    "message": "Tombol, tautan, kotak centang, dan sorotan"
+  },
+  "accentDefault": {
+    "message": "Bawaan palet"
+  },
+  "accentCustom": {
+    "message": "Kustom"
+  },
+  "accentOwn": {
+    "message": "Setiap palet memakai aksennya sendiri."
+  },
+  "accentAdjusted": {
+    "message": "Sedikit disesuaikan bila perlu agar tombol dan tautan tetap terbaca di mode terang maupun gelap."
+  },
+  "accentAsPicked": {
+    "message": "Terbaca apa adanya di mode terang maupun gelap."
+  },
+  "noteFont": {
+    "message": "Font catatan"
+  },
+  "noteFontHint": {
+    "message": "Editor dan catatan yang Anda simpan"
+  },
+  "fontSans": {
+    "message": "Sans"
+  },
+  "fontSerif": {
+    "message": "Serif"
+  },
+  "fontMono": {
+    "message": "Mono"
+  },
+  "textSize": {
+    "message": "Ukuran teks"
+  },
+  "sizeSmall": {
+    "message": "Kecil"
+  },
+  "sizeMedium": {
+    "message": "Sedang"
+  },
+  "sizeLarge": {
+    "message": "Besar"
+  },
+  "resetAppearance": {
+    "message": "Atur ulang tampilan"
+  },
+  "preview": {
+    "message": "Pratinjau"
+  },
+  "previewMode": {
+    "message": "Mode pratinjau"
+  },
+  "colorBlue": {
+    "message": "Biru"
+  },
+  "colorTeal": {
+    "message": "Hijau toska"
+  },
+  "colorGreen": {
+    "message": "Hijau"
+  },
+  "colorAmber": {
+    "message": "Kuning tua"
+  },
+  "colorRed": {
+    "message": "Merah"
+  },
+  "colorViolet": {
+    "message": "Ungu"
+  },
+  "colorPink": {
+    "message": "Merah muda"
+  },
+  "paletteSage": {
+    "message": "Hijau tenang di atas putih hangat."
+  },
+  "palettePaper": {
+    "message": "Kertas putih gading, biru tinta pena."
+  },
+  "paletteSlate": {
+    "message": "Abu-abu sejuk dan biru jernih."
+  },
+  "paletteHeather": {
+    "message": "Ungu muda redup, lembut tetapi kontras."
+  },
+  "paletteOchre": {
+    "message": "Perkamen dan kuning tua, untuk malam yang panjang."
+  },
+  "paletteGraphite": {
+    "message": "Kontras tinggi, hitam dan putih murni."
+  },
+  "previewHeading": {
+    "message": "Rapat harian Selasa"
+  },
+  "previewShip": {
+    "message": "Rilis $1, lihat $2."
+  },
+  "previewFix": {
+    "message": "perbaikan panel"
+  },
+  "previewTheNotes": {
+    "message": "catatannya"
+  },
+  "previewTask1": {
+    "message": "Tinjau rencana tema"
+  },
+  "previewTask2": {
+    "message": "Pilih palet"
+  },
+  "previewDraft": {
+    "message": "Draf tersimpan."
+  },
+  "previewAll": {
+    "message": "Semua 3"
+  },
+  "previewNote": {
+    "message": "Check-in penerbangan dibuka pukul 09:40"
+  }
+}

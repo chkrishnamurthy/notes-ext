@@ -206,7 +206,7 @@ await s.evalJson(radio('Text size', 'large'));
 check('typography is saved', (await stored())?.editorFont === 'serif' && (await stored())?.textSize === 'large');
 check('typography reaches the page', await s.evalJson(`
   const cs = getComputedStyle(document.documentElement);
-  return cs.getPropertyValue('--fn-text').trim() === '17px' &&
+  return cs.getPropertyValue('--fn-text').trim() === '19px' &&
     cs.getPropertyValue('--fn-note-font').includes('Georgia');
 `));
 await shot(s, `${OUT}/08b-options-appearance.png`, true);

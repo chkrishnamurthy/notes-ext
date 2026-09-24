@@ -12,7 +12,7 @@ describe('appearance settings', () => {
     expect(settings.darkPalette).toBe('sage');
     expect(settings.accent).toBeNull();
     expect(settings.editorFont).toBe('sans');
-    expect(settings.textSize).toBe('medium');
+    expect(settings.textSize).toBe('large');
   });
 
   it('keep settings written before palettes existed', () => {
@@ -34,7 +34,7 @@ describe('appearance settings', () => {
     expect(settings.darkPalette).toBe('sage');
     expect(settings.accent).toBeNull();
     expect(settings.editorFont).toBe('sans');
-    expect(settings.textSize).toBe('medium');
+    expect(settings.textSize).toBe('large');
   });
 
   it('keep valid choices, lower-casing the accent', () => {
@@ -79,7 +79,7 @@ describe('resolving a theme', () => {
 
   it('carries typography as variables', () => {
     const vars = themeVariables({ ...DEFAULT_SETTINGS, textSize: 'large', editorFont: 'mono' }, 'light');
-    expect(vars['--fn-text']).toBe('17px');
+    expect(vars['--fn-text']).toBe('19px');
     expect(vars['--fn-note-font']).toContain('monospace');
     expect(vars['--fn-paper']).toBe('#ffffff');
   });

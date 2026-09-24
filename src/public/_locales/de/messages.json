@@ -1,0 +1,851 @@
+{
+  "extName": {
+    "message": "For Now"
+  },
+  "extDescription": {
+    "message": "Ein Seitenbereich für Notizen, die du jetzt brauchst. Festhalten ohne Ablage, finden ohne Suchen, löschen ohne Verlust."
+  },
+  "actionTitle": {
+    "message": "For Now — Notizen öffnen"
+  },
+  "commandOpen": {
+    "message": "For-Now-Notizen öffnen"
+  },
+  "menuSaveSelection": {
+    "message": "Auswahl in For Now speichern"
+  },
+  "menuSaveLink": {
+    "message": "Link in For Now speichern"
+  },
+  "menuSavePage": {
+    "message": "Diese Seite in For Now speichern"
+  },
+  "captureNothing": {
+    "message": "Mit diesem Klick gab es nichts zu speichern."
+  },
+  "notSavedQuotaShort": {
+    "message": "Nicht gespeichert — auf diesem Gerät ist kein Platz mehr für Notizen. Exportiere eine Sicherung und lösche einige Notizen."
+  },
+  "notSavedQuota": {
+    "message": "Nicht gespeichert — auf diesem Gerät ist kein Platz mehr für Notizen. Exportiere in den Einstellungen eine Sicherung und lösche dann einige Notizen."
+  },
+  "notSavedReason": {
+    "message": "Nicht gespeichert — $1"
+  },
+  "launcherTitle": {
+    "message": "For Now — Notizen öffnen (Alt+Shift+N)"
+  },
+  "overlayFrameTitle": {
+    "message": "For-Now-Notizen"
+  },
+  "resizeLabel": {
+    "message": "Größe des Notizbereichs ändern"
+  },
+  "resizeHint": {
+    "message": "Ziehen, um die Größe zu ändern. Doppelklick zum Zurücksetzen."
+  },
+  "settingsPageTitle": {
+    "message": "For Now — Einstellungen und Sicherung"
+  },
+  "noteNeedsText": {
+    "message": "Eine Notiz braucht etwas Text."
+  },
+  "conflictCopy": {
+    "message": "Konfliktkopie"
+  },
+  "conflictCopyOf": {
+    "message": "Konfliktkopie · $1"
+  },
+  "errorNewerNote": {
+    "message": "Diese Notiz wurde mit einer neueren Version von For Now gespeichert. Aktualisiere die Erweiterung, um sie zu ändern."
+  },
+  "errorNoteGone": {
+    "message": "Diese Notiz gibt es auf diesem Gerät nicht mehr."
+  },
+  "errorChangedElsewhere": {
+    "message": "Diese Notiz wurde in einem anderen Fenster geändert, während du sie bearbeitet hast."
+  },
+  "errorTrashedElsewhere": {
+    "message": "Diese Notiz wurde in einem anderen Fenster in den Papierkorb verschoben, während du sie bearbeitet hast."
+  },
+  "errorUnknown": {
+    "message": "Unbekannter Fehler"
+  },
+  "backupNotJson": {
+    "message": "Diese Datei ist kein gültiges JSON."
+  },
+  "backupNotBackup": {
+    "message": "Diese Datei ist keine For-Now-Sicherung."
+  },
+  "backupNotOurs": {
+    "message": "Diese Datei wurde nicht von For Now exportiert."
+  },
+  "backupNoNotes": {
+    "message": "Diese Sicherung enthält keine Notizliste."
+  },
+  "backupNewer": {
+    "message": "Diese Sicherung stammt von einer neueren Version von For Now. Aktualisiere die Erweiterung und importiere sie dann erneut."
+  },
+  "backupInvalid": {
+    "message": "Ungültige Sicherung."
+  },
+  "timeJustNow": {
+    "message": "Gerade eben"
+  },
+  "timeToday": {
+    "message": "Heute · $1"
+  },
+  "timeYesterday": {
+    "message": "Gestern · $1"
+  },
+  "groupPinned": {
+    "message": "Angeheftet"
+  },
+  "groupToday": {
+    "message": "Heute"
+  },
+  "groupYesterday": {
+    "message": "Gestern"
+  },
+  "groupEarlier": {
+    "message": "Früher"
+  },
+  "groupRecentlyCleared": {
+    "message": "Kürzlich gelöscht"
+  },
+  "mdExportedOne": {
+    "message": "1 Notiz, exportiert am $1."
+  },
+  "mdExportedOther": {
+    "message": "$1 Notizen, exportiert am $2."
+  },
+  "mdPinned": {
+    "message": "Angeheftet"
+  },
+  "settingsAndBackup": {
+    "message": "Einstellungen und Sicherung"
+  },
+  "settingsOpenFailed": {
+    "message": "Die Einstellungen konnten nicht geöffnet werden. Versuche es über das Erweiterungsmenü in Chrome."
+  },
+  "closeNotes": {
+    "message": "Notizen schließen"
+  },
+  "nearQuota": {
+    "message": "Notizen belegen $1 der 10 MB, die dieses Gerät erlaubt. Exportiere eine Sicherung und lösche, was du nicht mehr brauchst."
+  },
+  "savedOnDevice": {
+    "message": "Auf diesem Gerät gespeichert."
+  },
+  "changesSaved": {
+    "message": "Änderungen auf diesem Gerät gespeichert."
+  },
+  "conflictKeepText": {
+    "message": "$1 Dein Text ist noch da."
+  },
+  "keptSeparate": {
+    "message": "Als eigene Notiz behalten. Beide Versionen sind in deinen Notizen."
+  },
+  "copied": {
+    "message": "In die Zwischenablage kopiert."
+  },
+  "copyFailed": {
+    "message": "Kopieren fehlgeschlagen. Markiere den Text stattdessen."
+  },
+  "copiedMarkdown": {
+    "message": "Als Markdown kopiert."
+  },
+  "tagged": {
+    "message": "Mit $1 getaggt."
+  },
+  "tagRemoved": {
+    "message": "Tag entfernt."
+  },
+  "unpinned": {
+    "message": "Losgelöst."
+  },
+  "pinnedSkip": {
+    "message": "Angeheftet. Das Sammellöschen überspringt diese Notiz."
+  },
+  "movedToTrash": {
+    "message": "In den Papierkorb verschoben · $1 Tage wiederherstellbar"
+  },
+  "undo": {
+    "message": "Rückgängig"
+  },
+  "restored": {
+    "message": "Wiederhergestellt."
+  },
+  "restoredToNotes": {
+    "message": "In deinen Notizen wiederhergestellt."
+  },
+  "deletedForever": {
+    "message": "Gelöscht. Diese Notiz lässt sich nicht wiederherstellen."
+  },
+  "movedManyOne": {
+    "message": "1 Notiz in den Papierkorb verschoben · $1 Tage wiederherstellbar"
+  },
+  "movedManyOther": {
+    "message": "$1 Notizen in den Papierkorb verschoben · $2 Tage wiederherstellbar"
+  },
+  "openPageFailed": {
+    "message": "Diese Seite konnte nicht geöffnet werden."
+  },
+  "editCancelled": {
+    "message": "Bearbeitung abgebrochen. Die ursprüngliche Notiz ist unverändert."
+  },
+  "draftCopied": {
+    "message": "Entwurf in die Zwischenablage kopiert."
+  },
+  "draftCopyFailed": {
+    "message": "Der Entwurf konnte nicht kopiert werden."
+  },
+  "taggedFilter": {
+    "message": "Tag $1"
+  },
+  "stopTagFilter": {
+    "message": "Filter nach $1 aufheben"
+  },
+  "showAllTags": {
+    "message": "Alle Tags anzeigen"
+  },
+  "loadingNotes": {
+    "message": "Notizen werden geladen …"
+  },
+  "clearSearch": {
+    "message": "Suche löschen"
+  },
+  "confirmClearOne": {
+    "message": "1 nicht angeheftete Notiz in den Papierkorb verschieben? Angeheftete bleiben. Du kannst das rückgängig machen."
+  },
+  "confirmClearOther": {
+    "message": "$1 nicht angeheftete Notizen in den Papierkorb verschieben? Angeheftete bleiben. Du kannst das rückgängig machen."
+  },
+  "moveToTrash": {
+    "message": "In den Papierkorb"
+  },
+  "cancel": {
+    "message": "Abbrechen"
+  },
+  "inTrashCount": {
+    "message": "$1 im Papierkorb"
+  },
+  "notesOnDeviceOne": {
+    "message": "1 Notiz · auf diesem Gerät"
+  },
+  "notesOnDeviceOther": {
+    "message": "$1 Notizen · auf diesem Gerät"
+  },
+  "clearUnpinned": {
+    "message": "Nicht angeheftete löschen …"
+  },
+  "editorPlaceholder": {
+    "message": "Erst mal hier ablegen. „- “ für eine Liste, „# “ für eine Überschrift."
+  },
+  "noteBody": {
+    "message": "Notiztext"
+  },
+  "linkPrompt": {
+    "message": "Linkadresse"
+  },
+  "linkInvalid": {
+    "message": "Links müssen mit http://, https:// oder mailto: beginnen."
+  },
+  "statusSaving": {
+    "message": "Wird gespeichert …"
+  },
+  "statusError": {
+    "message": "Nicht gespeichert. Dein Text ist noch da."
+  },
+  "statusEditing": {
+    "message": "Die ursprüngliche Notiz bleibt, bis du die Änderungen speicherst."
+  },
+  "statusDraft": {
+    "message": "Entwurf auf diesem Gerät gespeichert."
+  },
+  "statusIdle": {
+    "message": "Notizen bleiben, bis du sie löschst."
+  },
+  "editNote": {
+    "message": "Notiz bearbeiten"
+  },
+  "newNote": {
+    "message": "Neue Notiz"
+  },
+  "saveSeparate": {
+    "message": "Meine als eigene Notiz speichern"
+  },
+  "retrySave": {
+    "message": "Erneut speichern"
+  },
+  "copyDraft": {
+    "message": "Entwurf kopieren"
+  },
+  "showList": {
+    "message": "Notizliste anzeigen"
+  },
+  "expandWriting": {
+    "message": "Schreibbereich vergrößern"
+  },
+  "expandWritingHint": {
+    "message": "Schreibbereich vergrößern (blendet die Notizliste aus)"
+  },
+  "saveChanges": {
+    "message": "Änderungen speichern"
+  },
+  "addNote": {
+    "message": "Notiz hinzufügen"
+  },
+  "textFormatting": {
+    "message": "Textformatierung"
+  },
+  "toolBold": {
+    "message": "Fett"
+  },
+  "toolItalic": {
+    "message": "Kursiv"
+  },
+  "toolStrike": {
+    "message": "Durchgestrichen"
+  },
+  "toolHeadingLarge": {
+    "message": "Große Überschrift"
+  },
+  "toolHeadingSmall": {
+    "message": "Kleine Überschrift"
+  },
+  "toolBulletList": {
+    "message": "Aufzählung"
+  },
+  "toolNumberedList": {
+    "message": "Nummerierte Liste"
+  },
+  "toolChecklist": {
+    "message": "Checkliste"
+  },
+  "toolInlineCode": {
+    "message": "Code im Text"
+  },
+  "toolCodeBlock": {
+    "message": "Codeblock"
+  },
+  "toolQuote": {
+    "message": "Zitat"
+  },
+  "toolRedo": {
+    "message": "Wiederholen"
+  },
+  "addLink": {
+    "message": "Link hinzufügen"
+  },
+  "removeLink": {
+    "message": "Link entfernen"
+  },
+  "tabAll": {
+    "message": "Alle"
+  },
+  "tabPinned": {
+    "message": "Angeheftet"
+  },
+  "tabTrash": {
+    "message": "Papierkorb"
+  },
+  "tabCountSr": {
+    "message": ", $1 Notizen"
+  },
+  "notesViews": {
+    "message": "Notizansichten"
+  },
+  "searchLabel": {
+    "message": "Notizen, Tags, Text und Quellen durchsuchen"
+  },
+  "searchPlaceholder": {
+    "message": "Suchen"
+  },
+  "noteLayout": {
+    "message": "Notizlayout"
+  },
+  "listView": {
+    "message": "Listenansicht"
+  },
+  "cardView": {
+    "message": "Kartenansicht"
+  },
+  "matchingOne": {
+    "message": "1 passende Notiz"
+  },
+  "matchingOther": {
+    "message": "$1 passende Notizen"
+  },
+  "quickThought": {
+    "message": "Schneller Gedanke"
+  },
+  "savedInApp": {
+    "message": "In For Now gespeichert"
+  },
+  "tagFilterTitle": {
+    "message": "Nur Notizen mit dem Tag $1 anzeigen"
+  },
+  "tagChipLabel": {
+    "message": "Tag: $1. Nur Notizen mit diesem Tag anzeigen"
+  },
+  "restore": {
+    "message": "Wiederherstellen"
+  },
+  "deleteForever": {
+    "message": "Endgültig löschen"
+  },
+  "openSource": {
+    "message": "Quelle öffnen"
+  },
+  "copy": {
+    "message": "Kopieren"
+  },
+  "copyMarkdown": {
+    "message": "Als Markdown kopieren"
+  },
+  "changeTag": {
+    "message": "Tag ändern"
+  },
+  "addTag": {
+    "message": "Tag hinzufügen"
+  },
+  "pin": {
+    "message": "Anheften"
+  },
+  "unpin": {
+    "message": "Loslösen"
+  },
+  "clear": {
+    "message": "Löschen"
+  },
+  "editNoteLabel": {
+    "message": "Notiz bearbeiten: $1"
+  },
+  "tagInputLabel": {
+    "message": "Tag für diese Notiz. Enter zum Speichern, Escape zum Abbrechen, leer zum Entfernen"
+  },
+  "tagPlaceholder": {
+    "message": "Ein Tag, z. B. Arbeit"
+  },
+  "recoverSoon": {
+    "message": "wird bald entfernt"
+  },
+  "recoverOne": {
+    "message": "noch 1 Tag wiederherstellbar"
+  },
+  "recoverOther": {
+    "message": "noch $1 Tage wiederherstellbar"
+  },
+  "emptyAllTitle": {
+    "message": "Ein wenig Raum zum Denken."
+  },
+  "emptyAllBody": {
+    "message": "Notiere oben einen Gedanken, oder markiere Text auf einer Seite und wähle „Auswahl in For Now speichern“."
+  },
+  "emptyPinnedTitle": {
+    "message": "Das Nützliche griffbereit halten."
+  },
+  "emptyPinnedBody": {
+    "message": "Hefte eine Notiz an, damit sie oben bleibt und vom Sammellöschen ausgenommen ist."
+  },
+  "emptyTrashTitle": {
+    "message": "Der Papierkorb ist leer"
+  },
+  "emptyTrashBody": {
+    "message": "Gelöschte Notizen warten hier, bevor sie entfernt werden."
+  },
+  "emptySearchTitle": {
+    "message": "Keine passenden Notizen"
+  },
+  "emptySearchBody": {
+    "message": "Versuche ein Wort aus der Notiz, ihrem Tag oder ihrer Quelle."
+  },
+  "optTitle": {
+    "message": "For-Now-Einstellungen"
+  },
+  "optSubtitle": {
+    "message": "Darstellung, Sicherung und Datenschutz · alles bleibt auf diesem Gerät"
+  },
+  "optSaved": {
+    "message": "Einstellungen auf diesem Gerät gespeichert."
+  },
+  "optSaveFailed": {
+    "message": "Einstellungen konnten nicht gespeichert werden — $1"
+  },
+  "launcherOffDone": {
+    "message": "Schnellstart-Button ausgeschaltet und Websitezugriff an Chrome zurückgegeben."
+  },
+  "launcherDeclined": {
+    "message": "Der Websitezugriff wurde abgelehnt, daher bleibt der Button aus. Das Symbol in der Symbolleiste und Alt+Shift+N funktionieren weiterhin."
+  },
+  "launcherOnDone": {
+    "message": "Schnellstart-Button eingeschaltet. Er erscheint unten rechts auf jeder Seite."
+  },
+  "launcherRefused": {
+    "message": "Chrome hat die Berechtigungsanfrage abgelehnt. Es wurde nichts geändert."
+  },
+  "exportedOne": {
+    "message": "1 Notiz exportiert, einschließlich Papierkorb."
+  },
+  "exportedOther": {
+    "message": "$1 Notizen exportiert, einschließlich Papierkorb."
+  },
+  "exportedMdOne": {
+    "message": "1 Notiz als Markdown exportiert. Der Papierkorb ist nicht enthalten."
+  },
+  "exportedMdOther": {
+    "message": "$1 Notizen als Markdown exportiert. Der Papierkorb ist nicht enthalten."
+  },
+  "backupUnreadable": {
+    "message": "Diese Sicherung konnte nicht gelesen werden."
+  },
+  "importFailed": {
+    "message": "Import fehlgeschlagen — $1. Es wurde nichts geändert."
+  },
+  "importAdded": {
+    "message": "Importiert: $1 hinzugefügt"
+  },
+  "importUpdated": {
+    "message": "$1 aktualisiert"
+  },
+  "importCurrent": {
+    "message": "$1 bereits aktuell"
+  },
+  "importReplaced": {
+    "message": "$1 ersetzt"
+  },
+  "importSkipped": {
+    "message": "$1 unlesbar und übersprungen"
+  },
+  "secAppearance": {
+    "message": "Darstellung"
+  },
+  "secAppearanceDesc": {
+    "message": "Farben, Modus und Notiztext. Änderungen gelten sofort für den Seitenbereich, das Panel auf der Seite und diese Seite."
+  },
+  "secStorage": {
+    "message": "Wo deine Notizen liegen"
+  },
+  "secStorageNav": {
+    "message": "Speicher"
+  },
+  "secStorageDesc": {
+    "message": "Was gespeichert wird, wie viel Platz es braucht und wo es auf der Festplatte liegt."
+  },
+  "storageP1": {
+    "message": "Notizen werden auf diesem Gerät über $1 gespeichert. Es gibt kein Konto, und nichts wird hochgeladen. Das ist lokaler Speicher auf deinem Computer, kein verschlüsselter Tresor — wer dein Chrome-Profil nutzen kann, kann diese Notizen lesen."
+  },
+  "storageP2": {
+    "message": "Auf der Festplatte ist das dein Chrome-Profilordner, unter $1, als LevelDB-Datenbank. Der Text ist nicht verschlüsselt."
+  },
+  "storageWarn": {
+    "message": "Wenn du die Erweiterung entfernst, werden ihre lokalen Notizen gelöscht. Exportiere vorher eine Sicherung — vor dem Deinstallieren, dem Zurücksetzen von Chrome oder einem Computerwechsel."
+  },
+  "statActive": {
+    "message": "Aktive Notizen"
+  },
+  "statTrash": {
+    "message": "Im Papierkorb"
+  },
+  "statUsed": {
+    "message": "Belegter Speicher"
+  },
+  "statUsedValue": {
+    "message": "$1 von $2"
+  },
+  "storageBar": {
+    "message": "Speicher zu $1 Prozent belegt"
+  },
+  "storageUnder1": {
+    "message": "Unter 1 %"
+  },
+  "storageShare": {
+    "message": "$1 des Speichers, den Chrome dieser Erweiterung gibt."
+  },
+  "secBackup": {
+    "message": "Sicherung"
+  },
+  "secBackupDesc": {
+    "message": "Eine einfache JSON-Datei mit allen Notizen, Papierkorb eingeschlossen. Importiere sie zum Wiederherstellen oder für einen neuen Computer."
+  },
+  "backupMdNote": {
+    "message": "Um deine Notizen woanders zu lesen — in Obsidian, einem Dokument, einer E-Mail — exportiere sie stattdessen als Markdown. Diese Datei ist zum Lesen, nicht zum Wiederherstellen: Sie lässt sich nicht zurück importieren."
+  },
+  "exportBackup": {
+    "message": "Sicherung exportieren"
+  },
+  "chooseBackup": {
+    "message": "Sicherungsdatei auswählen …"
+  },
+  "exportMarkdown": {
+    "message": "Als Markdown exportieren"
+  },
+  "backupFileLabel": {
+    "message": "Zu importierende Sicherungsdatei"
+  },
+  "pendingReadOne": {
+    "message": "1 Notiz gelesen"
+  },
+  "pendingReadOther": {
+    "message": "$1 Notizen gelesen"
+  },
+  "pendingSkipped": {
+    "message": " · $1 unlesbar und übersprungen"
+  },
+  "pendingSchema": {
+    "message": " · Schema v$1"
+  },
+  "mergeInto": {
+    "message": "Mit meinen Notizen zusammenführen"
+  },
+  "replaceAll": {
+    "message": "Alles ersetzen"
+  },
+  "mergeExplainOne": {
+    "message": "Zusammenführen behält jeweils die zuletzt bearbeitete Fassung einer Notiz. Ersetzen löscht zuerst die 1 Notiz auf diesem Gerät."
+  },
+  "mergeExplainOther": {
+    "message": "Zusammenführen behält jeweils die zuletzt bearbeitete Fassung einer Notiz. Ersetzen löscht zuerst die $1 Notizen auf diesem Gerät."
+  },
+  "secTrash": {
+    "message": "Papierkorb"
+  },
+  "secTrashDesc": {
+    "message": "Eine gelöschte Notiz landet im Papierkorb. Angeheftete Notizen sind vom Sammellöschen immer ausgenommen."
+  },
+  "keepFor": {
+    "message": "Gelöschte Notizen behalten für"
+  },
+  "daysOption": {
+    "message": "$1 Tage"
+  },
+  "trashAfter": {
+    "message": "Danach werden Notizen im Papierkorb endgültig entfernt."
+  },
+  "secQuickOpen": {
+    "message": "Schnellstart-Button"
+  },
+  "secQuickOpenDesc": {
+    "message": "Ein kleiner Button unten rechts auf jeder Seite, damit der Bereich nur einen Klick entfernt ist."
+  },
+  "quickOpenP1": {
+    "message": "Er ist aus gutem Grund standardmäßig aus: Um einen Button auf eine Seite zu zeichnen, braucht die Erweiterung die Erlaubnis, dort zu laufen — und ihn überall zu haben heißt Zugriff auf alle Websites. Einschalten fragt Chrome nach diesem Zugriff. Ausschalten gibt ihn sofort zurück."
+  },
+  "quickOpenStrong": {
+    "message": "Das ändert nichts daran, was erfasst wird."
+  },
+  "quickOpenP2": {
+    "message": "Der Button liest keine Seiteninhalte und sendet nichts — er zeichnet ein Symbol und wartet auf einen Klick."
+  },
+  "quickOpenToggle": {
+    "message": "Schnellstart-Button auf Seiten anzeigen"
+  },
+  "quickOpenToggleHint": {
+    "message": "Der Bereich öffnet sich aus ihm heraus, und er weicht aus, solange der Bereich offen ist."
+  },
+  "quickOpenRevoked": {
+    "message": "Eingeschaltet, aber der Websitezugriff wurde in Chrome entzogen, daher wird der Button nicht angezeigt. Setze das Häkchen erneut, um ihn wiederherzustellen."
+  },
+  "secKeyboard": {
+    "message": "Tastatur"
+  },
+  "secKeyboardDesc": {
+    "message": "Tastenkürzel im Bereich."
+  },
+  "keyOpen": {
+    "message": "Bereich öffnen"
+  },
+  "keySearch": {
+    "message": "Notizen suchen"
+  },
+  "keyCommit": {
+    "message": "Notiz hinzufügen oder Änderung speichern"
+  },
+  "keyEscape": {
+    "message": "Schrittweise aus Bearbeitung, Suche oder Bereich zurück"
+  },
+  "keyConflict": {
+    "message": "Chrome verwendet Alt+Shift+N eventuell schon. Prüfe und ändere es in den Tastenkürzeln von Chrome."
+  },
+  "keyOpenSettings": {
+    "message": "Tastenkürzel von Chrome öffnen"
+  },
+  "secPrivacy": {
+    "message": "Datenschutz"
+  },
+  "secPrivacyDesc": {
+    "message": "Was die Erweiterung tut — und was nicht."
+  },
+  "privacy1": {
+    "message": "Kein Konto, kein Server, keine Analysen und keine Netzwerkanfragen."
+  },
+  "privacy2": {
+    "message": "Erfasst wird nur, was du ausdrücklich speicherst — nie eine Seite, die du nur besuchst."
+  },
+  "privacy3": {
+    "message": "Linkvorschauen und Favicons werden nicht geladen, das Speichern eines Links verrät also nichts."
+  },
+  "privacy4": {
+    "message": "Formatierte Notizen werden vor dem Speichern und erneut vor dem Anzeigen auf eine kleine Positivliste reduziert. Skripte, Stile und Einbettungen überleben das nie, und Codeblöcke werden als Text angezeigt, nie ausgeführt."
+  },
+  "privacy5": {
+    "message": "In Inkognitofenstern ist die Erweiterung deaktiviert."
+  },
+  "settingsSections": {
+    "message": "Einstellungsbereiche"
+  },
+  "mode": {
+    "message": "Modus"
+  },
+  "modeSystem": {
+    "message": "System"
+  },
+  "modeLight": {
+    "message": "Hell"
+  },
+  "modeDark": {
+    "message": "Dunkel"
+  },
+  "modeFollowing": {
+    "message": "Folgt deinem System, derzeit $1"
+  },
+  "modeAlways": {
+    "message": "Immer $1"
+  },
+  "lightTheme": {
+    "message": "Helles Design"
+  },
+  "lightThemeHint": {
+    "message": "Im hellen Modus verwendet"
+  },
+  "darkTheme": {
+    "message": "Dunkles Design"
+  },
+  "darkThemeHint": {
+    "message": "Im dunklen Modus verwendet"
+  },
+  "accent": {
+    "message": "Akzentfarbe"
+  },
+  "accentHint": {
+    "message": "Buttons, Links, Kontrollkästchen und Hervorhebungen"
+  },
+  "accentDefault": {
+    "message": "Standard der Palette"
+  },
+  "accentCustom": {
+    "message": "Eigene"
+  },
+  "accentOwn": {
+    "message": "Jede Palette nutzt ihren eigenen Akzent."
+  },
+  "accentAdjusted": {
+    "message": "Wo nötig leicht angepasst, damit Buttons und Links hell wie dunkel lesbar bleiben."
+  },
+  "accentAsPicked": {
+    "message": "So wie gewählt hell wie dunkel lesbar."
+  },
+  "noteFont": {
+    "message": "Notizschrift"
+  },
+  "noteFontHint": {
+    "message": "Der Editor und deine gespeicherten Notizen"
+  },
+  "fontSans": {
+    "message": "Sans"
+  },
+  "fontSerif": {
+    "message": "Serif"
+  },
+  "fontMono": {
+    "message": "Mono"
+  },
+  "textSize": {
+    "message": "Textgröße"
+  },
+  "sizeSmall": {
+    "message": "Klein"
+  },
+  "sizeMedium": {
+    "message": "Mittel"
+  },
+  "sizeLarge": {
+    "message": "Groß"
+  },
+  "resetAppearance": {
+    "message": "Darstellung zurücksetzen"
+  },
+  "preview": {
+    "message": "Vorschau"
+  },
+  "previewMode": {
+    "message": "Vorschaumodus"
+  },
+  "colorBlue": {
+    "message": "Blau"
+  },
+  "colorTeal": {
+    "message": "Petrol"
+  },
+  "colorGreen": {
+    "message": "Grün"
+  },
+  "colorAmber": {
+    "message": "Bernstein"
+  },
+  "colorRed": {
+    "message": "Rot"
+  },
+  "colorViolet": {
+    "message": "Violett"
+  },
+  "colorPink": {
+    "message": "Pink"
+  },
+  "paletteSage": {
+    "message": "Ruhiges Grün auf warmem Weiß."
+  },
+  "palettePaper": {
+    "message": "Warmes, gebrochenes Weiß, Füllerblau."
+  },
+  "paletteSlate": {
+    "message": "Kühle Grautöne und ein klares Blau."
+  },
+  "paletteHeather": {
+    "message": "Gedämpftes Mauve, sanft, aber kontrastreich."
+  },
+  "paletteOchre": {
+    "message": "Pergament und Bernstein, für lange Abende."
+  },
+  "paletteGraphite": {
+    "message": "Hoher Kontrast, reines Schwarz und Weiß."
+  },
+  "previewHeading": {
+    "message": "Standup am Dienstag"
+  },
+  "previewShip": {
+    "message": "Den $1 ausliefern, siehe $2."
+  },
+  "previewFix": {
+    "message": "Overlay-Fix"
+  },
+  "previewTheNotes": {
+    "message": "die Notizen"
+  },
+  "previewTask1": {
+    "message": "Designplan prüfen"
+  },
+  "previewTask2": {
+    "message": "Eine Palette wählen"
+  },
+  "previewDraft": {
+    "message": "Entwurf gespeichert."
+  },
+  "previewAll": {
+    "message": "Alle 3"
+  },
+  "previewNote": {
+    "message": "Check-in für den Flug öffnet um 09:40"
+  }
+}

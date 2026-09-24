@@ -1,7 +1,7 @@
 # For Now — Feature Roadmap and Growth Plan
 
-**Written:** 23 September 2026
-**Status:** Proposal. Nothing here is committed work.
+**Written:** 23 September 2026 · **Updated:** 24 September 2026
+**Status:** Proposal. Items marked **Shipped** are built; everything else is uncommitted.
 **Companion docs:** [`PRODUCT_RESEARCH_AND_PLAN.md`](PRODUCT_RESEARCH_AND_PLAN.md) (the original product plan), [`README.md`](README.md) (how the code is built)
 
 ---
@@ -40,10 +40,14 @@ live, it does not ship.
 
 ### Rule 2: Your permission set is a conversion asset
 
-Right now the extension asks for `storage`, `sidePanel`, `contextMenus` and
-`activeTab`. No host permissions, no content script. That means Chrome does **not**
-show the user the alarming *"Read and change all your data on all websites"*
-warning at install.
+Right now the extension asks for `storage`, `sidePanel`, `contextMenus`,
+`activeTab` and `scripting`. `scripting` injects the overlay and the selection
+reader into the tab you clicked, under `activeTab`; it is not a host permission
+and adds no install warning. There are no host permissions and no content script
+in the manifest. The quick-open button needs `<all_urls>`, but only as an
+*optional* permission requested when the user switches it on, so the install
+prompt is unaffected. That means Chrome does **not** show the alarming *"Read and
+change all your data on all websites"* warning at install.
 
 Every Phase 2 feature costs you that. Phase 1 costs you nothing. That is why the
 order is what it is.
@@ -151,6 +155,11 @@ update within 90 days, so cadence alone puts you ahead of most.
 
 ### 1.1 — One optional tag per note
 
+**Status: Shipped** (24 Sep 2026). Schema v4. Tag from the note's **Add tag**
+action, click a tag to filter, and search matches tags. Tags survive export and
+import, and are carried onto conflict copies. There is no tag picker in the
+filter row yet; clicking a tag on a note is the only way to filter.
+
 **What:** a single free-text tag, optional, never required at capture time.
 **Why:** already identified in `PRODUCT_RESEARCH_AND_PLAN.md` §8 as the first
 organisation feature worth adding *if retrieval tests justify it*. Cheapest
@@ -165,6 +174,11 @@ export/import, and capture still needs zero decisions.
 > product exists to avoid.
 
 ### 1.2 — Copy and export as Markdown
+
+**Status: Shipped** (24 Sep 2026). **Copy as Markdown** on each note, and
+**Export as Markdown** in Settings (active notes only; Trash stays in the JSON
+backup). Converter in `src/lib/markdown.ts`, not `richtext.ts`, with tests in
+`tests/markdown.test.ts`.
 
 **What:** per-note "Copy as Markdown", and a bulk Markdown export beside the
 existing JSON backup.
@@ -220,6 +234,13 @@ import path is already validated and tested — this is mostly a parser.
 and malformed input is reported rather than half-imported.
 
 ### 1.7 — Localisation
+
+**Status: UI shipped** (24 Sep 2026); **store listing not done**. `chrome.i18n`
+drives every string, including the manifest name, description and context
+menus, in `src/public/_locales/` for en, hi, es, pt_BR, de, fr, id and ja. The
+translations are machine drafts, **not reviewed by native speakers**, and need
+checking before launch. The Web Store listing itself (0.2) still needs writing
+and translating; that is where the ranking benefit comes from.
 
 **What:** translate the UI and the store listing into 5–8 languages.
 **Why:** **the cheapest ranking lever that exists.** Each translation is a separate
@@ -449,9 +470,9 @@ If you do nothing else, do these six, in this order:
 - [ ] **0.1** Pick and clear the name
 - [ ] **0.2** Rewrite the listing for keyword relevance
 - [ ] **0.4** Onboarding walkthrough
-- [ ] **1.7** Localisation (5–8 languages)
-- [ ] **1.2** Markdown export
-- [ ] **1.1** One optional tag
+- [x] **1.7** Localisation (5–8 languages) — UI done; translations need native review, listing still to do
+- [x] **1.2** Markdown export
+- [x] **1.1** One optional tag
 
 Then measure first-week uninstalls and notes-per-user before choosing anything
 from Phase 2.
