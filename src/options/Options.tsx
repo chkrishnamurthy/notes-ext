@@ -11,10 +11,11 @@ import {
   type ParsedBackup,
 } from '../lib/backup';
 import { isActive, isTrashed } from '../lib/notes';
-import { DEFAULT_SETTINGS, type Settings, type ThemePreference } from '../lib/schema';
+import { DEFAULT_SETTINGS, type Settings } from '../lib/schema';
 import { chromeLocalArea, NoteStore, QUOTA_BYTES } from '../lib/storage';
 import { applyTheme } from '../lib/theme';
 import { formatBytes } from '../lib/time';
+import { Appearance } from './Appearance';
 
 const store = new NoteStore(chromeLocalArea());
 
@@ -45,7 +46,7 @@ export function Options() {
       trashed: notes.filter(isTrashed).length,
     });
     setSettings(loadedSettings);
-    applyTheme(loadedSettings.theme);
+    applyTheme(loadedSettings);
     setUsage({ bytes: bytes.bytes, ratio: bytes.ratio });
   }, []);
 
@@ -57,7 +58,7 @@ export function Options() {
     const result = await store.setSettings(next);
     if (result.ok) {
       setSettings(result.value);
-      applyTheme(result.value.theme);
+      applyTheme(result.value);
       setMessage('Settings saved on this device.');
     } else {
       setMessage(`Could not save settings — ${result.message}`);
@@ -205,6 +206,10 @@ export function Options() {
         </div>
       </Section>
 
+      <Section title="Appearance">
+        <Appearance settings={settings} onChange={(next) => void saveSettings(next)} />
+      </Section>
+
       <Section title="Backup">
         <p>
           An export is a plain JSON file containing every note, including Trash. Import it here to
@@ -336,29 +341,6 @@ export function Options() {
             ) : null}
           </span>
         </label>
-      </Section>
-
-      <Section title="Appearance">
-        <div className="flex items-center gap-2">
-          <label htmlFor="theme" className="text-sm">
-            Theme
-          </label>
-          <select
-            id="theme"
-            className="fn-btn"
-            value={settings.theme}
-            onChange={(event) =>
-              void saveSettings({
-                ...settings,
-                theme: event.target.value as ThemePreference,
-              })
-            }
-          >
-            <option value="system">Match the system</option>
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-          </select>
-        </div>
       </Section>
 
       <Section title="Keyboard">

@@ -212,24 +212,28 @@ export function NoteEditor({
         </div>
       ) : null}
 
-      {/* Actions sit below the writing surface, outside it. */}
-      <div className="flex items-center justify-between gap-2 px-4 py-2.5">
-        <p id="fn-draft-status" className="min-w-0 flex-1 truncate text-[11px] text-muted">
+      {/* Actions sit below the writing surface, outside it. Three columns so
+          the list toggle stays centred on the panel whatever the status text
+          and buttons on either side of it measure. */}
+      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 px-4 py-2.5">
+        <p id="fn-draft-status" className="min-w-0 truncate text-[11px] text-muted">
           {status}
         </p>
-        <div className="flex shrink-0 items-center gap-1.5">
-          {onToggleList ? (
-            <button
-              type="button"
-              className="fn-tool"
-              aria-label={listCollapsed ? 'Show notes list' : 'Expand writing area'}
-              aria-expanded={!listCollapsed}
-              title={listCollapsed ? 'Show notes list' : 'Expand writing area (hides the notes list)'}
-              onClick={onToggleList}
-            >
-              {listCollapsed ? <Minimize2 aria-hidden="true" /> : <Maximize2 aria-hidden="true" />}
-            </button>
-          ) : null}
+        {onToggleList ? (
+          <button
+            type="button"
+            className="fn-tool"
+            aria-label={listCollapsed ? 'Show notes list' : 'Expand writing area'}
+            aria-expanded={!listCollapsed}
+            title={listCollapsed ? 'Show notes list' : 'Expand writing area (hides the notes list)'}
+            onClick={onToggleList}
+          >
+            {listCollapsed ? <Minimize2 aria-hidden="true" /> : <Maximize2 aria-hidden="true" />}
+          </button>
+        ) : (
+          <span />
+        )}
+        <div className="flex items-center justify-end gap-1.5">
           {editing ? (
             <button type="button" className="fn-btn fn-btn-small" onClick={onCancelEdit}>
               Cancel

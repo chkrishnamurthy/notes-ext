@@ -12,6 +12,11 @@ import '../styles.css';
 import { trapFocus } from '../lib/focusTrap';
 import { OVERLAY_OPENED, framedOverlayHost } from '../lib/host';
 import { App } from '../sidepanel/App';
+import { applyCachedTheme } from '../lib/theme';
+
+// Before the first render, so the page opens in the user's palette rather
+// than flashing the default one while settings load.
+applyCachedTheme();
 
 const container = document.getElementById('root');
 if (container) {

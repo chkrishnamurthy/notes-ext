@@ -146,20 +146,81 @@ check('the retention window is saved', await s.evalJson(`
   return settings?.trashRetentionDays === 7;
 `));
 
-await s.evalJson(`
-  const select = document.querySelector('#theme');
-  const setter = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value').set;
-  setter.call(select, 'light');
-  select.dispatchEvent(new Event('change', { bubbles: true }));
+const radio = (group, value) => `
+  document.querySelector('[role=radiogroup][aria-label="${group}"] [data-value="${value}"], [role=radiogroup][aria-label="${group}"] [data-palette="${value}"]').click();
   await new Promise((r) => setTimeout(r, 400));
   return true;
-`);
+`;
+const stored = () => s.evalJson(`return (await chrome.storage.local.get('settings')).settings;`);
+
+console.log('\n# Appearance');
+check('the mode defaults to following the system', (await stored())?.theme === 'system' ||
+  (await stored())?.theme === undefined);
+await s.evalJson(radio('Mode', 'light'));
 check('choosing light theme applies immediately', await s.evalJson(`
   return document.documentElement.getAttribute('data-theme') === 'light';
 `));
 check('the light theme actually repaints', await s.evalJson(`
   return getComputedStyle(document.body).backgroundColor === 'rgb(255, 255, 255)';
 `), await s.evalJson('return getComputedStyle(document.body).backgroundColor;'));
+check('pinning light hides the dark palette picker', await s.evalJson(`
+  return !document.querySelector('[role=radiogroup][aria-label="Dark theme"]') &&
+    !!document.querySelector('[role=radiogroup][aria-label="Light theme"]');
+`));
+
+await s.evalJson(radio('Light theme', 'paper'));
+check('choosing a palette repaints the page', await s.evalJson(`
+  return getComputedStyle(document.body).backgroundColor === 'rgb(255, 253, 248)';
+`), await s.evalJson('return getComputedStyle(document.body).backgroundColor;'));
+check('the palette is saved', (await stored())?.lightPalette === 'paper');
+
+await s.evalJson(radio('Mode', 'system'));
+await s.evalJson(radio('Dark theme', 'slate'));
+check('system mode offers a palette for each mode', (await stored())?.darkPalette === 'slate' &&
+  (await stored())?.theme === 'system');
+check('the preview shows the dark palette just chosen', await s.evalJson(`
+  const p = document.querySelector('[data-preview-mode]');
+  return p.dataset.previewMode === 'dark' && getComputedStyle(p).backgroundColor === 'rgb(26, 32, 41)';
+`));
+
+// Pinned light, so the check below does not depend on the machine's theme.
+await s.evalJson(radio('Mode', 'light'));
+// The native picker cannot be driven, so set its value the way it would.
+await s.evalJson(`
+  const input = document.querySelector('#accent-custom');
+  const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set;
+  setter.call(input, '#ffe45c');
+  input.dispatchEvent(new Event('input', { bubbles: true }));
+  await new Promise((r) => setTimeout(r, 800));
+  return true;
+`);
+check('a custom accent is saved as picked', (await stored())?.accent === '#ffe45c');
+const accentOnPage = await s.evalJson(`
+  return getComputedStyle(document.documentElement).getPropertyValue('--fn-accent').trim();
+`);
+check('a pale custom accent is darkened to stay readable in light mode',
+  accentOnPage !== '#ffe45c' && accentOnPage.startsWith('#'), accentOnPage);
+
+await s.evalJson(radio('Note font', 'serif'));
+await s.evalJson(radio('Text size', 'large'));
+check('typography is saved', (await stored())?.editorFont === 'serif' && (await stored())?.textSize === 'large');
+check('typography reaches the page', await s.evalJson(`
+  const cs = getComputedStyle(document.documentElement);
+  return cs.getPropertyValue('--fn-text').trim() === '17px' &&
+    cs.getPropertyValue('--fn-note-font').includes('Georgia');
+`));
+await shot(s, `${OUT}/08b-options-appearance.png`, true);
+
+await s.evalJson(`
+  [...document.querySelectorAll('button')].find((b) => b.textContent === 'Reset appearance').click();
+  await new Promise((r) => setTimeout(r, 400));
+  return true;
+`);
+const reset = await stored();
+check('reset returns to System, Sage and no accent',
+  reset?.theme === 'system' && reset?.lightPalette === 'sage' && reset?.darkPalette === 'sage' &&
+  reset?.accent === null && reset?.textSize === 'medium', JSON.stringify(reset));
+await s.evalJson(radio('Mode', 'light'));
 await shot(s, `${OUT}/08-options-light.png`, true);
 
 console.log('\n# Console');

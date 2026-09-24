@@ -14,7 +14,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { Session, targets, waitFor } from '../cdp.mjs';
-import { ID, OPTIONS, check, clickReal, inShell, openPage, report, settle, shot } from '../driver.mjs';
+import { ID, OPTIONS, check, clickReal, inShell, openPage, report, settle, shot, workerTarget } from '../driver.mjs';
 
 const OUT = process.env.FORNOW_SHOTS ?? '.';
 const PORT = process.env.FORNOW_CDP_PORT ?? 9222;
@@ -50,10 +50,7 @@ check('the button ships as its own bundle', (() => {
 
 // --- Off by default -------------------------------------------------------
 console.log('\n# Off by default');
-const swTarget = await waitFor(
-  async () => (await targets(PORT)).find((t) => t.type === 'service_worker' && t.url.includes(ID)),
-  { label: 'the service worker' },
-);
+const swTarget = await workerTarget();
 const sw = await Session.open(swTarget.webSocketDebuggerUrl);
 await sw.send('Runtime.enable');
 

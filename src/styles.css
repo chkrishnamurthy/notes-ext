@@ -15,6 +15,10 @@
 
    `data-theme` on <html> overrides the system preference; absent, the system
    preference wins.
+
+   These values are Sage, the default palette, and are only the first paint.
+   The palette the user picked (src/lib/palettes.ts) is written over them as
+   inline custom properties by applyTheme() in src/lib/theme.ts.
 --------------------------------------------------------------------------- */
 
 :root,
@@ -22,7 +26,7 @@
   --fn-bg: #fbfaf7;
   --fn-paper: #ffffff;
   --fn-ink: #202d27;
-  --fn-muted: #657168;
+  --fn-muted: #5f6b62;
   --fn-line: #dce1da;
   --fn-soft: #edf1eb;
   --fn-accent: #315e49;
@@ -137,7 +141,8 @@
     margin: 0;
     color: var(--fn-ink);
     font-family: var(--font-sans);
-    font-size: 15px;
+    /* Set from the text-size setting; see src/lib/theme.ts. */
+    font-size: var(--fn-text, 15px);
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
   }
@@ -386,7 +391,10 @@
 --------------------------------------------------------------------------- */
 
 .fn-prose {
-  font-size: 15px;
+  font-size: var(--fn-text, 15px);
+  /* The note typeface setting applies to note text only; the panel's own
+     controls stay in the interface face. */
+  font-family: var(--fn-note-font, inherit);
   line-height: 1.6;
   outline: none;
 }

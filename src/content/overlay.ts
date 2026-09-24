@@ -119,13 +119,14 @@ function announce(open: boolean): void {
 }
 
 /**
- * The frame's border and background follow the theme setting. The panel inside
- * applies it to its own document; this applies it to the shell around it.
+ * The frame's border and background follow the appearance settings. The panel
+ * inside applies them to its own document; this applies them to the shell
+ * around it, so the frame and the genie's slices match the palette.
  */
 async function syncTheme(host: HTMLElement): Promise<void> {
   try {
     const record = await chrome.storage.local.get(SETTINGS_KEY);
-    applyTheme(parseSettings(record[SETTINGS_KEY]).theme, host);
+    applyTheme(parseSettings(record[SETTINGS_KEY]), host);
   } catch {
     // The system theme is a fine fallback for a border colour.
   }

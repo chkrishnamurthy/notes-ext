@@ -6,7 +6,7 @@
  * still a working notes panel.
  */
 import { Session, targets, waitFor } from '../cdp.mjs';
-import { ID, check, inShell, overlayPanel, report, settle, shot } from '../driver.mjs';
+import { ID, check, inShell, overlayPanel, report, settle, shot, workerTarget } from '../driver.mjs';
 
 const OUT = process.env.FORNOW_SHOTS ?? '.';
 const PORT = process.env.FORNOW_CDP_PORT ?? 9222;
@@ -51,10 +51,7 @@ await s.evalJson(`
 await settle(s, 300);
 
 // Drive the same path the toolbar click takes.
-const swTarget = await waitFor(
-  async () => (await targets(PORT)).find((t) => t.type === 'service_worker' && t.url.includes(ID)),
-  { label: 'the service worker' },
-);
+const swTarget = await workerTarget();
 const sw = await Session.open(swTarget.webSocketDebuggerUrl);
 await sw.send('Runtime.enable');
 
@@ -205,6 +202,11 @@ await panel.evalJson(`document.querySelector('[aria-label="Expand writing area"]
 await settle(s, 200);
 const collapsed = await layout();
 check('collapsing hides the notes list', expanded.list && !collapsed.list);
+const centring = await panel.evalJson(`
+  const t = document.querySelector('[aria-expanded][aria-label="Show notes list"]').getBoundingClientRect();
+  return Math.round(Math.abs((t.left + t.right) / 2 - document.documentElement.clientWidth / 2));
+`);
+check('the toggle is centred in the panel', centring <= 4, `${centring}px off centre`);
 check('the editor takes the space the list gave up', collapsed.editorH > expanded.editorH + 150,
   `${expanded.editorH}px -> ${collapsed.editorH}px`);
 await shot(s, `${OUT}/40f-list-collapsed.png`);
@@ -215,6 +217,36 @@ check('the collapsed state is remembered', !afterReload.list);
 await panel.evalJson(`document.querySelector('[aria-label="Show notes list"]').click(); return true;`);
 await settle(s, 200);
 check('expanding brings the list back', (await layout()).list);
+
+// --- Appearance -----------------------------------------------------------
+console.log('\n# Appearance');
+const paints = async () => ({
+  shell: await inShell(s, `return getComputedStyle(this.querySelector('.fn-frame')).backgroundColor;`),
+  panel: await panel.evalJson(`return getComputedStyle(document.body).backgroundColor;`),
+  font: await panel.evalJson(`return getComputedStyle(document.querySelector('.fn-prose')).fontFamily;`),
+});
+await sw.evalJson(`
+  const { settings } = await chrome.storage.local.get('settings');
+  await chrome.storage.local.set({ settings: { ...settings, theme: 'dark', darkPalette: 'slate', editorFont: 'serif' } });
+  return true;
+`);
+await settle(s, 500);
+const slate = await paints();
+check('a palette change repaints the open panel', slate.panel === 'rgb(26, 32, 41)', slate.panel);
+check('and the shell around it', slate.shell === 'rgb(26, 32, 41)', slate.shell);
+check('the note font reaches the panel', slate.font.includes('Georgia'), slate.font);
+await shot(s, `${OUT}/40g-overlay-slate.png`);
+await sw.evalJson(`
+  const { settings } = await chrome.storage.local.get('settings');
+  await chrome.storage.local.set({ settings: { ...settings, theme: 'system', darkPalette: 'sage', editorFont: 'sans' } });
+  return true;
+`);
+await settle(s, 500);
+check('the page’s own root is still untouched by the theme', await s.evalJson(`
+  const root = document.documentElement;
+  return !root.hasAttribute('data-theme') && !root.hasAttribute('data-mode') &&
+    root.style.getPropertyValue('--fn-paper') === '';
+`));
 
 // --- What the page can reach ----------------------------------------------
 // Everything here runs in the page's main world, the way a hostile site's own

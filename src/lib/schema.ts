@@ -1,3 +1,5 @@
+import { isHexColor } from './color';
+import { DEFAULT_PALETTE, isPaletteId, type PaletteId } from './palettes';
 import { stripTagsFallback, textToHtml } from './richtext';
 
 /**
@@ -68,10 +70,31 @@ export interface Draft {
   updatedAt: number;
 }
 
+/** When to be dark. `system` follows the OS and switches with it. */
 export type ThemePreference = 'system' | 'light' | 'dark';
 
+export type EditorFont = 'sans' | 'serif' | 'mono';
+export type TextSize = 'small' | 'medium' | 'large';
+
 export interface Settings {
+  /**
+   * The mode. Kept under its original name so settings written before
+   * palettes existed still mean exactly what they meant.
+   */
   theme: ThemePreference;
+  /** The palette used whenever the panel is in light mode. */
+  lightPalette: PaletteId;
+  /** The palette used whenever the panel is in dark mode. */
+  darkPalette: PaletteId;
+  /**
+   * A colour the user picked to replace the palette's own accent, or null to
+   * keep it. Stored as picked; the readable light and dark versions are
+   * derived from it when the theme is applied.
+   */
+  accent: string | null;
+  /** Typeface for note text, in the editor and in the list. */
+  editorFont: EditorFont;
+  textSize: TextSize;
   /** Days a note stays recoverable in Trash before it is purged. */
   trashRetentionDays: number;
   /**
@@ -85,6 +108,11 @@ export interface Settings {
 
 export const DEFAULT_SETTINGS: Settings = {
   theme: 'system',
+  lightPalette: DEFAULT_PALETTE,
+  darkPalette: DEFAULT_PALETTE,
+  accent: null,
+  editorFont: 'sans',
+  textSize: 'medium',
   trashRetentionDays: 30,
   showLauncher: false,
 };
@@ -242,6 +270,15 @@ export function parseSettings(value: unknown): Settings {
       theme === 'light' || theme === 'dark' || theme === 'system'
         ? theme
         : DEFAULT_SETTINGS.theme,
+    // Unknown palettes — from a newer build, or a corrupt record — fall back
+    // to the default rather than leaving the panel without colours.
+    lightPalette: isPaletteId(value.lightPalette) ? value.lightPalette : DEFAULT_PALETTE,
+    darkPalette: isPaletteId(value.darkPalette) ? value.darkPalette : DEFAULT_PALETTE,
+    accent: isHexColor(value.accent) ? value.accent.toLowerCase() : null,
+    editorFont:
+      value.editorFont === 'serif' || value.editorFont === 'mono' ? value.editorFont : 'sans',
+    textSize:
+      value.textSize === 'small' || value.textSize === 'large' ? value.textSize : 'medium',
     // Clamped so an edited or corrupt value can never mean "purge immediately".
     trashRetentionDays: Math.min(365, Math.max(1, Math.round(days))),
     // Anything but an explicit `true` means off. A corrupt record must never

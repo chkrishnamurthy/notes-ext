@@ -325,3 +325,42 @@ export async function overlayPanel() {
   });
   return panel;
 }
+
+/**
+ * The extension's service worker target, started if Chrome has stopped it.
+ *
+ * An MV3 worker is shut down after about 30 seconds without events, so a
+ * suite that runs after a long one can find no worker at all. Any runtime
+ * message from an extension page starts it again.
+ */
+export async function workerTarget() {
+  const find = async () =>
+    (await targets()).find((t) => t.type === 'service_worker' && t.url.includes(ID));
+  if (!(await find())) {
+    // In a tab of its own, so the calling suite's page is left where it is.
+    const port = process.env.FORNOW_CDP_PORT ?? 9222;
+    const info = await (await fetch(`http://127.0.0.1:${port}/json/version`)).json();
+    const browser = await Session.open(info.webSocketDebuggerUrl);
+    const { targetId } = await browser.send('Target.createTarget', { url: OPTIONS });
+    const tab = await waitFor(async () => (await targets()).find((t) => t.id === targetId), {
+      label: 'a tab to wake the worker from',
+    });
+    const page = await Session.open(tab.webSocketDebuggerUrl);
+    await waitFor(() => page.evalJson('return typeof chrome?.runtime?.sendMessage === "function";'), {
+      label: 'the extension page',
+    });
+    await page.evalJson(`
+      // Sending is what wakes the worker; the reply does not matter, and a
+      // listener that keeps the channel open would otherwise hang here.
+      await Promise.race([
+        chrome.runtime.sendMessage({ type: 'ping' }).catch(() => undefined),
+        new Promise((r) => setTimeout(r, 500)),
+      ]);
+      return true;
+    `);
+    page.close();
+    await browser.send('Target.closeTarget', { targetId });
+    browser.close();
+  }
+  return waitFor(find, { label: 'the service worker' });
+}

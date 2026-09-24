@@ -134,7 +134,7 @@ export function App({ host }: { host: HostBridge }) {
     void (async () => {
       const loadedSettings = await store.getSettings();
       setSettings(loadedSettings);
-      applyTheme(loadedSettings.theme, host.themeRoot);
+      applyTheme(loadedSettings, host.themeRoot);
 
       const draft = await store.getDraft();
       synced.current = { html: draft.html, editingId: draft.editingId, editingRev: draft.editingRev };
@@ -206,7 +206,7 @@ export function App({ host }: { host: HostBridge }) {
       if (keys.includes('settings')) {
         void store.getSettings().then((next) => {
           setSettings(next);
-          applyTheme(next.theme, host.themeRoot);
+          applyTheme(next, host.themeRoot);
         });
       }
     };
