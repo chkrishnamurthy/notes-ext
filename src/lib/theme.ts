@@ -46,9 +46,9 @@ export const EDITOR_FONTS: Record<EditorFont, { label: string; stack: string }> 
 };
 
 export const TEXT_SIZES: Record<TextSize, { label: string; px: number }> = {
-  small: { label: 'Small', px: 14 },
-  medium: { label: 'Medium', px: 15 },
-  large: { label: 'Large', px: 17 },
+  small: { label: 'Small', px: 15 },
+  medium: { label: 'Medium', px: 17 },
+  large: { label: 'Large', px: 19 },
 };
 
 /** Where extension pages remember the last appearance, for a correct first paint. */

@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "For Now",
+  "name": "__MSG_extName__",
+  "default_locale": "en",
   "version": "0.1.0",
-  "description": "A side panel for notes you need right now. Capture without filing, find without remembering where, clear without losing anything.",
+  "description": "__MSG_extDescription__",
   "minimum_chrome_version": "141",
   "icons": {
     "16": "icons/icon-16.png",
@@ -28,7 +29,7 @@
     "default_path": "sidepanel.html"
   },
   "action": {
-    "default_title": "For Now \u2014 open notes",
+    "default_title": "__MSG_actionTitle__",
     "default_icon": {
       "16": "icons/icon-16.png",
       "32": "icons/icon-32.png"
@@ -44,7 +45,7 @@
         "default": "Alt+Shift+N",
         "mac": "Alt+Shift+N"
       },
-      "description": "Open For Now notes"
+      "description": "__MSG_commandOpen__"
     }
   },
   "incognito": "not_allowed",

@@ -7,6 +7,7 @@ import TaskItem from '@tiptap/extension-task-item';
 import { Maximize2, Minimize2 } from 'lucide-react';
 import { useCallback, useEffect, useRef } from 'react';
 
+import { t } from '../../lib/i18n';
 import { EditorToolbar } from './EditorToolbar';
 
 export type SaveState = 'idle' | 'saving' | 'saved' | 'error';
@@ -96,14 +97,14 @@ export function NoteEditor({
       TaskList,
       TaskItem.configure({ nested: true }),
       Placeholder.configure({
-        placeholder: 'Keep it here for now. Type “- ” for a list, “# ” for a heading.',
+        placeholder: t('editorPlaceholder'),
       }),
     ],
     content: value.html,
     editorProps: {
       attributes: {
         class: 'fn-prose',
-        'aria-label': 'Note body',
+        'aria-label': t('noteBody'),
         'aria-keyshortcuts': 'Control+Enter Meta+Enter',
       },
       handleKeyDown: (_view, event) => {
@@ -142,7 +143,7 @@ export function NoteEditor({
       return;
     }
     const previous = (editor.getAttributes('link').href as string | undefined) ?? 'https://';
-    const entered = window.prompt('Link address', previous);
+    const entered = window.prompt(t('linkPrompt'), previous);
     if (entered === null) return;
     const href = entered.trim();
     if (!href) {
@@ -150,7 +151,7 @@ export function NoteEditor({
       return;
     }
     if (!/^(https?:|mailto:)/i.test(href)) {
-      window.alert('Links must start with http://, https:// or mailto:.');
+      window.alert(t('linkInvalid'));
       return;
     }
     editor.chain().focus().extendMarkRange('link').setLink({ href }).run();
@@ -160,17 +161,17 @@ export function NoteEditor({
   const canCommit = !empty && saveState !== 'saving';
 
   const status = (() => {
-    if (saveState === 'saving') return 'Saving…';
-    if (saveState === 'error') return 'Not saved. Your text is still here.';
-    if (saveState === 'saved') return 'Saved on this device.';
-    if (editing) return 'The original note is kept until you save changes.';
-    if (draftSaved) return 'Draft saved on this device.';
-    return 'Notes stay until you clear them.';
+    if (saveState === 'saving') return t('statusSaving');
+    if (saveState === 'error') return t('statusError');
+    if (saveState === 'saved') return t('savedOnDevice');
+    if (editing) return t('statusEditing');
+    if (draftSaved) return t('statusDraft');
+    return t('statusIdle');
   })();
 
   return (
     <section
-      aria-label={editing ? 'Edit note' : 'New note'}
+      aria-label={editing ? t('editNote') : t('newNote')}
       className="fn-editor flex min-h-0 flex-1 flex-col overflow-hidden border-b border-line"
     >
       <EditorToolbar editor={editor} onAddLink={addLink} />
@@ -198,15 +199,15 @@ export function NoteEditor({
           <div className="mt-2 flex flex-wrap gap-1.5">
             {saveError.conflict ? (
               <button type="button" className="fn-btn fn-btn-small" onClick={onKeepBoth}>
-                Save mine as a separate note
+                {t('saveSeparate')}
               </button>
             ) : (
               <button type="button" className="fn-btn fn-btn-small" onClick={onRetry}>
-                Retry save
+                {t('retrySave')}
               </button>
             )}
             <button type="button" className="fn-btn fn-btn-small" onClick={onCopyDraft}>
-              Copy draft
+              {t('copyDraft')}
             </button>
           </div>
         </div>
@@ -223,9 +224,9 @@ export function NoteEditor({
           <button
             type="button"
             className="fn-tool"
-            aria-label={listCollapsed ? 'Show notes list' : 'Expand writing area'}
+            aria-label={listCollapsed ? t('showList') : t('expandWriting')}
             aria-expanded={!listCollapsed}
-            title={listCollapsed ? 'Show notes list' : 'Expand writing area (hides the notes list)'}
+            title={listCollapsed ? t('showList') : t('expandWritingHint')}
             onClick={onToggleList}
           >
             {listCollapsed ? <Minimize2 aria-hidden="true" /> : <Maximize2 aria-hidden="true" />}
@@ -238,7 +239,7 @@ export function NoteEditor({
               as a pair, with only the colour saying which one is primary. */}
           {editing ? (
             <button type="button" className="fn-btn" onClick={onCancelEdit}>
-              Cancel
+              {t('cancel')}
             </button>
           ) : null}
           <button
@@ -247,7 +248,7 @@ export function NoteEditor({
             disabled={!canCommit}
             onClick={onCommit}
           >
-            {saveState === 'saving' ? 'Saving…' : editing ? 'Save changes' : 'Add note'}
+            {saveState === 'saving' ? t('statusSaving') : editing ? t('saveChanges') : t('addNote')}
           </button>
         </div>
       </div>

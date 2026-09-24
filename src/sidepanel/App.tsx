@@ -18,9 +18,13 @@ import {
   restoreNote,
   saveConflictCopy,
   setPinned,
+  setTag,
   sortNotes,
+  tagsInUse,
   trashNote,
 } from '../lib/notes';
+import { plural, t } from '../lib/i18n';
+import { htmlToMarkdown } from '../lib/markdown';
 import {
   DEFAULT_SETTINGS,
   DRAFT_KEY,
@@ -28,10 +32,11 @@ import {
   isNoteKey,
   parseDraft,
   parseNote,
+  sameTag,
   type Note,
   type Settings,
 } from '../lib/schema';
-import { parseQuery } from '../lib/search';
+import { matchesNote, parseQuery } from '../lib/search';
 import { QUOTA_WARN_RATIO, type WriteResult } from '../lib/storage';
 import { applyTheme } from '../lib/theme';
 import { formatBytes } from '../lib/time';
@@ -60,9 +65,9 @@ interface EditTarget {
 /** Turn a failed write into something worth reading in the panel. */
 function explain(result: Extract<WriteResult<unknown>, { ok: false }>): string {
   if (result.reason === 'quota') {
-    return 'Not saved — this device is out of space for notes. Export a backup from Settings, then clear some notes.';
+    return t('notSavedQuota');
   }
-  return `Not saved — ${result.message}`;
+  return t('notSavedReason', result.message);
 }
 
 /** The layout choice is a per-viewer convenience, so it lives in the browser. */
@@ -103,6 +108,8 @@ export function App({ host }: { host: HostBridge }) {
   const [conflictNote, setConflictNote] = useState<Note | null>(null);
 
   const [query, setQuery] = useState('');
+  /** Set by clicking a note's tag: the list shows only notes with that tag. */
+  const [tagFilter, setTagFilter] = useState<string | null>(null);
   const [view, setView] = useState<View>('all');
   const [noteView, setNoteView] = useState<NoteView>(loadNoteView);
   const [status, setStatus] = useState('');
@@ -220,7 +227,7 @@ export function App({ host }: { host: HostBridge }) {
       if (message.type === 'capture-saved') {
         setView('all');
         setQuery('');
-        announce('Saved on this device.');
+        announce(t('savedOnDevice'));
         void refresh();
       } else if (message.type === 'capture-failed') {
         announce(message.message);
@@ -290,22 +297,14 @@ export function App({ host }: { host: HostBridge }) {
   const visible = useMemo(() => {
     const pool =
       view === 'trash' ? trashed : view === 'pinned' ? active.filter((n) => n.pinned) : active;
-    const filtered =
-      terms.length === 0
-        ? pool
-        : pool.filter((note) => {
-            const haystack = [
-              note.text,
-              note.sourceTitle ?? '',
-              note.sourceUrl ?? '',
-              note.targetUrl ?? '',
-            ]
-              .join('\n')
-              .toLowerCase();
-            return terms.every((term) => haystack.includes(term));
-          });
+    const filtered = pool.filter(
+      (note) =>
+        (tagFilter === null || sameTag(note.tag, tagFilter)) && matchesNote(note, terms),
+    );
     return sortNotes(filtered);
-  }, [view, terms, active, trashed]);
+  }, [view, terms, tagFilter, active, trashed]);
+
+  const tags = useMemo(() => tagsInUse(active), [active]);
 
   const clearable = useMemo(() => clearableNotes(active), [active]);
   const searching = terms.length > 0;
@@ -351,13 +350,13 @@ export function App({ host }: { host: HostBridge }) {
       resetComposer();
       setSaveState('saved');
       setView('all');
-      announce(editTarget ? 'Changes saved on this device.' : 'Saved on this device.');
+      announce(editTarget ? t('changesSaved') : t('savedOnDevice'));
     } else if (result.reason === 'conflict') {
       setSaveState('error');
       setConflictNote(result.conflict ?? null);
       setSaveError({
         // The store says which: the text changed, or the note went to Trash.
-        message: `${result.message} Your text is still here.`,
+        message: t('conflictKeepText', result.message),
         conflict: true,
       });
     } else {
@@ -374,7 +373,7 @@ export function App({ host }: { host: HostBridge }) {
     if (result.ok) {
       resetComposer();
       setSaveState('saved');
-      announce('Kept as a separate note. Both versions are in your notes.');
+      announce(t('keptSeparate'));
     } else {
       setSaveState('error');
       setSaveError({ message: explain(result) });
@@ -393,7 +392,24 @@ export function App({ host }: { host: HostBridge }) {
 
   async function copyNote(note: Note) {
     const copied = await copyText(note.text);
-    announce(copied ? 'Copied to the clipboard.' : 'Could not copy. Select the text instead.');
+    announce(copied ? t('copied') : t('copyFailed'));
+  }
+
+  async function copyMarkdown(note: Note) {
+    const copied = await copyText(htmlToMarkdown(note.html));
+    announce(copied ? t('copiedMarkdown') : t('copyFailed'));
+  }
+
+  async function changeTag(note: Note, tag: string | undefined) {
+    const result = await setTag(store, note.id, tag);
+    announce(
+      result.ok
+        ? result.value.tag
+          ? t('tagged', result.value.tag)
+          : t('tagRemoved')
+        : explain(result),
+    );
+    await refresh();
   }
 
   async function togglePin(note: Note) {
@@ -401,8 +417,8 @@ export function App({ host }: { host: HostBridge }) {
     announce(
       result.ok
         ? note.pinned
-          ? 'Unpinned.'
-          : 'Pinned. Bulk cleanup will skip this note.'
+          ? t('unpinned')
+          : t('pinnedSkip')
         : explain(result),
     );
     await refresh();
@@ -414,8 +430,8 @@ export function App({ host }: { host: HostBridge }) {
       announce(explain(result));
       return;
     }
-    announce(`Moved to Trash · recover for ${settings.trashRetentionDays} days`, {
-      label: 'Undo',
+    announce(t('movedToTrash', settings.trashRetentionDays), {
+      label: t('undo'),
       onClick: () => void undoTrash([note.id]),
     });
     await refresh();
@@ -423,19 +439,19 @@ export function App({ host }: { host: HostBridge }) {
 
   async function undoTrash(ids: string[]) {
     const result = await restoreMany(store, ids);
-    announce(result.ok ? 'Restored.' : explain(result));
+    announce(result.ok ? t('restored') : explain(result));
     await refresh();
   }
 
   async function restore(note: Note) {
     const result = await restoreNote(store, note.id);
-    announce(result.ok ? 'Restored to your notes.' : explain(result));
+    announce(result.ok ? t('restoredToNotes') : explain(result));
     await refresh();
   }
 
   async function removeForever(note: Note) {
     const result = await deleteForever(store, [note.id]);
-    announce(result.ok ? 'Deleted. That one cannot be recovered.' : explain(result));
+    announce(result.ok ? t('deletedForever') : explain(result));
     await refresh();
   }
 
@@ -448,15 +464,15 @@ export function App({ host }: { host: HostBridge }) {
     }
     const ids = result.value;
     announce(
-      `${ids.length} ${ids.length === 1 ? 'note' : 'notes'} moved to Trash · recover for ${settings.trashRetentionDays} days`,
-      { label: 'Undo', onClick: () => void undoTrash(ids) },
+      plural(ids.length, 'movedManyOne', 'movedManyOther', settings.trashRetentionDays),
+      { label: t('undo'), onClick: () => void undoTrash(ids) },
     );
     await refresh();
   }
 
   function openSource(url: string) {
     void host.openTab(url).then((ok) => {
-      if (!ok) announce('Could not open that page.');
+      if (!ok) announce(t('openPageFailed'));
     });
   }
 
@@ -514,9 +530,11 @@ export function App({ host }: { host: HostBridge }) {
         setConfirmClear(false);
       } else if (editTarget) {
         resetComposer();
-        announce('Edit cancelled. The original note is unchanged.');
+        announce(t('editCancelled'));
       } else if (query) {
         setQuery('');
+      } else if (tagFilter) {
+        setTagFilter(null);
       } else if (status) {
         announce('');
       } else {
@@ -525,32 +543,33 @@ export function App({ host }: { host: HostBridge }) {
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [saveError, confirmClear, editTarget, query, status, host, listCollapsed]);
+  }, [saveError, confirmClear, editTarget, query, tagFilter, status, host, listCollapsed]);
 
   // ---------------------------------------------------------------------
   // Render
   // ---------------------------------------------------------------------
 
-  const emptyKind: EmptyKind = searching ? 'search' : view;
+  const filtering = searching || tagFilter !== null;
+  const emptyKind: EmptyKind = filtering ? 'search' : view;
   const nearQuota = usageRatio >= QUOTA_WARN_RATIO;
 
   return (
     <div className="flex h-full min-h-0 flex-col bg-paper text-ink">
       {/* One compact row. Everything else in the panel is content. */}
-      <header className="flex shrink-0 items-center justify-between gap-2 px-3 py-1.5">
-        <span className="flex items-center gap-1.5 text-sm font-semibold tracking-tight">
-          <NotebookPen size={15} aria-hidden="true" className="text-accent" />
-          For Now
+      <header className="flex shrink-0 items-center justify-between gap-2 px-3 py-2">
+        <span className="flex items-center gap-2 text-base font-semibold tracking-tight">
+          <NotebookPen size={19} aria-hidden="true" className="text-accent" />
+          {t('extName')}
         </span>
-        <div className="flex gap-px">
+        <div className="flex gap-0.5">
           <button
             type="button"
-            className="fn-tool"
-            aria-label="Settings and backup"
-            title="Settings and backup"
+            className="fn-tool fn-tool-header"
+            aria-label={t('settingsAndBackup')}
+            title={t('settingsAndBackup')}
             onClick={() =>
               void host.openOptions().then((ok) => {
-                if (!ok) announce('Could not open settings. Try the extension menu in Chrome.');
+                if (!ok) announce(t('settingsOpenFailed'));
               })
             }
           >
@@ -558,9 +577,9 @@ export function App({ host }: { host: HostBridge }) {
           </button>
           <button
             type="button"
-            className="fn-tool"
-            aria-label="Close notes"
-            title="Close notes"
+            className="fn-tool fn-tool-header"
+            aria-label={t('closeNotes')}
+            title={t('closeNotes')}
             onClick={() => host.requestClose()}
           >
             <X size={15} aria-hidden="true" />
@@ -570,8 +589,7 @@ export function App({ host }: { host: HostBridge }) {
 
       {nearQuota ? (
         <div role="alert" className="mx-3 mb-2 rounded-md bg-warning-bg p-2 text-xs text-warning">
-          Notes are using {formatBytes(usageBytes)} of the 10 MB this device allows. Export a
-          backup and clear what you no longer need.
+          {t('nearQuota', formatBytes(usageBytes))}
         </div>
       ) : null}
 
@@ -597,12 +615,12 @@ export function App({ host }: { host: HostBridge }) {
           onCommit={() => void commit()}
           onCancelEdit={() => {
             resetComposer();
-            announce('Edit cancelled. The original note is unchanged.');
+            announce(t('editCancelled'));
           }}
           onRetry={() => void commit()}
           onCopyDraft={() =>
             void copyText(value.text).then((ok) =>
-              announce(ok ? 'Draft copied to the clipboard.' : 'Could not copy the draft.'),
+              announce(ok ? t('draftCopied') : t('draftCopyFailed')),
             )
           }
           onKeepBoth={() => void keepBoth()}
@@ -627,14 +645,33 @@ export function App({ host }: { host: HostBridge }) {
             onChangeNoteView={changeNoteView}
           />
 
+          {tagFilter ? (
+            <div className="flex items-center gap-1.5 border-b border-line px-3 py-1 text-xs text-muted">
+              <span className="font-medium text-accent">{t('taggedFilter', `#${tagFilter}`)}</span>
+              <button
+                type="button"
+                className="fn-tool"
+                aria-label={t('stopTagFilter', tagFilter)}
+                title={t('showAllTags')}
+                onClick={() => setTagFilter(null)}
+              >
+                <X size={13} aria-hidden="true" />
+              </button>
+            </div>
+          ) : null}
+
           <div className="min-h-[8rem] flex-[2] overflow-y-auto">
             {notes === null ? (
-              <p className="px-4 py-8 text-center text-xs text-muted">Loading your notes…</p>
+              <p className="px-4 py-8 text-center text-xs text-muted">{t('loadingNotes')}</p>
             ) : visible.length === 0 ? (
               <EmptyState
                 kind={emptyKind}
                 action={
-                  searching ? { label: 'Clear search', onClick: () => changeQuery('') } : undefined
+                  searching
+                    ? { label: t('clearSearch'), onClick: () => changeQuery('') }
+                    : tagFilter
+                      ? { label: t('showAllTags'), onClick: () => setTagFilter(null) }
+                      : undefined
                 }
               />
             ) : (
@@ -644,9 +681,16 @@ export function App({ host }: { host: HostBridge }) {
                 view={noteView}
                 inTrash={view === 'trash'}
                 retentionDays={settings.trashRetentionDays}
+                tags={tags}
                 actions={{
                   onEdit: beginEdit,
                   onCopy: (note) => void copyNote(note),
+                  onCopyMarkdown: (note) => void copyMarkdown(note),
+                  onSetTag: (note, tag) => void changeTag(note, tag),
+                  onFilterTag: (tag) => {
+                    setTagFilter(tag);
+                    announce('');
+                  },
                   onTogglePin: (note) => void togglePin(note),
                   onTrash: (note) => void moveToTrash(note),
                   onRestore: (note) => void restore(note),
@@ -662,8 +706,7 @@ export function App({ host }: { host: HostBridge }) {
       {confirmClear ? (
         <div className="mx-3 mb-2 rounded-md bg-soft p-2.5 text-xs">
           <p className="mb-2">
-            Move {clearable.length} unpinned {clearable.length === 1 ? 'note' : 'notes'} to Trash?
-            Pinned notes stay. You can undo this.
+            {plural(clearable.length, 'confirmClearOne', 'confirmClearOther')}
           </p>
           <div className="flex gap-1.5">
             <button
@@ -671,14 +714,14 @@ export function App({ host }: { host: HostBridge }) {
               className="fn-btn fn-btn-primary fn-btn-small"
               onClick={() => void doClearUnpinned()}
             >
-              Move to Trash
+              {t('moveToTrash')}
             </button>
             <button
               type="button"
               className="fn-btn fn-btn-small"
               onClick={() => setConfirmClear(false)}
             >
-              Cancel
+              {t('cancel')}
             </button>
           </div>
         </div>
@@ -689,8 +732,8 @@ export function App({ host }: { host: HostBridge }) {
       <footer className="flex shrink-0 items-center justify-between gap-1.5 border-t border-line px-3 py-1.5 text-[11px] text-muted">
         <span>
           {view === 'trash'
-            ? `${counts.trash} in Trash`
-            : `${counts.all} ${counts.all === 1 ? 'note' : 'notes'} · on this device`}
+            ? t('inTrashCount', counts.trash)
+            : plural(counts.all, 'notesOnDeviceOne', 'notesOnDeviceOther')}
         </span>
         {view !== 'trash' && !searching && clearable.length > 0 ? (
           <button
@@ -698,7 +741,7 @@ export function App({ host }: { host: HostBridge }) {
             className="fn-btn fn-btn-quiet fn-btn-small"
             onClick={() => setConfirmClear(true)}
           >
-            Clear unpinned…
+            {t('clearUnpinned')}
           </button>
         ) : null}
       </footer>

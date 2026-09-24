@@ -1,6 +1,7 @@
 import { Bold, Check, Italic, Link2, List, Maximize2, NotebookPen, Undo2 } from 'lucide-react';
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 
+import { t, tParts, type MessageKey } from '../lib/i18n';
 import { ACCENT_PRESETS, PALETTES, type Palette, type PaletteId } from '../lib/palettes';
 import type { EditorFont, Settings, TextSize, ThemePreference } from '../lib/schema';
 import {
@@ -19,11 +20,51 @@ const ACCENT_SAVE_DELAY_MS = 300;
 /** What the custom picker starts on before anything has been chosen. */
 const CUSTOM_START = '#e0457b';
 
-const MODES: { id: ThemePreference; label: string }[] = [
-  { id: 'system', label: 'System' },
-  { id: 'light', label: 'Light' },
-  { id: 'dark', label: 'Dark' },
-];
+const MODE_LABELS: Record<ThemePreference, MessageKey> = {
+  system: 'modeSystem',
+  light: 'modeLight',
+  dark: 'modeDark',
+};
+
+const FONT_LABELS: Record<EditorFont, MessageKey> = {
+  sans: 'fontSans',
+  serif: 'fontSerif',
+  mono: 'fontMono',
+};
+
+const SIZE_LABELS: Record<TextSize, MessageKey> = {
+  small: 'sizeSmall',
+  medium: 'sizeMedium',
+  large: 'sizeLarge',
+};
+
+/**
+ * Palette names are kept as they are — they are names, like a paint's — but
+ * what each one looks like is described in the reader's language.
+ */
+const PALETTE_DESCRIPTIONS: Record<PaletteId, MessageKey> = {
+  sage: 'paletteSage',
+  paper: 'palettePaper',
+  slate: 'paletteSlate',
+  heather: 'paletteHeather',
+  ochre: 'paletteOchre',
+  graphite: 'paletteGraphite',
+};
+
+const ACCENT_NAMES: Record<string, MessageKey> = {
+  Blue: 'colorBlue',
+  Teal: 'colorTeal',
+  Green: 'colorGreen',
+  Amber: 'colorAmber',
+  Red: 'colorRed',
+  Violet: 'colorViolet',
+  Pink: 'colorPink',
+};
+
+const MODES: ThemePreference[] = ['system', 'light', 'dark'];
+
+/** The mode as a word in the reader's language. */
+const modeName = (mode: Mode): string => t(MODE_LABELS[mode]).toLowerCase();
 
 /**
  * The Appearance section of the options page: mode, a palette for each mode,
@@ -90,21 +131,26 @@ export function Appearance({
   const darkResolved = resolveTokens(live, 'dark');
 
   const accentNote = (() => {
-    if (!live.accent) return 'Each palette uses its own accent.';
+    if (!live.accent) return t('accentOwn');
     const adjusted = lightResolved.accentAdjusted || darkResolved.accentAdjusted;
-    return adjusted
-      ? 'Adjusted slightly where needed so buttons and links stay readable in both light and dark.'
-      : 'Readable as picked in both light and dark.';
+    return adjusted ? t('accentAdjusted') : t('accentAsPicked');
   })();
 
   return (
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px] 2xl:grid-cols-[minmax(0,1fr)_380px]">
       <div className="min-w-0 space-y-5">
-        <Field label="Mode" hint={settings.theme === 'system' ? `Following your system, currently ${effective}` : `Always ${effective}`}>
+        <Field
+          label={t('mode')}
+          hint={
+            settings.theme === 'system'
+              ? t('modeFollowing', modeName(effective))
+              : t('modeAlways', modeName(effective))
+          }
+        >
           <Segmented
-            name="Mode"
+            name={t('mode')}
             value={settings.theme}
-            options={MODES}
+            options={MODES.map((id) => ({ id, label: t(MODE_LABELS[id]) }))}
             onChange={(theme) => {
               setPreviewMode(null);
               update({ theme });
@@ -113,7 +159,7 @@ export function Appearance({
         </Field>
 
         {settings.theme !== 'dark' ? (
-          <Field label="Light theme" hint="Used in light mode">
+          <Field label={t('lightTheme')} hint={t('lightThemeHint')}>
             <PaletteGrid
               mode="light"
               value={settings.lightPalette}
@@ -127,7 +173,7 @@ export function Appearance({
         ) : null}
 
         {settings.theme !== 'light' ? (
-          <Field label="Dark theme" hint="Used in dark mode">
+          <Field label={t('darkTheme')} hint={t('darkThemeHint')}>
             <PaletteGrid
               mode="dark"
               value={settings.darkPalette}
@@ -140,10 +186,10 @@ export function Appearance({
           </Field>
         ) : null}
 
-        <Field label="Accent colour" hint="Buttons, links, checkboxes and highlights">
-          <div role="radiogroup" aria-label="Accent colour" className="flex flex-wrap items-center gap-2">
+        <Field label={t('accent')} hint={t('accentHint')}>
+          <div role="radiogroup" aria-label={t('accent')} className="flex flex-wrap items-center gap-2">
             <Swatch
-              label="Palette default"
+              label={t('accentDefault')}
               checked={!live.accent}
               style={{
                 background: `conic-gradient(${lightResolved.tokens.accent} 0 50%, ${darkResolved.tokens.accent} 0 100%)`,
@@ -153,7 +199,7 @@ export function Appearance({
             {ACCENT_PRESETS.map((preset) => (
               <Swatch
                 key={preset.value}
-                label={preset.name}
+                label={ACCENT_NAMES[preset.name] ? t(ACCENT_NAMES[preset.name]) : preset.name}
                 checked={live.accent === preset.value}
                 style={{ background: preset.value }}
                 onClick={() => pickAccent(preset.value)}
@@ -172,7 +218,8 @@ export function Appearance({
                 value={custom ?? CUSTOM_START}
                 onChange={(event) => dragAccent(event.target.value)}
               />
-              Custom{custom ? <span className="font-mono text-xs">{custom}</span> : null}
+              {t('accentCustom')}
+              {custom ? <span className="font-mono text-xs">{custom}</span> : null}
             </label>
           </div>
           <p className="text-xs text-muted" aria-live="polite">
@@ -180,26 +227,26 @@ export function Appearance({
           </p>
         </Field>
 
-        <Field label="Note font" hint="The editor and your saved notes">
+        <Field label={t('noteFont')} hint={t('noteFontHint')}>
           <Segmented
-            name="Note font"
+            name={t('noteFont')}
             value={settings.editorFont}
             options={(Object.keys(EDITOR_FONTS) as EditorFont[]).map((id) => ({
               id,
-              label: EDITOR_FONTS[id].label,
+              label: t(FONT_LABELS[id]),
               style: { fontFamily: EDITOR_FONTS[id].stack },
             }))}
             onChange={(editorFont) => update({ editorFont })}
           />
         </Field>
 
-        <Field label="Text size" hint={`${TEXT_SIZES[settings.textSize].px}px`}>
+        <Field label={t('textSize')} hint={`${TEXT_SIZES[settings.textSize].px}px`}>
           <Segmented
-            name="Text size"
+            name={t('textSize')}
             value={settings.textSize}
             options={(Object.keys(TEXT_SIZES) as TextSize[]).map((id) => ({
               id,
-              label: TEXT_SIZES[id].label,
+              label: t(SIZE_LABELS[id]),
             }))}
             onChange={(textSize) => update({ textSize })}
           />
@@ -218,25 +265,25 @@ export function Appearance({
               darkPalette: 'sage',
               accent: null,
               editorFont: 'sans',
-              textSize: 'medium',
+              textSize: 'large',
             });
           }}
         >
-          Reset appearance
+          {t('resetAppearance')}
         </button>
       </div>
 
       <div className="min-w-0 space-y-2 lg:sticky lg:top-24 lg:self-start">
         <div className="flex items-center justify-between gap-2">
-          <span className="text-sm font-medium text-ink">Preview</span>
+          <span className="text-sm font-medium text-ink">{t('preview')}</span>
           {settings.theme === 'system' ? (
             <Segmented
-              name="Preview mode"
+              name={t('previewMode')}
               small
               value={shown}
               options={[
-                { id: 'light', label: 'Light' },
-                { id: 'dark', label: 'Dark' },
+                { id: 'light', label: t('modeLight') },
+                { id: 'dark', label: t('modeDark') },
               ]}
               onChange={setPreviewMode}
             />
@@ -244,7 +291,8 @@ export function Appearance({
         </div>
         <PanelPreview settings={live} mode={shown} />
         <p className="text-xs text-muted">
-          {paletteName(shown === 'dark' ? settings.darkPalette : settings.lightPalette)} · {shown}
+          {paletteName(shown === 'dark' ? settings.darkPalette : settings.lightPalette)} ·{' '}
+          {modeName(shown)}
         </p>
       </div>
     </div>
@@ -323,7 +371,7 @@ function PaletteGrid({
   return (
     <div
       role="radiogroup"
-      aria-label={mode === 'light' ? 'Light theme' : 'Dark theme'}
+      aria-label={mode === 'light' ? t('lightTheme') : t('darkTheme')}
       className="grid grid-cols-[repeat(auto-fill,minmax(128px,1fr))] gap-2.5"
     >
       {PALETTES.map((palette) => (
@@ -354,7 +402,7 @@ function PaletteCard({
   onClick: () => void;
 }) {
   // The thumbnail shows the palette as it would look with the chosen accent.
-  const t = resolveTokens(
+  const tokens = resolveTokens(
     { ...settings, lightPalette: palette.id, darkPalette: palette.id },
     mode,
   ).tokens;
@@ -364,7 +412,7 @@ function PaletteCard({
       role="radio"
       aria-checked={checked}
       data-palette={palette.id}
-      title={palette.description}
+      title={t(PALETTE_DESCRIPTIONS[palette.id])}
       onClick={onClick}
       className={`grid gap-1.5 rounded-lg border bg-paper p-1.5 text-left ${
         checked ? 'border-accent ring-1 ring-accent' : 'border-line hover:border-muted'
@@ -373,21 +421,21 @@ function PaletteCard({
       <span
         aria-hidden="true"
         className="grid h-16 grid-rows-[12px_1fr_14px] overflow-hidden rounded-md border"
-        style={{ background: t.paper, borderColor: t.line }}
+        style={{ background: tokens.paper, borderColor: tokens.line }}
       >
-        <span className="flex items-center px-1.5" style={{ borderBottom: `1px solid ${t.line}` }}>
-          <span className="h-[3px] w-4 rounded-sm" style={{ background: t.ink }} />
+        <span className="flex items-center px-1.5" style={{ borderBottom: `1px solid ${tokens.line}` }}>
+          <span className="h-[3px] w-4 rounded-sm" style={{ background: tokens.ink }} />
         </span>
         <span className="grid content-start gap-1 px-1.5 py-1">
-          <span className="h-[3px] w-4/5 rounded-sm" style={{ background: t.ink }} />
-          <span className="h-[3px] w-3/5 rounded-sm" style={{ background: t.muted }} />
-          <span className="h-[3px] w-2/5 rounded-sm" style={{ background: t.accent }} />
+          <span className="h-[3px] w-4/5 rounded-sm" style={{ background: tokens.ink }} />
+          <span className="h-[3px] w-3/5 rounded-sm" style={{ background: tokens.muted }} />
+          <span className="h-[3px] w-2/5 rounded-sm" style={{ background: tokens.accent }} />
         </span>
         <span
           className="flex items-center justify-end px-1.5"
-          style={{ background: t.bg, borderTop: `1px solid ${t.line}` }}
+          style={{ background: tokens.bg, borderTop: `1px solid ${tokens.line}` }}
         >
-          <span className="h-[7px] w-6 rounded-sm" style={{ background: t.accent }} />
+          <span className="h-[7px] w-6 rounded-sm" style={{ background: tokens.accent }} />
         </span>
       </span>
       <span className="flex items-center justify-between px-0.5 text-xs font-medium text-ink">
@@ -446,7 +494,7 @@ function PanelPreview({ settings, mode }: { settings: Settings; mode: Mode }) {
       <div className="flex items-center justify-between px-2.5 py-1.5">
         <span className="flex items-center gap-1.5 text-[13px] font-semibold">
           <NotebookPen size={13} className="text-accent" />
-          For Now
+          {t('extName')}
         </span>
       </div>
       <div className="flex items-center gap-1 border-y border-line px-2 py-1 text-ink">
@@ -457,9 +505,13 @@ function PanelPreview({ settings, mode }: { settings: Settings; mode: Mode }) {
         ))}
       </div>
       <div className="fn-prose px-3 py-2.5">
-        <h2>Tuesday standup</h2>
+        <h2>{t('previewHeading')}</h2>
         <p>
-          Ship the <mark>overlay fix</mark>, see <a>the notes</a>.
+          {tParts(
+            'previewShip',
+            <mark key="fix">{t('previewFix')}</mark>,
+            <a key="notes">{t('previewTheNotes')}</a>,
+          )}
         </p>
         {/* Drawn rather than real checkboxes: a still has no controls. */}
         <ul data-type="taskList">
@@ -467,34 +519,37 @@ function PanelPreview({ settings, mode }: { settings: Settings; mode: Mode }) {
             <label>
               <span className="inline-block size-3 rounded-sm border border-accent bg-accent" />
             </label>
-            <div>Review theme plan</div>
+            <div>{t('previewTask1')}</div>
           </li>
           <li data-checked="false">
             <label>
               <span className="inline-block size-3 rounded-sm border border-accent" />
             </label>
-            <div>Pick a palette</div>
+            <div>{t('previewTask2')}</div>
           </li>
         </ul>
       </div>
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-1 px-2.5 pb-2">
-        <span className="truncate text-[10px] text-muted">Draft saved.</span>
+        <span className="truncate text-[10px] text-muted">{t('previewDraft')}</span>
         <Maximize2 size={13} className="text-muted" />
         <span className="justify-self-end rounded-md bg-accent px-2 py-1 text-[11px] font-semibold text-on-accent">
-          Add note
+          {t('addNote')}
         </span>
       </div>
       <div className="flex items-center gap-1 border-t border-line px-2 py-1.5 text-[11px]">
-        <span className="rounded bg-soft px-1.5 font-medium text-accent">All 3</span>
-        <span className="px-1.5">Pinned</span>
-        <span className="ml-1 flex-1 rounded border border-line bg-bg px-1.5 text-muted">Search</span>
+        <span className="rounded bg-soft px-1.5 font-medium text-accent">{t('previewAll')}</span>
+        <span className="px-1.5">{t('tabPinned')}</span>
+        <span className="ml-1 flex-1 rounded border border-line bg-bg px-1.5 text-muted">
+          {t('searchPlaceholder')}
+        </span>
       </div>
       <div className="border-t border-line bg-bg px-2.5 py-1.5">
         <p className="font-medium" style={{ fontFamily: 'var(--fn-note-font)' }}>
-          Flight check-in opens 09:40
+          {t('previewNote')}
         </p>
         <p className="text-[10px] text-muted">
-          <span className="font-semibold text-accent">Pinned</span> · Today · 08:12
+          <span className="font-semibold text-accent">{t('groupPinned')}</span> ·{' '}
+          {t('timeToday', '08:12')}
         </p>
       </div>
     </div>

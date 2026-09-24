@@ -7,6 +7,7 @@
  * silently dropped or silently written.
  */
 
+import { t } from './i18n';
 import { sanitizeHtml } from './richtext';
 import { SCHEMA_VERSION, isFromNewerVersion, parseNote, type Note } from './schema';
 import { migrateRecord } from './migrations';
@@ -72,26 +73,24 @@ export function parseBackup(raw: string, now = Date.now()): ParsedBackup {
   try {
     data = JSON.parse(raw);
   } catch {
-    return invalid('That file is not valid JSON.');
+    return invalid(t('backupNotJson'));
   }
   if (typeof data !== 'object' || data === null || Array.isArray(data)) {
-    return invalid('That file is not a For Now backup.');
+    return invalid(t('backupNotBackup'));
   }
 
   const file = data as Record<string, unknown>;
   if (file.app !== BACKUP_APP) {
-    return invalid('That file was not exported by For Now.');
+    return invalid(t('backupNotOurs'));
   }
   if (!Array.isArray(file.notes)) {
-    return invalid('That backup has no notes list.');
+    return invalid(t('backupNoNotes'));
   }
 
   const schemaVersion =
     typeof file.schemaVersion === 'number' ? file.schemaVersion : 0;
   if (schemaVersion > SCHEMA_VERSION) {
-    return invalid(
-      'That backup was made by a newer version of For Now. Update the extension, then import again.',
-    );
+    return invalid(t('backupNewer'));
   }
 
   const notes: Note[] = [];
@@ -196,7 +195,7 @@ export async function importBackup(
   mode: ImportMode,
 ): Promise<WriteResult<ImportSummary>> {
   if (!parsed.ok) {
-    return { ok: false, reason: 'unknown', message: parsed.error ?? 'Invalid backup.' };
+    return { ok: false, reason: 'unknown', message: parsed.error ?? t('backupInvalid') };
   }
 
   if (mode === 'replace') {

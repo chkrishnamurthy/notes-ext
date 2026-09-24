@@ -1,5 +1,5 @@
 /**
- * Local search across note body, source title, and URLs.
+ * Local search across note body, tag, source title, and URLs.
  *
  * Matching is AND across whitespace-separated terms, case-insensitive, and
  * substring-based rather than prefix-based — people search for a fragment they
@@ -23,7 +23,13 @@ export function parseQuery(query: string): string[] {
 
 /** Everything a query is matched against, in display order. */
 export function searchableFields(note: Note): string[] {
-  return [note.text, note.sourceTitle ?? '', note.sourceUrl ?? '', note.targetUrl ?? ''];
+  return [
+    note.text,
+    note.tag ?? '',
+    note.sourceTitle ?? '',
+    note.sourceUrl ?? '',
+    note.targetUrl ?? '',
+  ];
 }
 
 export function matchesNote(note: Note, terms: string[]): boolean {

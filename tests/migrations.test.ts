@@ -76,7 +76,7 @@ describe('record migration', () => {
     const migrated = migrateRecord({ ...v2 });
     expect(migrated.contentRev).toBe(7);
     expect(migrated.rev).toBe(7);
-    expect(migrated.schemaVersion).toBe(3);
+    expect(migrated.schemaVersion).toBe(SCHEMA_VERSION);
   });
 
   it('leaves a record from a newer build alone', () => {

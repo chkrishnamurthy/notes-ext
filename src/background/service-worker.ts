@@ -17,6 +17,7 @@ import {
 import { canInject } from '../lib/inject';
 import { broadcast, type ExtensionMessage } from '../lib/messages';
 import { createNote, purgeExpiredTrash } from '../lib/notes';
+import { t } from '../lib/i18n';
 import { runMigrations } from '../lib/migrations';
 import { sanitizeUrl } from '../lib/schema';
 import { chromeLocalArea, NoteStore } from '../lib/storage';
@@ -29,17 +30,17 @@ function registerMenus(): void {
   chrome.contextMenus.removeAll(() => {
     chrome.contextMenus.create({
       id: MENU_SELECTION,
-      title: 'Save selection to For Now',
+      title: t('menuSaveSelection'),
       contexts: ['selection'],
     });
     chrome.contextMenus.create({
       id: MENU_LINK,
-      title: 'Save link to For Now',
+      title: t('menuSaveLink'),
       contexts: ['link'],
     });
     chrome.contextMenus.create({
       id: MENU_PAGE,
-      title: 'Save this page to For Now',
+      title: t('menuSavePage'),
       contexts: ['page'],
     });
     // Reported here rather than thrown: a failed menu registration should not
@@ -340,7 +341,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
     if (!input) {
       broadcast({
         type: 'capture-failed',
-        message: 'There was nothing to save from that click.',
+        message: t('captureNothing'),
       });
       return;
     }
@@ -354,8 +355,8 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       type: 'capture-failed',
       message:
         result.reason === 'quota'
-          ? 'Not saved — this device is out of space for notes. Export a backup and clear some notes.'
-          : `Not saved — ${result.message}`,
+          ? t('notSavedQuotaShort')
+          : t('notSavedReason', result.message),
     });
   })();
 });

@@ -7,5 +7,8 @@ export default defineConfig({
     // asserted separately in tests/no-dom.test.ts.
     environment: 'jsdom',
     include: ['tests/**/*.test.ts'],
+    // An English chrome.i18n, so code that reads its strings runs as it does
+    // in the browser.
+    setupFiles: ['tests/setup.ts'],
   },
 });

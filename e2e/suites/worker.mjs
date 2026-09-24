@@ -52,7 +52,7 @@ check('the open-panel command is registered', await sw.evalJson(`
 
 check('the schema version is recorded after start-up', await sw.evalJson(`
   const { meta } = await chrome.storage.local.get('meta');
-  return meta?.schemaVersion === 3;
+  return meta?.schemaVersion === 4;
 `));
 
 check('the worker holds no durable state in globals', await sw.evalJson(`

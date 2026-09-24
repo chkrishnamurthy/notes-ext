@@ -374,7 +374,7 @@ const pageRoot = await s.evalJson('return getComputedStyle(document.documentElem
 const prose = await panel.evalJson('return getComputedStyle(document.querySelector(".fn-prose")).fontSize;');
 const stage = await inShell(s, 'return getComputedStyle(this.querySelector(".fn-stage")).fontSize;');
 check('the host page really is at 10px', pageRoot === '10px', pageRoot);
-check('the panel keeps its own type scale', prose === '15px', prose);
+check('the panel keeps its own type scale', prose === '19px', prose);
 check('the shell sets its own root size', stage === '16px', stage);
 
 // --- The genie ------------------------------------------------------------

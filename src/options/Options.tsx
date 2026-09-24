@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Check,
   Download,
+  FileText,
   HardDrive,
   Keyboard,
   MousePointerClick,
@@ -21,6 +22,8 @@ import {
   type ImportMode,
   type ParsedBackup,
 } from '../lib/backup';
+import { plural, t, tParts, type MessageKey } from '../lib/i18n';
+import { markdownFilename, notesToMarkdown } from '../lib/markdown';
 import { isActive, isTrashed } from '../lib/notes';
 import { DEFAULT_SETTINGS, type Settings } from '../lib/schema';
 import { chromeLocalArea, NoteStore, QUOTA_BYTES } from '../lib/storage';
@@ -70,9 +73,9 @@ export function Options() {
     if (result.ok) {
       setSettings(result.value);
       applyTheme(result.value);
-      setMessage('Settings saved on this device.');
+      setMessage(t('optSaved'));
     } else {
-      setMessage(`Could not save settings — ${result.message}`);
+      setMessage(t('optSaveFailed', result.message));
     }
   }
 
@@ -92,7 +95,7 @@ export function Options() {
         // longer being used for anything.
         await chrome.permissions.remove({ origins: [ALL_SITES] }).catch(() => undefined);
         setSiteAccess(false);
-        setMessage('Quick-open button turned off, and site access given back to Chrome.');
+        setMessage(t('launcherOffDone'));
       })();
       return;
     }
@@ -102,31 +105,26 @@ export function Options() {
       .then(async (granted) => {
         setSiteAccess(granted);
         if (!granted) {
-          setMessage(
-            'Site access was declined, so the button stays off. The toolbar icon and Alt+Shift+N still work.',
-          );
+          setMessage(t('launcherDeclined'));
           return;
         }
         await saveSettings({ ...settings, showLauncher: true });
         await chrome.runtime.sendMessage({ type: 'launcher-changed' }).catch(() => undefined);
-        setMessage('Quick-open button turned on. It appears at the bottom-right of every page.');
+        setMessage(t('launcherOnDone'));
       })
-      .catch(() => setMessage('Chrome refused the permission prompt. Nothing was changed.'));
+      .catch(() => setMessage(t('launcherRefused')));
   }
 
   async function exportBackup() {
     const notes = await store.listNotes();
-    const json = serializeBackup(notes);
-    // A blob URL keeps the file entirely local; nothing is uploaded anywhere.
-    const url = URL.createObjectURL(new Blob([json], { type: 'application/json' }));
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = backupFilename();
-    link.click();
-    URL.revokeObjectURL(url);
-    setMessage(
-      `Exported ${notes.length} ${notes.length === 1 ? 'note' : 'notes'}, including Trash.`,
-    );
+    download(serializeBackup(notes), 'application/json', backupFilename());
+    setMessage(plural(notes.length, 'exportedOne', 'exportedOther'));
+  }
+
+  async function exportMarkdown() {
+    const notes = (await store.listNotes()).filter(isActive);
+    download(notesToMarkdown(notes), 'text/markdown', markdownFilename());
+    setMessage(plural(notes.length, 'exportedMdOne', 'exportedMdOther'));
   }
 
   async function chooseFile(file: File) {
@@ -134,7 +132,7 @@ export function Options() {
     const parsed = parseBackup(text);
     if (!parsed.ok) {
       setPending(null);
-      setMessage(parsed.error ?? 'That backup could not be read.');
+      setMessage(parsed.error ?? t('backupUnreadable'));
       return;
     }
     // Nothing is written until the summary below is confirmed.
@@ -148,17 +146,17 @@ export function Options() {
     setPending(null);
     if (fileRef.current) fileRef.current.value = '';
     if (!result.ok) {
-      setMessage(`Import failed — ${result.message}. Nothing was changed.`);
+      setMessage(t('importFailed', result.message));
       return;
     }
     const { added, updated, unchanged, skipped, removed } = result.value;
     setMessage(
       [
-        `Imported: ${added} added`,
-        `${updated} updated`,
-        `${unchanged} already current`,
-        removed > 0 ? `${removed} replaced` : null,
-        skipped > 0 ? `${skipped} unreadable and skipped` : null,
+        t('importAdded', added),
+        t('importUpdated', updated),
+        t('importCurrent', unchanged),
+        removed > 0 ? t('importReplaced', removed) : null,
+        skipped > 0 ? t('importSkipped', skipped) : null,
       ]
         .filter(Boolean)
         .join(' · '),
@@ -185,11 +183,9 @@ export function Options() {
             </span>
             <div className="min-w-0">
               <h1 className="truncate text-lg font-semibold leading-tight tracking-tight">
-                For Now settings
+                {t('optTitle')}
               </h1>
-              <p className="truncate text-xs text-muted">
-                Appearance, backup and privacy · everything stays on this device
-              </p>
+              <p className="truncate text-xs text-muted">{t('optSubtitle')}</p>
             </div>
           </div>
           <div
@@ -211,49 +207,50 @@ export function Options() {
         <main className="min-w-0 space-y-6">
           <Card
             id="appearance"
-            title="Appearance"
-            description="Colours, mode and note text. Changes apply at once to the side panel, the in-page panel and this page."
+            title={t('secAppearance')}
+            description={t('secAppearanceDesc')}
           >
             <Appearance settings={settings} onChange={(next) => void saveSettings(next)} />
           </Card>
 
           <Card
             id="storage"
-            title="Where your notes live"
-            description="What is stored, how much room it takes, and where it sits on disk."
+            title={t('secStorage')}
+            description={t('secStorageDesc')}
           >
             <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
               <div className="max-w-[68ch] space-y-2 text-sm text-muted">
                 <p>
-                  Notes are stored on this device by <strong className="text-ink">chrome.storage.local</strong>.
-                  There is no account and nothing is uploaded. This is local storage on your computer, not
-                  an encrypted vault — anyone who can use your Chrome profile can read these notes.
+                  {tParts(
+                    'storageP1',
+                    <strong key="api" className="text-ink">
+                      chrome.storage.local
+                    </strong>,
+                  )}
                 </p>
                 <p>
-                  On disk that is your Chrome profile folder, under{' '}
-                  <code className="rounded bg-soft px-1 py-0.5 font-mono text-xs break-all">
-                    Local Extension Settings/{chrome.runtime.id}
-                  </code>
-                  , as a LevelDB database. The text is not encrypted.
+                  {tParts(
+                    'storageP2',
+                    <code key="path" className="rounded bg-soft px-1 py-0.5 font-mono text-xs break-all">
+                      Local Extension Settings/{chrome.runtime.id}
+                    </code>,
+                  )}
                 </p>
-                <p className="rounded-lg bg-warning-bg px-3 py-2 text-warning">
-                  Removing the extension deletes its local notes. Export a backup before you uninstall,
-                  reset Chrome, or move to another computer.
-                </p>
+                <p className="rounded-lg bg-warning-bg px-3 py-2 text-warning">{t('storageWarn')}</p>
               </div>
               <div className="space-y-3">
                 <dl className="grid grid-cols-3 gap-3">
-                  <Stat label="Active notes" value={String(counts.active)} />
-                  <Stat label="In Trash" value={String(counts.trashed)} />
+                  <Stat label={t('statActive')} value={String(counts.active)} />
+                  <Stat label={t('statTrash')} value={String(counts.trashed)} />
                   <Stat
-                    label="Storage used"
-                    value={`${formatBytes(usage.bytes)} of ${formatBytes(QUOTA_BYTES)}`}
+                    label={t('statUsed')}
+                    value={t('statUsedValue', formatBytes(usage.bytes), formatBytes(QUOTA_BYTES))}
                   />
                 </dl>
                 <div
                   className="h-1.5 w-full overflow-hidden rounded-full bg-soft"
                   role="img"
-                  aria-label={`Storage ${Math.round(usage.ratio * 100)} percent used`}
+                  aria-label={t('storageBar', Math.round(usage.ratio * 100))}
                 >
                   <div
                     className="h-full rounded-full bg-accent"
@@ -261,10 +258,12 @@ export function Options() {
                   />
                 </div>
                 <p className="text-xs text-muted">
-                  {usage.ratio > 0 && usage.ratio < 0.01
-                    ? 'Under 1%'
-                    : `${Math.round(usage.ratio * 100)}%`}{' '}
-                  of the space Chrome gives this extension.
+                  {t(
+                    'storageShare',
+                    usage.ratio > 0 && usage.ratio < 0.01
+                      ? t('storageUnder1')
+                      : `${Math.round(usage.ratio * 100)}%`,
+                  )}
                 </p>
               </div>
             </div>
@@ -273,24 +272,29 @@ export function Options() {
           <div className="grid gap-6 xl:grid-cols-2">
             <Card
               id="backup"
-              title="Backup"
-              description="A plain JSON file with every note, Trash included. Import it to restore, or to move to another computer."
+              title={t('secBackup')}
+              description={t('secBackupDesc')}
             >
+              <p className="-mt-2 mb-4 text-sm text-muted">{t('backupMdNote')}</p>
               <div className="flex flex-wrap gap-2">
                 <button type="button" className="fn-btn fn-btn-primary" onClick={() => void exportBackup()}>
                   <Download size={16} aria-hidden="true" />
-                  Export backup
+                  {t('exportBackup')}
                 </button>
                 <button type="button" className="fn-btn" onClick={() => fileRef.current?.click()}>
                   <Upload size={16} aria-hidden="true" />
-                  Choose a backup file…
+                  {t('chooseBackup')}
+                </button>
+                <button type="button" className="fn-btn" onClick={() => void exportMarkdown()}>
+                  <FileText size={16} aria-hidden="true" />
+                  {t('exportMarkdown')}
                 </button>
                 <input
                   ref={fileRef}
                   type="file"
                   accept="application/json,.json"
                   className="sr-only"
-                  aria-label="Backup file to import"
+                  aria-label={t('backupFileLabel')}
                   onChange={(event) => {
                     const file = event.target.files?.[0];
                     if (file) void chooseFile(file);
@@ -302,13 +306,10 @@ export function Options() {
                 <div className="mt-4 rounded-lg border border-line bg-bg p-4">
                   <p className="font-medium">{pending.filename}</p>
                   <p className="mt-1 text-sm text-muted">
-                    {pending.parsed.notes.length}{' '}
-                    {pending.parsed.notes.length === 1 ? 'note' : 'notes'} read
-                    {pending.parsed.skipped > 0
-                      ? ` · ${pending.parsed.skipped} unreadable and skipped`
-                      : ''}
+                    {plural(pending.parsed.notes.length, 'pendingReadOne', 'pendingReadOther')}
+                    {pending.parsed.skipped > 0 ? t('pendingSkipped', pending.parsed.skipped) : ''}
                     {pending.parsed.schemaVersion > 0
-                      ? ` · schema v${pending.parsed.schemaVersion}`
+                      ? t('pendingSchema', pending.parsed.schemaVersion)
                       : ''}
                   </p>
                   <div className="mt-3 flex flex-wrap gap-2">
@@ -317,18 +318,17 @@ export function Options() {
                       className="fn-btn fn-btn-primary"
                       onClick={() => void runImport('merge')}
                     >
-                      Merge into my notes
+                      {t('mergeInto')}
                     </button>
                     <button type="button" className="fn-btn" onClick={() => void runImport('replace')}>
-                      Replace everything
+                      {t('replaceAll')}
                     </button>
                     <button type="button" className="fn-btn" onClick={() => setPending(null)}>
-                      Cancel
+                      {t('cancel')}
                     </button>
                   </div>
                   <p className="mt-2 text-xs text-muted">
-                    Merge keeps whichever copy of a note was edited more recently. Replace deletes the{' '}
-                    {total} note{total === 1 ? '' : 's'} on this device first.
+                    {plural(total, 'mergeExplainOne', 'mergeExplainOther')}
                   </p>
                 </div>
               ) : null}
@@ -336,12 +336,12 @@ export function Options() {
 
             <Card
               id="trash"
-              title="Trash"
-              description="Clearing a note moves it to Trash. Pinned notes are never included in bulk cleanup."
+              title={t('secTrash')}
+              description={t('secTrashDesc')}
             >
               <div className="flex flex-wrap items-center gap-3">
                 <label htmlFor="retention" className="text-sm">
-                  Keep cleared notes for
+                  {t('keepFor')}
                 </label>
                 <select
                   id="retention"
@@ -356,34 +356,27 @@ export function Options() {
                 >
                   {RETENTION_CHOICES.map((days) => (
                     <option key={days} value={days}>
-                      {days} days
+                      {t('daysOption', days)}
                     </option>
                   ))}
                 </select>
               </div>
               <p className="mt-3 text-xs text-muted">
-                After that, notes in Trash are removed permanently.
+                {t('trashAfter')}
               </p>
             </Card>
           </div>
 
           <Card
             id="quick-open"
-            title="Quick-open button"
-            description="A small button at the bottom-right of every page, so the panel is one click away."
+            title={t('secQuickOpen')}
+            description={t('secQuickOpenDesc')}
           >
             <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
               <div className="max-w-[68ch] space-y-2 text-sm text-muted">
+                <p>{t('quickOpenP1')}</p>
                 <p>
-                  It is off by default for a reason: to draw a button on a page, the extension needs
-                  permission to run on that page, and the only way to have it everywhere is access to
-                  every site. Turning this on asks Chrome for that access. Turning it off hands the
-                  access straight back.
-                </p>
-                <p>
-                  <strong className="text-ink">This changes nothing about what is collected.</strong> The
-                  button reads no page content and sends nothing anywhere — it draws an icon and listens
-                  for a click.
+                  <strong className="text-ink">{t('quickOpenStrong')}</strong> {t('quickOpenP2')}
                 </p>
               </div>
               <label className="flex cursor-pointer items-start gap-3 self-start rounded-lg border border-line bg-bg p-4">
@@ -394,15 +387,10 @@ export function Options() {
                   onChange={(event) => toggleLauncher(event.target.checked)}
                 />
                 <span className="text-sm text-ink">
-                  <span className="font-medium">Show the quick-open button on pages</span>
-                  <span className="mt-0.5 block text-xs text-muted">
-                    The panel genies out of it, and it steps aside while the panel is open.
-                  </span>
+                  <span className="font-medium">{t('quickOpenToggle')}</span>
+                  <span className="mt-0.5 block text-xs text-muted">{t('quickOpenToggleHint')}</span>
                   {settings.showLauncher && !siteAccess ? (
-                    <span className="mt-1 block text-xs text-warning">
-                      Turned on, but site access has been revoked in Chrome, so the button is not
-                      showing. Tick this again to restore it.
-                    </span>
+                    <span className="mt-1 block text-xs text-warning">{t('quickOpenRevoked')}</span>
                   ) : null}
                 </span>
               </label>
@@ -410,11 +398,11 @@ export function Options() {
           </Card>
 
           <div className="grid gap-6 xl:grid-cols-2">
-            <Card id="keyboard" title="Keyboard" description="Shortcuts that work in the panel.">
+            <Card id="keyboard" title={t('secKeyboard')} description={t('secKeyboardDesc')}>
               <dl className="divide-y divide-line text-sm">
                 {SHORTCUTS.map(([keys, what]) => (
                   <div key={keys} className="flex items-center justify-between gap-4 py-2">
-                    <dt className="text-muted">{what}</dt>
+                    <dt className="text-muted">{t(what)}</dt>
                     <dd>
                       <kbd className="rounded-md border border-line bg-bg px-2 py-0.5 font-mono text-xs text-ink">
                         {keys}
@@ -424,7 +412,7 @@ export function Options() {
                 ))}
               </dl>
               <p className="mt-2 text-xs text-muted">
-                Chrome may already use Alt+Shift+N. Check and change it in Chrome's shortcut settings.
+                {t('keyConflict')}
               </p>
               <button
                 type="button"
@@ -432,16 +420,16 @@ export function Options() {
                 onClick={() => chrome.tabs.create({ url: 'chrome://extensions/shortcuts' })}
               >
                 <Keyboard size={16} aria-hidden="true" />
-                Open Chrome's shortcut settings
+                {t('keyOpenSettings')}
               </button>
             </Card>
 
-            <Card id="privacy" title="Privacy" description="What the extension does, and does not, do.">
+            <Card id="privacy" title={t('secPrivacy')} description={t('secPrivacyDesc')}>
               <ul className="space-y-2 text-sm text-muted">
                 {PRIVACY.map((line) => (
                   <li key={line} className="flex gap-2">
                     <Check size={16} aria-hidden="true" className="mt-0.5 shrink-0 text-accent" />
-                    <span>{line}</span>
+                    <span>{t(line)}</span>
                   </li>
                 ))}
               </ul>
@@ -453,30 +441,37 @@ export function Options() {
   );
 }
 
-const SECTIONS = [
-  { id: 'appearance', label: 'Appearance', icon: Palette },
-  { id: 'storage', label: 'Storage', icon: HardDrive },
-  { id: 'backup', label: 'Backup', icon: Download },
-  { id: 'trash', label: 'Trash', icon: Trash2 },
-  { id: 'quick-open', label: 'Quick-open button', icon: MousePointerClick },
-  { id: 'keyboard', label: 'Keyboard', icon: Keyboard },
-  { id: 'privacy', label: 'Privacy', icon: ShieldCheck },
-] as const;
+/**
+ * Save a string as a file. A blob URL keeps it entirely local; nothing is
+ * uploaded anywhere.
+ */
+function download(contents: string, type: string, filename: string) {
+  const url = URL.createObjectURL(new Blob([contents], { type }));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
+}
 
-const SHORTCUTS: [string, string][] = [
-  ['Alt+Shift+N', 'Open the panel'],
-  ['Ctrl/Cmd+K', 'Search notes'],
-  ['Ctrl/Cmd+Enter', 'Add a note or save an edit'],
-  ['Escape', 'Step back out of an edit, a search, or the panel'],
+const SECTIONS: ReadonlyArray<{ id: string; label: MessageKey; icon: typeof Palette }> = [
+  { id: 'appearance', label: 'secAppearance', icon: Palette },
+  { id: 'storage', label: 'secStorageNav', icon: HardDrive },
+  { id: 'backup', label: 'secBackup', icon: Download },
+  { id: 'trash', label: 'secTrash', icon: Trash2 },
+  { id: 'quick-open', label: 'secQuickOpen', icon: MousePointerClick },
+  { id: 'keyboard', label: 'secKeyboard', icon: Keyboard },
+  { id: 'privacy', label: 'secPrivacy', icon: ShieldCheck },
 ];
 
-const PRIVACY = [
-  'No account, no server, no analytics, and no network requests.',
-  'Only what you explicitly save is captured — never a page you merely visit.',
-  'Link previews and favicons are not fetched, so saving a link reveals nothing.',
-  'Formatted notes are stripped to a small allowlist before they are saved and again before they are shown. Scripts, styles and embeds never survive, and code blocks are shown as text, never run.',
-  'The extension is disabled in Incognito windows.',
+const SHORTCUTS: [string, MessageKey][] = [
+  ['Alt+Shift+N', 'keyOpen'],
+  ['Ctrl/Cmd+K', 'keySearch'],
+  ['Ctrl/Cmd+Enter', 'keyCommit'],
+  ['Escape', 'keyEscape'],
 ];
+
+const PRIVACY: MessageKey[] = ['privacy1', 'privacy2', 'privacy3', 'privacy4', 'privacy5'];
 
 /**
  * The section menu. It follows the scroll, so it always says where you are;
@@ -504,7 +499,7 @@ function SideNav() {
   }, []);
 
   return (
-    <nav aria-label="Settings sections" className="lg:sticky lg:top-24 lg:self-start">
+    <nav aria-label={t('settingsSections')} className="lg:sticky lg:top-24 lg:self-start">
       <ul className="flex flex-wrap gap-1 lg:flex-col">
         {SECTIONS.map(({ id, label, icon: Icon }) => (
           <li key={id}>
@@ -518,7 +513,7 @@ function SideNav() {
               }`}
             >
               <Icon size={16} aria-hidden="true" />
-              {label}
+              {t(label)}
             </a>
           </li>
         ))}

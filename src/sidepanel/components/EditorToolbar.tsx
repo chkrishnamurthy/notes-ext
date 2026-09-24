@@ -5,6 +5,8 @@ import {
 } from 'lucide-react';
 import { Fragment, type ComponentType } from 'react';
 
+import { t, type MessageKey } from '../../lib/i18n';
+
 /**
  * The formatting toolbar.
  *
@@ -16,7 +18,7 @@ import { Fragment, type ComponentType } from 'react';
 
 interface Tool {
   id: string;
-  label: string;
+  label: MessageKey;
   icon: ComponentType<{ size?: number; 'aria-hidden'?: boolean }>;
   shortcut?: string;
   run: (editor: Editor) => void;
@@ -28,7 +30,7 @@ const GROUPS: Tool[][] = [
   [
     {
       id: 'bold',
-      label: 'Bold',
+      label: 'toolBold',
       shortcut: 'Mod+B',
       icon: Bold,
       run: (e) => e.chain().focus().toggleBold().run(),
@@ -36,7 +38,7 @@ const GROUPS: Tool[][] = [
     },
     {
       id: 'italic',
-      label: 'Italic',
+      label: 'toolItalic',
       shortcut: 'Mod+I',
       icon: Italic,
       run: (e) => e.chain().focus().toggleItalic().run(),
@@ -44,7 +46,7 @@ const GROUPS: Tool[][] = [
     },
     {
       id: 'strike',
-      label: 'Strikethrough',
+      label: 'toolStrike',
       icon: Strikethrough,
       run: (e) => e.chain().focus().toggleStrike().run(),
       active: (e) => e.isActive('strike'),
@@ -53,14 +55,14 @@ const GROUPS: Tool[][] = [
   [
     {
       id: 'h1',
-      label: 'Large heading',
+      label: 'toolHeadingLarge',
       icon: Heading1,
       run: (e) => e.chain().focus().toggleHeading({ level: 1 }).run(),
       active: (e) => e.isActive('heading', { level: 1 }),
     },
     {
       id: 'h2',
-      label: 'Small heading',
+      label: 'toolHeadingSmall',
       icon: Heading2,
       run: (e) => e.chain().focus().toggleHeading({ level: 2 }).run(),
       active: (e) => e.isActive('heading', { level: 2 }),
@@ -69,21 +71,21 @@ const GROUPS: Tool[][] = [
   [
     {
       id: 'bullet',
-      label: 'Bullet list',
+      label: 'toolBulletList',
       icon: List,
       run: (e) => e.chain().focus().toggleBulletList().run(),
       active: (e) => e.isActive('bulletList'),
     },
     {
       id: 'ordered',
-      label: 'Numbered list',
+      label: 'toolNumberedList',
       icon: ListOrdered,
       run: (e) => e.chain().focus().toggleOrderedList().run(),
       active: (e) => e.isActive('orderedList'),
     },
     {
       id: 'task',
-      label: 'Checklist',
+      label: 'toolChecklist',
       icon: ListTodo,
       run: (e) => e.chain().focus().toggleTaskList().run(),
       active: (e) => e.isActive('taskList'),
@@ -92,21 +94,21 @@ const GROUPS: Tool[][] = [
   [
     {
       id: 'code',
-      label: 'Inline code',
+      label: 'toolInlineCode',
       icon: Code,
       run: (e) => e.chain().focus().toggleCode().run(),
       active: (e) => e.isActive('code'),
     },
     {
       id: 'codeBlock',
-      label: 'Code block',
+      label: 'toolCodeBlock',
       icon: CodeSquare,
       run: (e) => e.chain().focus().toggleCodeBlock().run(),
       active: (e) => e.isActive('codeBlock'),
     },
     {
       id: 'quote',
-      label: 'Quote',
+      label: 'toolQuote',
       icon: Quote,
       run: (e) => e.chain().focus().toggleBlockquote().run(),
       active: (e) => e.isActive('blockquote'),
@@ -117,14 +119,14 @@ const GROUPS: Tool[][] = [
 const UNDO: Tool[] = [
   {
     id: 'undo',
-    label: 'Undo',
+    label: 'undo',
     icon: Undo2,
     run: (e) => e.chain().focus().undo().run(),
     enabled: (e) => e.can().undo(),
   },
   {
     id: 'redo',
-    label: 'Redo',
+    label: 'toolRedo',
     icon: Redo2,
     run: (e) => e.chain().focus().redo().run(),
     enabled: (e) => e.can().redo(),
@@ -145,7 +147,7 @@ export function EditorToolbar({
   return (
     <div
       role="toolbar"
-      aria-label="Text formatting"
+      aria-label={t('textFormatting')}
       // Wraps rather than scrolls: a hidden formatting button is a button
       // nobody finds, and the panel is narrow enough for this to matter.
       className="fn-toolbar flex flex-wrap items-center border-b border-line px-1.5 py-1"
@@ -168,9 +170,9 @@ export function EditorToolbar({
       <button
         type="button"
         className="fn-tool"
-        aria-label={linkActive ? 'Remove link' : 'Add link'}
+        aria-label={linkActive ? t('removeLink') : t('addLink')}
         aria-pressed={linkActive}
-        title={linkActive ? 'Remove link' : 'Add link'}
+        title={linkActive ? t('removeLink') : t('addLink')}
         onClick={onAddLink}
       >
         {linkActive ? <Link2Off aria-hidden="true" /> : <Link2 aria-hidden="true" />}
@@ -190,9 +192,10 @@ function ToolButton({ tool, editor }: { tool: Tool; editor: Editor }) {
   const active = tool.active?.(editor) ?? false;
   const enabled = tool.enabled?.(editor) ?? true;
   const Icon = tool.icon;
+  const label = t(tool.label);
   const hint = tool.shortcut
-    ? `${tool.label} (${tool.shortcut.replace('Mod', navigator.platform.toLowerCase().includes('mac') ? '⌘' : 'Ctrl')})`
-    : tool.label;
+    ? `${label} (${tool.shortcut.replace('Mod', navigator.platform.toLowerCase().includes('mac') ? '⌘' : 'Ctrl')})`
+    : label;
 
   return (
     <button

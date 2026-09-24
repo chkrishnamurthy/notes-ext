@@ -25,6 +25,10 @@ export type MigrationStep = (record: RawRecord) => RawRecord;
  *
  * Version 2 had a single revision counter, bumped by every write — so pinning a
  * note made an open edit of it look stale.
+ *
+ * Version 3 had no tag. The step adds nothing — a missing tag means none — but
+ * the bump matters: it marks tagged records as newer, so a build from before
+ * tags leaves them alone instead of rewriting them and dropping the tag.
  */
 export const MIGRATIONS: MigrationStep[] = [
   function v0_to_v1(record) {
@@ -68,6 +72,10 @@ export const MIGRATIONS: MigrationStep[] = [
     next.contentRev = typeof next.rev === 'number' ? next.rev : 1;
     next.schemaVersion = 3;
     return next;
+  },
+
+  function v3_to_v4(record) {
+    return { ...record, schemaVersion: 4 };
   },
 ];
 

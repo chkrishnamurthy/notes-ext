@@ -1,5 +1,7 @@
 /** Relative time and grouping labels for the notes list. */
 
+import { t, type MessageKey } from './i18n';
+
 const MINUTE = 60 * 1000;
 const HOUR = 60 * MINUTE;
 
@@ -13,7 +15,17 @@ export function dayOffset(timestamp: number, now = Date.now()): number {
   return Math.round((startOfDay(now) - startOfDay(timestamp)) / (24 * HOUR));
 }
 
+/** A group id. Show it with `groupLabel`, never as it is. */
 export type NoteGroup = 'Pinned' | 'Today' | 'Yesterday' | 'Earlier';
+
+const GROUP_LABELS: Record<NoteGroup, MessageKey> = {
+  Pinned: 'groupPinned',
+  Today: 'groupToday',
+  Yesterday: 'groupYesterday',
+  Earlier: 'groupEarlier',
+};
+
+export const groupLabel = (group: NoteGroup): string => t(GROUP_LABELS[group]);
 
 export function groupFor(timestamp: number, pinned: boolean, now = Date.now()): NoteGroup {
   if (pinned) return 'Pinned';
@@ -32,11 +44,11 @@ const timeOfDay = (timestamp: number): string =>
 /** "Just now", "Today · 9:12 AM", "Yesterday · 5:30 PM", "12 Sept · 9:12 AM". */
 export function formatTimestamp(timestamp: number, now = Date.now()): string {
   const elapsed = now - timestamp;
-  if (elapsed >= 0 && elapsed < MINUTE) return 'Just now';
+  if (elapsed >= 0 && elapsed < MINUTE) return t('timeJustNow');
 
   const offset = dayOffset(timestamp, now);
-  if (offset <= 0) return `Today · ${timeOfDay(timestamp)}`;
-  if (offset === 1) return `Yesterday · ${timeOfDay(timestamp)}`;
+  if (offset <= 0) return t('timeToday', timeOfDay(timestamp));
+  if (offset === 1) return t('timeYesterday', timeOfDay(timestamp));
 
   const date = new Date(timestamp).toLocaleDateString(undefined, {
     day: 'numeric',

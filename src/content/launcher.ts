@@ -8,8 +8,9 @@
  *
  * It is deliberately its own tiny script rather than part of the panel bundle.
  * This one runs on every page the user has allowed, so it carries no framework,
- * no stylesheet and no imports beyond two numbers — the panel's several hundred
- * kilobytes are still only fetched when someone actually opens it.
+ * no stylesheet and no copy of the string catalogue — its two strings come from
+ * chrome.i18n — so the panel's several hundred kilobytes are still only fetched
+ * when someone actually opens it.
  *
  * It is registered at runtime and only after the user turns it on in Settings
  * and grants site access, which is why the extension still installs asking for
@@ -17,6 +18,7 @@
  */
 
 import { LAUNCHER_INSET, LAUNCHER_SIZE } from '../lib/corner';
+import { t } from '../lib/i18n';
 import { enterTopLayer, pin, pinShell } from '../lib/shell';
 
 const HOST_ID = 'for-now-launcher-host';
@@ -117,8 +119,8 @@ function mount(): void {
 
   const button = document.createElement('button');
   button.type = 'button';
-  button.title = 'For Now — open notes (Alt+Shift+N)';
-  button.setAttribute('aria-label', 'Open For Now notes');
+  button.title = t('launcherTitle');
+  button.setAttribute('aria-label', t('commandOpen'));
 
   const icon = document.createElement('img');
   icon.alt = '';

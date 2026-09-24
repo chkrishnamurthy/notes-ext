@@ -6,8 +6,16 @@
  * retention purge. Pinned notes are excluded from every bulk action.
  */
 
+import { t } from './i18n';
 import { textToHtml } from './richtext';
-import { newId, SCHEMA_VERSION, sanitizeUrl, type CaptureKind, type Note } from './schema';
+import {
+  newId,
+  normalizeTag,
+  SCHEMA_VERSION,
+  sanitizeUrl,
+  type CaptureKind,
+  type Note,
+} from './schema';
 import type { NoteStore, WriteResult } from './storage';
 
 /**
@@ -30,6 +38,8 @@ export interface NoteDraftInput {
   targetUrl?: string;
   sourceUrl?: string;
   sourceTitle?: string;
+  /** Only ever carried over from an existing note; capture never asks for one. */
+  tag?: string;
 }
 
 export function buildNote(input: NoteDraftInput, now = Date.now()): Note {
@@ -50,6 +60,8 @@ export function buildNote(input: NoteDraftInput, now = Date.now()): Note {
   const sourceUrl = sanitizeUrl(input.sourceUrl);
   if (sourceUrl) note.sourceUrl = sourceUrl;
   if (input.sourceTitle) note.sourceTitle = input.sourceTitle;
+  const tag = normalizeTag(input.tag);
+  if (tag) note.tag = tag;
   return note;
 }
 
@@ -70,7 +82,7 @@ export async function createNote(
 ): Promise<WriteResult<Note>> {
   const text = normalizeText(input.text);
   if (!text) {
-    return { ok: false, reason: 'unknown', message: 'A note needs some text.' };
+    return { ok: false, reason: 'unknown', message: t('noteNeedsText') };
   }
   return store.putNote(buildNote({ ...input, text }, now));
 }
@@ -113,8 +125,9 @@ export function saveConflictCopy(
         targetUrl: original.targetUrl,
         sourceUrl: original.sourceUrl,
         sourceTitle: original.sourceTitle
-          ? `Conflicting copy · ${original.sourceTitle}`
-          : 'Conflicting copy',
+          ? t('conflictCopyOf', original.sourceTitle)
+          : t('conflictCopy'),
+        tag: original.tag,
       },
       now,
     ),
@@ -128,6 +141,37 @@ export function setPinned(
   now = Date.now(),
 ): Promise<WriteResult<Note>> {
   return store.updateNote(id, (current) => ({ ...current, pinned }), undefined, now);
+}
+
+/**
+ * Set or clear a note's tag. Like pinning, it is not a change to the text, so
+ * it never makes an edit open on the same note look stale.
+ */
+export function setTag(
+  store: NoteStore,
+  id: string,
+  tag: string | undefined,
+  now = Date.now(),
+): Promise<WriteResult<Note>> {
+  const next = normalizeTag(tag);
+  return store.updateNote(
+    id,
+    (current) => {
+      const { tag: _previous, ...rest } = current;
+      return next ? { ...rest, tag: next } : rest;
+    },
+    undefined,
+    now,
+  );
+}
+
+/** Every tag in use, once each (first spelling wins), sorted for display. */
+export function tagsInUse(notes: Note[]): string[] {
+  const byKey = new Map<string, string>();
+  for (const note of notes) {
+    if (note.tag && !byKey.has(note.tag.toLowerCase())) byKey.set(note.tag.toLowerCase(), note.tag);
+  }
+  return [...byKey.values()].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
 }
 
 export function trashNote(

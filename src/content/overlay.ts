@@ -26,6 +26,7 @@
 
 import { cornerPoint } from '../lib/corner';
 import { OVERLAY_CLOSE, OVERLAY_OPENED } from '../lib/host';
+import { t } from '../lib/i18n';
 import {
   DEFAULT_OVERLAY_WIDTH,
   MAX_OVERLAY_WIDTH,
@@ -161,7 +162,7 @@ function create(): OverlayState {
 
   const iframe = document.createElement('iframe');
   iframe.className = 'fn-iframe';
-  iframe.title = 'For Now notes';
+  iframe.title = t('overlayFrameTitle');
   // Copy uses the async clipboard API, which a cross-origin frame only gets
   // when its embedder delegates it.
   iframe.allow = 'clipboard-write';
@@ -178,10 +179,10 @@ function create(): OverlayState {
   handle.tabIndex = 0;
   handle.setAttribute('role', 'separator');
   handle.setAttribute('aria-orientation', 'vertical');
-  handle.setAttribute('aria-label', 'Resize notes panel');
+  handle.setAttribute('aria-label', t('resizeLabel'));
   handle.setAttribute('aria-valuemin', String(MIN_OVERLAY_WIDTH));
   handle.setAttribute('aria-valuemax', String(MAX_OVERLAY_WIDTH));
-  handle.title = 'Drag to resize. Double-click to reset.';
+  handle.title = t('resizeHint');
 
   frame.append(iframe, handle);
   stage.append(frame);

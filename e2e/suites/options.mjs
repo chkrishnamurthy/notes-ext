@@ -57,7 +57,7 @@ check('the file is named by date', /^for-now-backup-\d{4}-\d{2}-\d{2}\.json$/.te
   exported.name);
 const parsed = JSON.parse(exported.text);
 check('the export is valid JSON with a For Now marker', parsed.app === 'for-now');
-check('it carries a schema version', parsed.schemaVersion === 3);
+check('it carries a schema version', parsed.schemaVersion === 4);
 check('it includes every note, Trash included', parsed.notes.length === 4, String(parsed.notes.length));
 check('pinned state is exported', parsed.notes.find((n) => n.id === 'n1')?.pinned === true);
 check('trashed state is exported', parsed.notes.find((n) => n.id === 'n4')?.deletedAt !== undefined);
@@ -219,7 +219,7 @@ await s.evalJson(`
 const reset = await stored();
 check('reset returns to System, Sage and no accent',
   reset?.theme === 'system' && reset?.lightPalette === 'sage' && reset?.darkPalette === 'sage' &&
-  reset?.accent === null && reset?.textSize === 'medium', JSON.stringify(reset));
+  reset?.accent === null && reset?.textSize === 'large', JSON.stringify(reset));
 await s.evalJson(radio('Mode', 'light'));
 await shot(s, `${OUT}/08-options-light.png`, true);
 

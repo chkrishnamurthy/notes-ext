@@ -1,0 +1,852 @@
+{
+  "extName": {
+    "message": "For Now",
+    "description": "The product name. Not translated."
+  },
+  "extDescription": {
+    "message": "A side panel for notes you need right now. Capture without filing, find without remembering where, clear without losing anything."
+  },
+  "actionTitle": {
+    "message": "For Now — open notes"
+  },
+  "commandOpen": {
+    "message": "Open For Now notes"
+  },
+  "menuSaveSelection": {
+    "message": "Save selection to For Now"
+  },
+  "menuSaveLink": {
+    "message": "Save link to For Now"
+  },
+  "menuSavePage": {
+    "message": "Save this page to For Now"
+  },
+  "captureNothing": {
+    "message": "There was nothing to save from that click."
+  },
+  "notSavedQuotaShort": {
+    "message": "Not saved — this device is out of space for notes. Export a backup and clear some notes."
+  },
+  "notSavedQuota": {
+    "message": "Not saved — this device is out of space for notes. Export a backup from Settings, then clear some notes."
+  },
+  "notSavedReason": {
+    "message": "Not saved — $1"
+  },
+  "launcherTitle": {
+    "message": "For Now — open notes (Alt+Shift+N)"
+  },
+  "overlayFrameTitle": {
+    "message": "For Now notes"
+  },
+  "resizeLabel": {
+    "message": "Resize notes panel"
+  },
+  "resizeHint": {
+    "message": "Drag to resize. Double-click to reset."
+  },
+  "settingsPageTitle": {
+    "message": "For Now — Settings and backup"
+  },
+  "noteNeedsText": {
+    "message": "A note needs some text."
+  },
+  "conflictCopy": {
+    "message": "Conflicting copy"
+  },
+  "conflictCopyOf": {
+    "message": "Conflicting copy · $1"
+  },
+  "errorNewerNote": {
+    "message": "This note was saved by a newer version of For Now. Update the extension to change it."
+  },
+  "errorNoteGone": {
+    "message": "That note no longer exists on this device."
+  },
+  "errorChangedElsewhere": {
+    "message": "This note changed in another window while you were editing."
+  },
+  "errorTrashedElsewhere": {
+    "message": "This note was moved to Trash in another window while you were editing."
+  },
+  "errorUnknown": {
+    "message": "Unknown error"
+  },
+  "backupNotJson": {
+    "message": "That file is not valid JSON."
+  },
+  "backupNotBackup": {
+    "message": "That file is not a For Now backup."
+  },
+  "backupNotOurs": {
+    "message": "That file was not exported by For Now."
+  },
+  "backupNoNotes": {
+    "message": "That backup has no notes list."
+  },
+  "backupNewer": {
+    "message": "That backup was made by a newer version of For Now. Update the extension, then import again."
+  },
+  "backupInvalid": {
+    "message": "Invalid backup."
+  },
+  "timeJustNow": {
+    "message": "Just now"
+  },
+  "timeToday": {
+    "message": "Today · $1"
+  },
+  "timeYesterday": {
+    "message": "Yesterday · $1"
+  },
+  "groupPinned": {
+    "message": "Pinned"
+  },
+  "groupToday": {
+    "message": "Today"
+  },
+  "groupYesterday": {
+    "message": "Yesterday"
+  },
+  "groupEarlier": {
+    "message": "Earlier"
+  },
+  "groupRecentlyCleared": {
+    "message": "Recently cleared"
+  },
+  "mdExportedOne": {
+    "message": "1 note, exported $1."
+  },
+  "mdExportedOther": {
+    "message": "$1 notes, exported $2."
+  },
+  "mdPinned": {
+    "message": "Pinned"
+  },
+  "settingsAndBackup": {
+    "message": "Settings and backup"
+  },
+  "settingsOpenFailed": {
+    "message": "Could not open settings. Try the extension menu in Chrome."
+  },
+  "closeNotes": {
+    "message": "Close notes"
+  },
+  "nearQuota": {
+    "message": "Notes are using $1 of the 10 MB this device allows. Export a backup and clear what you no longer need."
+  },
+  "savedOnDevice": {
+    "message": "Saved on this device."
+  },
+  "changesSaved": {
+    "message": "Changes saved on this device."
+  },
+  "conflictKeepText": {
+    "message": "$1 Your text is still here."
+  },
+  "keptSeparate": {
+    "message": "Kept as a separate note. Both versions are in your notes."
+  },
+  "copied": {
+    "message": "Copied to the clipboard."
+  },
+  "copyFailed": {
+    "message": "Could not copy. Select the text instead."
+  },
+  "copiedMarkdown": {
+    "message": "Copied as Markdown."
+  },
+  "tagged": {
+    "message": "Tagged $1."
+  },
+  "tagRemoved": {
+    "message": "Tag removed."
+  },
+  "unpinned": {
+    "message": "Unpinned."
+  },
+  "pinnedSkip": {
+    "message": "Pinned. Bulk cleanup will skip this note."
+  },
+  "movedToTrash": {
+    "message": "Moved to Trash · recover for $1 days"
+  },
+  "undo": {
+    "message": "Undo"
+  },
+  "restored": {
+    "message": "Restored."
+  },
+  "restoredToNotes": {
+    "message": "Restored to your notes."
+  },
+  "deletedForever": {
+    "message": "Deleted. That one cannot be recovered."
+  },
+  "movedManyOne": {
+    "message": "1 note moved to Trash · recover for $1 days"
+  },
+  "movedManyOther": {
+    "message": "$1 notes moved to Trash · recover for $2 days"
+  },
+  "openPageFailed": {
+    "message": "Could not open that page."
+  },
+  "editCancelled": {
+    "message": "Edit cancelled. The original note is unchanged."
+  },
+  "draftCopied": {
+    "message": "Draft copied to the clipboard."
+  },
+  "draftCopyFailed": {
+    "message": "Could not copy the draft."
+  },
+  "taggedFilter": {
+    "message": "Tagged $1"
+  },
+  "stopTagFilter": {
+    "message": "Stop filtering by $1"
+  },
+  "showAllTags": {
+    "message": "Show all tags"
+  },
+  "loadingNotes": {
+    "message": "Loading your notes…"
+  },
+  "clearSearch": {
+    "message": "Clear search"
+  },
+  "confirmClearOne": {
+    "message": "Move 1 unpinned note to Trash? Pinned notes stay. You can undo this."
+  },
+  "confirmClearOther": {
+    "message": "Move $1 unpinned notes to Trash? Pinned notes stay. You can undo this."
+  },
+  "moveToTrash": {
+    "message": "Move to Trash"
+  },
+  "cancel": {
+    "message": "Cancel"
+  },
+  "inTrashCount": {
+    "message": "$1 in Trash"
+  },
+  "notesOnDeviceOne": {
+    "message": "1 note · on this device"
+  },
+  "notesOnDeviceOther": {
+    "message": "$1 notes · on this device"
+  },
+  "clearUnpinned": {
+    "message": "Clear unpinned…"
+  },
+  "editorPlaceholder": {
+    "message": "Keep it here for now. Type “- ” for a list, “# ” for a heading."
+  },
+  "noteBody": {
+    "message": "Note body"
+  },
+  "linkPrompt": {
+    "message": "Link address"
+  },
+  "linkInvalid": {
+    "message": "Links must start with http://, https:// or mailto:."
+  },
+  "statusSaving": {
+    "message": "Saving…"
+  },
+  "statusError": {
+    "message": "Not saved. Your text is still here."
+  },
+  "statusEditing": {
+    "message": "The original note is kept until you save changes."
+  },
+  "statusDraft": {
+    "message": "Draft saved on this device."
+  },
+  "statusIdle": {
+    "message": "Notes stay until you clear them."
+  },
+  "editNote": {
+    "message": "Edit note"
+  },
+  "newNote": {
+    "message": "New note"
+  },
+  "saveSeparate": {
+    "message": "Save mine as a separate note"
+  },
+  "retrySave": {
+    "message": "Retry save"
+  },
+  "copyDraft": {
+    "message": "Copy draft"
+  },
+  "showList": {
+    "message": "Show notes list"
+  },
+  "expandWriting": {
+    "message": "Expand writing area"
+  },
+  "expandWritingHint": {
+    "message": "Expand writing area (hides the notes list)"
+  },
+  "saveChanges": {
+    "message": "Save changes"
+  },
+  "addNote": {
+    "message": "Add note"
+  },
+  "textFormatting": {
+    "message": "Text formatting"
+  },
+  "toolBold": {
+    "message": "Bold"
+  },
+  "toolItalic": {
+    "message": "Italic"
+  },
+  "toolStrike": {
+    "message": "Strikethrough"
+  },
+  "toolHeadingLarge": {
+    "message": "Large heading"
+  },
+  "toolHeadingSmall": {
+    "message": "Small heading"
+  },
+  "toolBulletList": {
+    "message": "Bullet list"
+  },
+  "toolNumberedList": {
+    "message": "Numbered list"
+  },
+  "toolChecklist": {
+    "message": "Checklist"
+  },
+  "toolInlineCode": {
+    "message": "Inline code"
+  },
+  "toolCodeBlock": {
+    "message": "Code block"
+  },
+  "toolQuote": {
+    "message": "Quote"
+  },
+  "toolRedo": {
+    "message": "Redo"
+  },
+  "addLink": {
+    "message": "Add link"
+  },
+  "removeLink": {
+    "message": "Remove link"
+  },
+  "tabAll": {
+    "message": "All"
+  },
+  "tabPinned": {
+    "message": "Pinned"
+  },
+  "tabTrash": {
+    "message": "Trash"
+  },
+  "tabCountSr": {
+    "message": ", $1 notes"
+  },
+  "notesViews": {
+    "message": "Notes views"
+  },
+  "searchLabel": {
+    "message": "Search notes, tags, text, and sources"
+  },
+  "searchPlaceholder": {
+    "message": "Search"
+  },
+  "noteLayout": {
+    "message": "Note layout"
+  },
+  "listView": {
+    "message": "List view"
+  },
+  "cardView": {
+    "message": "Card view"
+  },
+  "matchingOne": {
+    "message": "1 matching note"
+  },
+  "matchingOther": {
+    "message": "$1 matching notes"
+  },
+  "quickThought": {
+    "message": "Quick thought"
+  },
+  "savedInApp": {
+    "message": "Saved in For Now"
+  },
+  "tagFilterTitle": {
+    "message": "Show only notes tagged $1"
+  },
+  "tagChipLabel": {
+    "message": "Tag: $1. Show only notes with this tag"
+  },
+  "restore": {
+    "message": "Restore"
+  },
+  "deleteForever": {
+    "message": "Delete forever"
+  },
+  "openSource": {
+    "message": "Open source"
+  },
+  "copy": {
+    "message": "Copy"
+  },
+  "copyMarkdown": {
+    "message": "Copy as Markdown"
+  },
+  "changeTag": {
+    "message": "Change tag"
+  },
+  "addTag": {
+    "message": "Add tag"
+  },
+  "pin": {
+    "message": "Pin"
+  },
+  "unpin": {
+    "message": "Unpin"
+  },
+  "clear": {
+    "message": "Clear"
+  },
+  "editNoteLabel": {
+    "message": "Edit note: $1"
+  },
+  "tagInputLabel": {
+    "message": "Tag for this note. Enter to save, Escape to cancel, empty to remove"
+  },
+  "tagPlaceholder": {
+    "message": "One tag, e.g. work"
+  },
+  "recoverSoon": {
+    "message": "removed soon"
+  },
+  "recoverOne": {
+    "message": "1 day left to recover"
+  },
+  "recoverOther": {
+    "message": "$1 days left to recover"
+  },
+  "emptyAllTitle": {
+    "message": "A little space to think."
+  },
+  "emptyAllBody": {
+    "message": "Jot a thought above, or select text on any page and choose “Save selection to For Now”."
+  },
+  "emptyPinnedTitle": {
+    "message": "Keep the useful bits close."
+  },
+  "emptyPinnedBody": {
+    "message": "Pin a note to keep it at the top and out of bulk cleanup."
+  },
+  "emptyTrashTitle": {
+    "message": "Nothing in Trash"
+  },
+  "emptyTrashBody": {
+    "message": "Cleared notes wait here before they are removed."
+  },
+  "emptySearchTitle": {
+    "message": "No matching notes"
+  },
+  "emptySearchBody": {
+    "message": "Try a word from the note, its tag or its source."
+  },
+  "optTitle": {
+    "message": "For Now settings"
+  },
+  "optSubtitle": {
+    "message": "Appearance, backup and privacy · everything stays on this device"
+  },
+  "optSaved": {
+    "message": "Settings saved on this device."
+  },
+  "optSaveFailed": {
+    "message": "Could not save settings — $1"
+  },
+  "launcherOffDone": {
+    "message": "Quick-open button turned off, and site access given back to Chrome."
+  },
+  "launcherDeclined": {
+    "message": "Site access was declined, so the button stays off. The toolbar icon and Alt+Shift+N still work."
+  },
+  "launcherOnDone": {
+    "message": "Quick-open button turned on. It appears at the bottom-right of every page."
+  },
+  "launcherRefused": {
+    "message": "Chrome refused the permission prompt. Nothing was changed."
+  },
+  "exportedOne": {
+    "message": "Exported 1 note, including Trash."
+  },
+  "exportedOther": {
+    "message": "Exported $1 notes, including Trash."
+  },
+  "exportedMdOne": {
+    "message": "Exported 1 note as Markdown. Trash is left out."
+  },
+  "exportedMdOther": {
+    "message": "Exported $1 notes as Markdown. Trash is left out."
+  },
+  "backupUnreadable": {
+    "message": "That backup could not be read."
+  },
+  "importFailed": {
+    "message": "Import failed — $1. Nothing was changed."
+  },
+  "importAdded": {
+    "message": "Imported: $1 added"
+  },
+  "importUpdated": {
+    "message": "$1 updated"
+  },
+  "importCurrent": {
+    "message": "$1 already current"
+  },
+  "importReplaced": {
+    "message": "$1 replaced"
+  },
+  "importSkipped": {
+    "message": "$1 unreadable and skipped"
+  },
+  "secAppearance": {
+    "message": "Appearance"
+  },
+  "secAppearanceDesc": {
+    "message": "Colours, mode and note text. Changes apply at once to the side panel, the in-page panel and this page."
+  },
+  "secStorage": {
+    "message": "Where your notes live"
+  },
+  "secStorageNav": {
+    "message": "Storage"
+  },
+  "secStorageDesc": {
+    "message": "What is stored, how much room it takes, and where it sits on disk."
+  },
+  "storageP1": {
+    "message": "Notes are stored on this device by $1. There is no account and nothing is uploaded. This is local storage on your computer, not an encrypted vault — anyone who can use your Chrome profile can read these notes."
+  },
+  "storageP2": {
+    "message": "On disk that is your Chrome profile folder, under $1, as a LevelDB database. The text is not encrypted."
+  },
+  "storageWarn": {
+    "message": "Removing the extension deletes its local notes. Export a backup before you uninstall, reset Chrome, or move to another computer."
+  },
+  "statActive": {
+    "message": "Active notes"
+  },
+  "statTrash": {
+    "message": "In Trash"
+  },
+  "statUsed": {
+    "message": "Storage used"
+  },
+  "statUsedValue": {
+    "message": "$1 of $2"
+  },
+  "storageBar": {
+    "message": "Storage $1 percent used"
+  },
+  "storageUnder1": {
+    "message": "Under 1%"
+  },
+  "storageShare": {
+    "message": "$1 of the space Chrome gives this extension."
+  },
+  "secBackup": {
+    "message": "Backup"
+  },
+  "secBackupDesc": {
+    "message": "A plain JSON file with every note, Trash included. Import it to restore, or to move to another computer."
+  },
+  "backupMdNote": {
+    "message": "To read your notes somewhere else — Obsidian, a document, an email — export them as Markdown instead. That file is for reading, not restoring: it cannot be imported back."
+  },
+  "exportBackup": {
+    "message": "Export backup"
+  },
+  "chooseBackup": {
+    "message": "Choose a backup file…"
+  },
+  "exportMarkdown": {
+    "message": "Export as Markdown"
+  },
+  "backupFileLabel": {
+    "message": "Backup file to import"
+  },
+  "pendingReadOne": {
+    "message": "1 note read"
+  },
+  "pendingReadOther": {
+    "message": "$1 notes read"
+  },
+  "pendingSkipped": {
+    "message": " · $1 unreadable and skipped"
+  },
+  "pendingSchema": {
+    "message": " · schema v$1"
+  },
+  "mergeInto": {
+    "message": "Merge into my notes"
+  },
+  "replaceAll": {
+    "message": "Replace everything"
+  },
+  "mergeExplainOne": {
+    "message": "Merge keeps whichever copy of a note was edited more recently. Replace deletes the 1 note on this device first."
+  },
+  "mergeExplainOther": {
+    "message": "Merge keeps whichever copy of a note was edited more recently. Replace deletes the $1 notes on this device first."
+  },
+  "secTrash": {
+    "message": "Trash"
+  },
+  "secTrashDesc": {
+    "message": "Clearing a note moves it to Trash. Pinned notes are never included in bulk cleanup."
+  },
+  "keepFor": {
+    "message": "Keep cleared notes for"
+  },
+  "daysOption": {
+    "message": "$1 days"
+  },
+  "trashAfter": {
+    "message": "After that, notes in Trash are removed permanently."
+  },
+  "secQuickOpen": {
+    "message": "Quick-open button"
+  },
+  "secQuickOpenDesc": {
+    "message": "A small button at the bottom-right of every page, so the panel is one click away."
+  },
+  "quickOpenP1": {
+    "message": "It is off by default for a reason: to draw a button on a page, the extension needs permission to run on that page, and the only way to have it everywhere is access to every site. Turning this on asks Chrome for that access. Turning it off hands the access straight back."
+  },
+  "quickOpenStrong": {
+    "message": "This changes nothing about what is collected."
+  },
+  "quickOpenP2": {
+    "message": "The button reads no page content and sends nothing anywhere — it draws an icon and listens for a click."
+  },
+  "quickOpenToggle": {
+    "message": "Show the quick-open button on pages"
+  },
+  "quickOpenToggleHint": {
+    "message": "The panel genies out of it, and it steps aside while the panel is open."
+  },
+  "quickOpenRevoked": {
+    "message": "Turned on, but site access has been revoked in Chrome, so the button is not showing. Tick this again to restore it."
+  },
+  "secKeyboard": {
+    "message": "Keyboard"
+  },
+  "secKeyboardDesc": {
+    "message": "Shortcuts that work in the panel."
+  },
+  "keyOpen": {
+    "message": "Open the panel"
+  },
+  "keySearch": {
+    "message": "Search notes"
+  },
+  "keyCommit": {
+    "message": "Add a note or save an edit"
+  },
+  "keyEscape": {
+    "message": "Step back out of an edit, a search, or the panel"
+  },
+  "keyConflict": {
+    "message": "Chrome may already use Alt+Shift+N. Check and change it in Chrome's shortcut settings."
+  },
+  "keyOpenSettings": {
+    "message": "Open Chrome's shortcut settings"
+  },
+  "secPrivacy": {
+    "message": "Privacy"
+  },
+  "secPrivacyDesc": {
+    "message": "What the extension does, and does not, do."
+  },
+  "privacy1": {
+    "message": "No account, no server, no analytics, and no network requests."
+  },
+  "privacy2": {
+    "message": "Only what you explicitly save is captured — never a page you merely visit."
+  },
+  "privacy3": {
+    "message": "Link previews and favicons are not fetched, so saving a link reveals nothing."
+  },
+  "privacy4": {
+    "message": "Formatted notes are stripped to a small allowlist before they are saved and again before they are shown. Scripts, styles and embeds never survive, and code blocks are shown as text, never run."
+  },
+  "privacy5": {
+    "message": "The extension is disabled in Incognito windows."
+  },
+  "settingsSections": {
+    "message": "Settings sections"
+  },
+  "mode": {
+    "message": "Mode"
+  },
+  "modeSystem": {
+    "message": "System"
+  },
+  "modeLight": {
+    "message": "Light"
+  },
+  "modeDark": {
+    "message": "Dark"
+  },
+  "modeFollowing": {
+    "message": "Following your system, currently $1"
+  },
+  "modeAlways": {
+    "message": "Always $1"
+  },
+  "lightTheme": {
+    "message": "Light theme"
+  },
+  "lightThemeHint": {
+    "message": "Used in light mode"
+  },
+  "darkTheme": {
+    "message": "Dark theme"
+  },
+  "darkThemeHint": {
+    "message": "Used in dark mode"
+  },
+  "accent": {
+    "message": "Accent colour"
+  },
+  "accentHint": {
+    "message": "Buttons, links, checkboxes and highlights"
+  },
+  "accentDefault": {
+    "message": "Palette default"
+  },
+  "accentCustom": {
+    "message": "Custom"
+  },
+  "accentOwn": {
+    "message": "Each palette uses its own accent."
+  },
+  "accentAdjusted": {
+    "message": "Adjusted slightly where needed so buttons and links stay readable in both light and dark."
+  },
+  "accentAsPicked": {
+    "message": "Readable as picked in both light and dark."
+  },
+  "noteFont": {
+    "message": "Note font"
+  },
+  "noteFontHint": {
+    "message": "The editor and your saved notes"
+  },
+  "fontSans": {
+    "message": "Sans"
+  },
+  "fontSerif": {
+    "message": "Serif"
+  },
+  "fontMono": {
+    "message": "Mono"
+  },
+  "textSize": {
+    "message": "Text size"
+  },
+  "sizeSmall": {
+    "message": "Small"
+  },
+  "sizeMedium": {
+    "message": "Medium"
+  },
+  "sizeLarge": {
+    "message": "Large"
+  },
+  "resetAppearance": {
+    "message": "Reset appearance"
+  },
+  "preview": {
+    "message": "Preview"
+  },
+  "previewMode": {
+    "message": "Preview mode"
+  },
+  "colorBlue": {
+    "message": "Blue"
+  },
+  "colorTeal": {
+    "message": "Teal"
+  },
+  "colorGreen": {
+    "message": "Green"
+  },
+  "colorAmber": {
+    "message": "Amber"
+  },
+  "colorRed": {
+    "message": "Red"
+  },
+  "colorViolet": {
+    "message": "Violet"
+  },
+  "colorPink": {
+    "message": "Pink"
+  },
+  "paletteSage": {
+    "message": "Calm green on warm white."
+  },
+  "palettePaper": {
+    "message": "Warm off-white stock, fountain-pen blue."
+  },
+  "paletteSlate": {
+    "message": "Cool greys and a clear blue."
+  },
+  "paletteHeather": {
+    "message": "Muted mauve, soft but high contrast."
+  },
+  "paletteOchre": {
+    "message": "Parchment and amber, for long evenings."
+  },
+  "paletteGraphite": {
+    "message": "High contrast, pure black and white."
+  },
+  "previewHeading": {
+    "message": "Tuesday standup"
+  },
+  "previewShip": {
+    "message": "Ship the $1, see $2."
+  },
+  "previewFix": {
+    "message": "overlay fix"
+  },
+  "previewTheNotes": {
+    "message": "the notes"
+  },
+  "previewTask1": {
+    "message": "Review theme plan"
+  },
+  "previewTask2": {
+    "message": "Pick a palette"
+  },
+  "previewDraft": {
+    "message": "Draft saved."
+  },
+  "previewAll": {
+    "message": "All 3"
+  },
+  "previewNote": {
+    "message": "Flight check-in opens 09:40"
+  }
+}

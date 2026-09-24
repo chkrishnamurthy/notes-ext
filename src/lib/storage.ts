@@ -12,6 +12,7 @@
  *     get a typed result and are expected to surface failure honestly.
  */
 
+import { t } from './i18n';
 import {
   DRAFT_KEY,
   META_KEY,
@@ -65,7 +66,7 @@ function classify(error: unknown): WriteFailureReason {
 }
 
 function describe(error: unknown): string {
-  return error instanceof Error ? error.message : String(error ?? 'Unknown error');
+  return error instanceof Error ? error.message : String(error ?? t('errorUnknown'));
 }
 
 /**
@@ -209,30 +210,19 @@ export class NoteStore {
       const record = await this.area.get(noteKey(id));
       const raw = record[noteKey(id)];
       if (isFromNewerVersion(raw)) {
-        return failure(
-          'unknown',
-          'This note was saved by a newer version of For Now. Update the extension to change it.',
-        );
+        return failure('unknown', t('errorNewerNote'));
       }
       const current = parseNote(raw);
       if (!current) {
-        return failure('unknown', 'That note no longer exists on this device.');
+        return failure('unknown', t('errorNoteGone'));
       }
       if (expectedContentRev !== undefined) {
         if (current.contentRev !== expectedContentRev) {
-          return failure(
-            'conflict',
-            'This note changed in another window while you were editing.',
-            current,
-          );
+          return failure('conflict', t('errorChangedElsewhere'), current);
         }
         if (current.deletedAt !== undefined) {
           // Saving into a trashed note would hide the edit where nobody looks.
-          return failure(
-            'conflict',
-            'This note was moved to Trash in another window while you were editing.',
-            current,
-          );
+          return failure('conflict', t('errorTrashedElsewhere'), current);
         }
       }
       const next = advance(current, mutate(current), now);

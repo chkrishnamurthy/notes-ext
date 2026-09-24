@@ -13,6 +13,7 @@ import '../styles.css';
 import { popupHost } from '../lib/host';
 import { OVERLAY_WIDTH_KEY, parseOverlayWidth } from '../lib/overlayWidth';
 import { applyCachedTheme } from '../lib/theme';
+import { applyLanguage } from '../lib/i18n';
 import { App } from '../sidepanel/App';
 
 /** Chrome's hard limits for an action popup. */
@@ -20,6 +21,7 @@ const POPUP_MAX_WIDTH = 800;
 const POPUP_MAX_HEIGHT = 600;
 
 applyCachedTheme();
+applyLanguage();
 
 /**
  * A popup is as big as its document, so the document asks for a size: the

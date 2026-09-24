@@ -1,5 +1,6 @@
 import type { Note } from '../../lib/schema';
-import { groupFor, type NoteGroup } from '../../lib/time';
+import { plural, t } from '../../lib/i18n';
+import { groupFor, groupLabel } from '../../lib/time';
 import { NoteItem, type NoteActions, type NoteView } from './NoteItem';
 
 export function NoteList({
@@ -8,6 +9,7 @@ export function NoteList({
   view,
   inTrash,
   retentionDays,
+  tags,
   actions,
 }: {
   notes: Note[];
@@ -15,17 +17,17 @@ export function NoteList({
   view: NoteView;
   inTrash: boolean;
   retentionDays: number;
+  /** Tags already in use, offered as suggestions when tagging a note. */
+  tags: string[];
   actions: NoteActions;
 }) {
   const searching = terms.length > 0;
 
   // While searching, one flat result group reads better than date headings:
   // the question is "how many matched", not "when did I write them".
-  const heading = searching
-    ? `${notes.length} matching ${notes.length === 1 ? 'note' : 'notes'}`
-    : null;
+  const heading = searching ? plural(notes.length, 'matchingOne', 'matchingOther') : null;
 
-  let lastGroup: NoteGroup | string | null = null;
+  let lastGroup: string | null = null;
 
   return (
     <div className="px-4 pt-1 pb-4">
@@ -34,8 +36,8 @@ export function NoteList({
         const group = searching
           ? null
           : inTrash
-            ? 'Recently cleared'
-            : groupFor(note.updatedAt, note.pinned);
+            ? t('groupRecentlyCleared')
+            : groupLabel(groupFor(note.updatedAt, note.pinned));
         const showHeading = group !== null && group !== lastGroup;
         if (showHeading) lastGroup = group;
 
@@ -48,6 +50,7 @@ export function NoteList({
               view={view}
               inTrash={inTrash}
               retentionDays={retentionDays}
+              tags={tags}
               actions={actions}
             />
           </div>

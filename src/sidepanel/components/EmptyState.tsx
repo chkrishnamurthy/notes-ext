@@ -1,28 +1,29 @@
 import { NotebookPen, Pin, Search, Trash2 } from 'lucide-react';
 import type { ReactNode } from 'react';
+import { t, type MessageKey } from '../../lib/i18n';
 
 export type EmptyKind = 'all' | 'pinned' | 'trash' | 'search';
 
-const CONTENT: Record<EmptyKind, { icon: ReactNode; title: string; body: string }> = {
+const CONTENT: Record<EmptyKind, { icon: ReactNode; title: MessageKey; body: MessageKey }> = {
   all: {
     icon: <NotebookPen size={22} aria-hidden="true" />,
-    title: 'A little space to think.',
-    body: 'Jot a thought above, or select text on any page and choose “Save selection to For Now”.',
+    title: 'emptyAllTitle',
+    body: 'emptyAllBody',
   },
   pinned: {
     icon: <Pin size={22} aria-hidden="true" />,
-    title: 'Keep the useful bits close.',
-    body: 'Pin a note to keep it at the top and out of bulk cleanup.',
+    title: 'emptyPinnedTitle',
+    body: 'emptyPinnedBody',
   },
   trash: {
     icon: <Trash2 size={22} aria-hidden="true" />,
-    title: 'Nothing in Trash',
-    body: 'Cleared notes wait here before they are removed.',
+    title: 'emptyTrashTitle',
+    body: 'emptyTrashBody',
   },
   search: {
     icon: <Search size={22} aria-hidden="true" />,
-    title: 'No matching notes',
-    body: 'Try a word from the note or its source.',
+    title: 'emptySearchTitle',
+    body: 'emptySearchBody',
   },
 };
 
@@ -39,8 +40,8 @@ export function EmptyState({
       <span className="mb-4 inline-flex rounded-full border border-line p-3.5 text-accent">
         {icon}
       </span>
-      <h3 className="mb-2.5 font-serif text-2xl font-normal tracking-tight">{title}</h3>
-      <p className="mx-auto mb-5 max-w-60 text-[13px] text-muted">{body}</p>
+      <h3 className="mb-2.5 font-serif text-2xl font-normal tracking-tight">{t(title)}</h3>
+      <p className="mx-auto mb-5 max-w-60 text-[13px] text-muted">{t(body)}</p>
       {action ? (
         <button type="button" className="fn-btn" onClick={action.onClick}>
           {action.label}

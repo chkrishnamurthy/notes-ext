@@ -142,7 +142,7 @@
     color: var(--fn-ink);
     font-family: var(--font-sans);
     /* Set from the text-size setting; see src/lib/theme.ts. */
-    font-size: var(--fn-text, 15px);
+    font-size: var(--fn-text, 19px);
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
   }
@@ -305,6 +305,14 @@
     height: var(--fn-tool-icon, 15px);
   }
 
+  /* Header actions (settings, close) sit a size up from the editor toolbar. */
+  .fn-tool.fn-tool-header {
+    min-width: 30px;
+    min-height: 30px;
+    border-radius: 6px;
+    --fn-tool-icon: 18px;
+  }
+
   /* The view tabs. Smaller than a button, but still a real hit target. */
   .fn-chip {
     display: inline-flex;
@@ -326,6 +334,23 @@
     background-color: var(--fn-soft);
     color: var(--fn-accent);
     font-weight: 500;
+  }
+
+  /* A note's tag, in its context line. It filters the list when clicked. */
+  .fn-tag {
+    display: inline;
+    padding: 0 5px;
+    border: 0;
+    border-radius: 4px;
+    background-color: var(--fn-soft);
+    color: var(--fn-accent);
+    font: inherit;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .fn-tag:hover {
+    text-decoration: underline;
   }
 
   /* In a side panel the document viewport is the panel, so a width query is
@@ -391,7 +416,7 @@
 --------------------------------------------------------------------------- */
 
 .fn-prose {
-  font-size: var(--fn-text, 15px);
+  font-size: var(--fn-text, 19px);
   /* The note typeface setting applies to note text only; the panel's own
      controls stay in the interface face. */
   font-family: var(--fn-note-font, inherit);

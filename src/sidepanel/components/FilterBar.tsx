@@ -1,13 +1,14 @@
 import { LayoutGrid, List as ListIcon, Search, X } from 'lucide-react';
 import type { RefObject } from 'react';
+import { t, type MessageKey } from '../../lib/i18n';
 import type { NoteView } from './NoteItem';
 
 export type View = 'all' | 'pinned' | 'trash';
 
-const TABS: Array<{ id: View; label: string }> = [
-  { id: 'all', label: 'All' },
-  { id: 'pinned', label: 'Pinned' },
-  { id: 'trash', label: 'Trash' },
+const TABS: Array<{ id: View; label: MessageKey }> = [
+  { id: 'all', label: 'tabAll' },
+  { id: 'pinned', label: 'tabPinned' },
+  { id: 'trash', label: 'tabTrash' },
 ];
 
 /**
@@ -38,7 +39,7 @@ export function FilterBar({
 }) {
   return (
     <div className="flex items-center gap-1 border-b border-line px-2 py-1.5">
-      <nav aria-label="Notes views" className="flex shrink-0 items-center gap-px">
+      <nav aria-label={t('notesViews')} className="flex shrink-0 items-center gap-px">
         {TABS.map((tab) => (
           <button
             key={tab.id}
@@ -47,13 +48,13 @@ export function FilterBar({
             aria-pressed={view === tab.id}
             onClick={() => onChangeView(tab.id)}
           >
-            {tab.label}
+            {t(tab.label)}
             {counts[tab.id] > 0 ? (
               <span aria-hidden="true" className="fn-count ml-1 text-muted">
                 {counts[tab.id]}
               </span>
             ) : null}
-            <span className="sr-only">, {counts[tab.id]} notes</span>
+            <span className="sr-only">{t('tabCountSr', counts[tab.id])}</span>
           </button>
         ))}
       </nav>
@@ -65,15 +66,15 @@ export function FilterBar({
           type="search"
           value={query}
           onChange={(event) => onChangeQuery(event.target.value)}
-          aria-label="Search notes, text, and sources"
-          placeholder="Search"
+          aria-label={t('searchLabel')}
+          placeholder={t('searchPlaceholder')}
           className="w-full min-w-0 border-0 bg-transparent text-xs outline-none [&::-webkit-search-cancel-button]:hidden"
         />
         {query ? (
           <button
             type="button"
             className="fn-tool shrink-0"
-            aria-label="Clear search"
+            aria-label={t('clearSearch')}
             onClick={() => onChangeQuery('')}
           >
             <X size={13} aria-hidden="true" />
@@ -81,12 +82,12 @@ export function FilterBar({
         ) : null}
       </div>
 
-      <div className="flex shrink-0 items-center gap-px" role="group" aria-label="Note layout">
+      <div className="flex shrink-0 items-center gap-px" role="group" aria-label={t('noteLayout')}>
         <button
           type="button"
           className="fn-tool"
-          aria-label="List view"
-          title="List view"
+          aria-label={t('listView')}
+          title={t('listView')}
           aria-pressed={noteView === 'list'}
           onClick={() => onChangeNoteView('list')}
         >
@@ -95,8 +96,8 @@ export function FilterBar({
         <button
           type="button"
           className="fn-tool"
-          aria-label="Card view"
-          title="Card view"
+          aria-label={t('cardView')}
+          title={t('cardView')}
           aria-pressed={noteView === 'card'}
           onClick={() => onChangeNoteView('card')}
         >

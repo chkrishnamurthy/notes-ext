@@ -12,7 +12,7 @@ import { stripTagsFallback, textToHtml } from './richtext';
  */
 
 /** Bump whenever the shape of a persisted record changes, and add a migration. */
-export const SCHEMA_VERSION = 3;
+export const SCHEMA_VERSION = 4;
 
 /** Where a note came from. Determines which source metadata is meaningful. */
 export type CaptureKind = 'thought' | 'selection' | 'link' | 'page';
@@ -43,6 +43,12 @@ export interface Note {
   createdAt: number;
   updatedAt: number;
   pinned: boolean;
+  /**
+   * One optional, free-text label, added after the fact and never asked for
+   * at capture time. Deliberately one: several tags per note is a filing
+   * system, which is the thing this product exists to avoid.
+   */
+  tag?: string;
   /** Set when the note is in Trash. Absent means active. */
   deletedAt?: number;
   /** Incremented on every committed write. */
@@ -112,7 +118,7 @@ export const DEFAULT_SETTINGS: Settings = {
   darkPalette: DEFAULT_PALETTE,
   accent: null,
   editorFont: 'sans',
-  textSize: 'medium',
+  textSize: 'large',
   trashRetentionDays: 30,
   showLauncher: false,
 };
@@ -143,6 +149,23 @@ export interface StoreMeta {
 // ---------------------------------------------------------------------------
 
 const KINDS: readonly CaptureKind[] = ['thought', 'selection', 'link', 'page'];
+
+/** Longest tag kept. A tag is a label, not a second note. */
+export const TAG_MAX_LENGTH = 32;
+
+/**
+ * Normalise a tag as typed: a leading `#` dropped, whitespace collapsed, and
+ * the length capped. An empty result means "no tag".
+ */
+export function normalizeTag(value: unknown): string | undefined {
+  if (typeof value !== 'string') return undefined;
+  const tag = value.trim().replace(/^#+/, '').replace(/\s+/g, ' ').trim().slice(0, TAG_MAX_LENGTH).trim();
+  return tag.length > 0 ? tag : undefined;
+}
+
+/** Tags compare without regard to case, so `Work` and `work` are one tag. */
+export const sameTag = (a: string | undefined, b: string | undefined): boolean =>
+  a !== undefined && b !== undefined && a.toLowerCase() === b.toLowerCase();
 
 const isPlainObject = (v: unknown): v is Record<string, unknown> =>
   typeof v === 'object' && v !== null && !Array.isArray(v);
@@ -240,6 +263,8 @@ export function parseNote(value: unknown, now = Date.now()): Note | null {
   if (sourceUrl) note.sourceUrl = sourceUrl;
   const sourceTitle = str(value.sourceTitle);
   if (sourceTitle) note.sourceTitle = sourceTitle;
+  const tag = normalizeTag(value.tag);
+  if (tag) note.tag = tag;
   if (typeof value.deletedAt === 'number' && Number.isFinite(value.deletedAt)) {
     note.deletedAt = value.deletedAt;
   }
@@ -278,7 +303,7 @@ export function parseSettings(value: unknown): Settings {
     editorFont:
       value.editorFont === 'serif' || value.editorFont === 'mono' ? value.editorFont : 'sans',
     textSize:
-      value.textSize === 'small' || value.textSize === 'large' ? value.textSize : 'medium',
+      value.textSize === 'small' || value.textSize === 'medium' ? value.textSize : 'large',
     // Clamped so an edited or corrupt value can never mean "purge immediately".
     trashRetentionDays: Math.min(365, Math.max(1, Math.round(days))),
     // Anything but an explicit `true` means off. A corrupt record must never
