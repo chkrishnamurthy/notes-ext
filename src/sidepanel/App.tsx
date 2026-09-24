@@ -559,8 +559,8 @@ export function App({ host }: { host: HostBridge }) {
           <button
             type="button"
             className="fn-tool"
-            aria-label="Close side panel"
-            title="Close side panel"
+            aria-label="Close notes"
+            title="Close notes"
             onClick={() => host.requestClose()}
           >
             <X size={15} aria-hidden="true" />

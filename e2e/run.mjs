@@ -29,7 +29,7 @@ const CHROME =
     ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
     : 'google-chrome');
 
-const ALL = ['panel', 'worker', 'options', 'conflicts', 'overlay', 'launcher'];
+const ALL = ['panel', 'worker', 'options', 'conflicts', 'overlay', 'launcher', 'popup'];
 const requested = process.argv.slice(2).filter((a) => !a.startsWith('-'));
 const suites = requested.length > 0 ? requested : ALL;
 

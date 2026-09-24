@@ -1,10 +1,11 @@
 /**
  * The bridge between the notes UI and whichever shell it is running in.
  *
- * The same React app is mounted in two places: the native side panel, and an
- * extension page framed inside the overlay a content script puts on a web page.
- * Both are extension pages with the full `chrome.*` surface; what differs is
- * how they close. The UI must not know or care which, so that goes through
+ * The same React app is mounted in three places: the native side panel, an
+ * extension page framed inside the overlay a content script puts on a web page,
+ * and the toolbar popup used on Chrome's own pages, where no overlay is
+ * allowed. All are extension pages with the full `chrome.*` surface; what
+ * differs is how they close. The UI must not know or care which, so that goes through
  * here.
  */
 
@@ -13,7 +14,7 @@ export const OVERLAY_CLOSE = 'for-now:close';
 /** Sent by the shell to the framed panel once it has finished opening. */
 export const OVERLAY_OPENED = 'for-now:opened';
 
-export type Surface = 'sidepanel' | 'overlay';
+export type Surface = 'sidepanel' | 'overlay' | 'popup';
 
 export interface HostBridge {
   surface: Surface;
@@ -96,6 +97,25 @@ export function framedOverlayHost(): HostBridge {
       // page's own scripts can see it too. The shell checks it came from this
       // frame before acting on it.
       window.parent.postMessage({ type: OVERLAY_CLOSE }, '*');
+    },
+  };
+}
+
+/**
+ * The panel as the toolbar popup, shown on Chrome's own pages (New Tab,
+ * Settings, the Web Store…) where Chrome allows no overlay. It floats over the
+ * page instead of docking beside it, and Chrome closes it on a click outside,
+ * just as the overlay does. Closing it from inside is simply closing the page.
+ */
+export function popupHost(): HostBridge {
+  const base = sidePanelHost();
+  return {
+    surface: 'popup',
+    themeRoot: document.documentElement,
+    openTab: base.openTab,
+    openOptions: base.openOptions,
+    requestClose() {
+      window.close();
     },
   };
 }

@@ -53,8 +53,8 @@ function registerMenus(): void {
 /**
  * The toolbar click has to reach `action.onClicked` so the overlay can be
  * injected, which it will not do while Chrome is set to open the side panel
- * for us. The side panel is still registered — it is the fallback for pages a
- * content script cannot touch.
+ * for us. The side panel is still registered — it is the last resort when
+ * neither the overlay nor the popup can be shown.
  */
 function configurePanel(): void {
   chrome.sidePanel
@@ -74,12 +74,8 @@ async function showPanel(
   tab: chrome.tabs.Tab,
   mode: 'toggle' | 'open' = 'toggle',
 ): Promise<void> {
-  const windowId = tab.windowId;
-
   if (!canInject(tab.url) || tab.id === undefined) {
-    if (windowId !== undefined) {
-      chrome.sidePanel.open({ windowId }).catch(() => undefined);
-    }
+    openPopup(tab);
     return;
   }
 
@@ -100,10 +96,45 @@ async function showPanel(
   } catch {
     // Injection is refused on the Web Store and other protected origins even
     // when the URL looks ordinary. Fall back rather than doing nothing.
-    if (windowId !== undefined) {
-      chrome.sidePanel.open({ windowId }).catch(() => undefined);
-    }
+    openPopup(tab);
   }
+}
+
+/** The notes panel as a toolbar popup; see src/popup/main.tsx. */
+const POPUP_PAGE = 'popup.html';
+
+/**
+ * Show the panel as the toolbar popup, for pages Chrome allows no overlay on.
+ *
+ * The popup is attached to this tab only for as long as it takes to open it,
+ * then detached again. Left attached, Chrome would open the popup itself on
+ * the next click and `action.onClicked` would never fire — including after the
+ * tab moves on to an ordinary web page, where the overlay belongs. The worker
+ * cannot see tab addresses ahead of a click, so it cannot keep a per-tab
+ * popup in step with navigation; attaching it at the moment of the click
+ * sidesteps that.
+ *
+ * Neither call is awaited before the next: `openPopup` must run while the
+ * click still counts as a user gesture, and Chrome applies the two in order.
+ * If the popup cannot open — no focused window, say — the side panel is
+ * tried, which is the one other surface allowed on these pages.
+ */
+function openPopup(tab: chrome.tabs.Tab): void {
+  const { id: tabId, windowId } = tab;
+  if (tabId === undefined) {
+    if (windowId !== undefined) chrome.sidePanel.open({ windowId }).catch(() => undefined);
+    return;
+  }
+  const attached = chrome.action.setPopup({ tabId, popup: POPUP_PAGE });
+  chrome.action
+    .openPopup(windowId !== undefined ? { windowId } : {})
+    .catch(() => (windowId !== undefined ? chrome.sidePanel.open({ windowId }) : undefined))
+    .catch(() => undefined)
+    .finally(() => {
+      void attached
+        .then(() => chrome.action.setPopup({ tabId, popup: '' }))
+        .catch(() => undefined);
+    });
 }
 
 /**
@@ -289,14 +320,12 @@ async function readRichSelection(
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   // Show the capture landing in the same place a toolbar click opens: the
-  // overlay where the page allows one, the side panel where it does not. The
-  // side panel may only be opened synchronously, before the first await, while
-  // the click still counts as a user gesture. The overlay needs no gesture,
-  // and is opened below once the selection has been read.
+  // overlay where the page allows one, the popup where it does not. The popup
+  // may only be opened synchronously, before the first await, while the click
+  // still counts as a user gesture. The overlay needs no gesture, and is
+  // opened below once the selection has been read.
   const overlay = tab !== undefined && tab.id !== undefined && canInject(tab.url);
-  if (!overlay && tab?.windowId !== undefined) {
-    chrome.sidePanel.open({ windowId: tab.windowId }).catch(() => undefined);
-  }
+  if (!overlay && tab) openPopup(tab);
 
   void (async () => {
     let input = captureFrom(info, tab);

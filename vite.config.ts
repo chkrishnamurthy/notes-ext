@@ -28,6 +28,8 @@ export default defineConfig({
         sidepanel: resolve(rootDir, 'src/sidepanel.html'),
         // The same panel, framed inside the in-page overlay.
         overlay: resolve(rootDir, 'src/overlay.html'),
+        // The same panel again, as the toolbar popup on Chrome's own pages.
+        popup: resolve(rootDir, 'src/popup.html'),
         options: resolve(rootDir, 'src/options.html'),
         'service-worker': resolve(rootDir, 'src/background/service-worker.ts'),
       },
