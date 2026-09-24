@@ -272,8 +272,9 @@ check('the hidden button cannot be clicked through the panel',
   opened.launcherClickable === false);
 await shot(s, `${OUT}/52-launcher-open.png`);
 
-await s.evalJson(`
-  document.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, clientX: 5, clientY: 5 }));
+// Closed the way the toolbar icon closes it; clicking the page no longer does.
+await sw.evalJson(`
+  await chrome.tabs.sendMessage(${pageTab}, { type: 'toggle-overlay' }).catch(() => undefined);
   return true;
 `);
 await settle(s, 1400);

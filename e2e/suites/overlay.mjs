@@ -378,12 +378,27 @@ check('the panel keeps its own type scale', prose === '15px', prose);
 check('the shell sets its own root size', stage === '16px', stage);
 
 // --- The genie ------------------------------------------------------------
+console.log('\n# Clicking the page');
+// A real click on the page, well away from the panel.
+await s.send('Input.dispatchMouseEvent', { type: 'mousePressed', x: 40, y: 300, button: 'left', buttons: 1, clickCount: 1 });
+await s.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: 40, y: 300, button: 'left', buttons: 0, clickCount: 1 });
+await settle(s, 900);
+const afterPageClick = await inShell(s, `
+  return getComputedStyle(this.querySelector('.fn-frame')).visibility === 'visible';
+`);
+check('clicking the page leaves the panel open', afterPageClick === true);
+check('the page under the panel still receives the click', await s.evalJson(`
+  return document.elementFromPoint(40, 300)?.id !== 'for-now-overlay-host';
+`));
+
 console.log('\n# Genie');
-await s.evalJson(`
-  document.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, clientX: 5, clientY: 5 }));
+// Closed the way the toolbar icon closes it.
+await sw.evalJson(`
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  chrome.tabs.sendMessage(tab.id, { type: 'toggle-overlay' }).catch(() => undefined);
   return true;
 `);
-await settle(s, 140);
+await settle(s, 120);
 const midFlight = await inShell(s, `
   const layer = this.querySelector('.fn-genie-layer');
   if (!layer) return { slices: 0 };
@@ -480,7 +495,14 @@ const reopened = await inShell(s, `
 `);
 check('the panel is visible again after reopening', reopened.visible === true);
 check('the reopen cleans up its slices too', reopened.layer === false);
-check('the open overlay accepts clicks', reopened.pointerEvents === 'auto');
+const hits = await inShell(s, `
+  const r = this.querySelector('.fn-frame').getBoundingClientRect();
+  const onPanel = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+  const beside = document.elementFromPoint(Math.max(5, r.left - 60), r.top + r.height / 2);
+  return { onPanel: onPanel === this.host, beside: beside !== this.host };
+`);
+check('the open overlay accepts clicks', hits.onPanel === true);
+check('while the page beside it still gets its own clicks', hits.beside === true);
 const caret = await panel.evalJson(`
   return { focus: document.hasFocus(), active: document.activeElement?.className ?? null };
 `);

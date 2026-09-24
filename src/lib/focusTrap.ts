@@ -3,8 +3,8 @@
  *
  * The panel floats over the page like a window, so Tab should cycle through
  * the panel rather than wander into the page behind it — where the user
- * cannot see what has focus. Escape and clicking outside still close it, so
- * nobody is trapped: they just do not get lost.
+ * cannot see what has focus. Escape closes it, and clicking the page moves
+ * focus there, so nobody is trapped: they just do not get lost.
  */
 
 const FOCUSABLE = [

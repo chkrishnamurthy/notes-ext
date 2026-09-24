@@ -36,7 +36,7 @@ import {
   parseOverlayWidth,
 } from '../lib/overlayWidth';
 import { SETTINGS_KEY, parseSettings } from '../lib/schema';
-import { enterTopLayer, pin, pinShell } from '../lib/shell';
+import { enterTopLayer, pinShell } from '../lib/shell';
 import { applyTheme } from '../lib/theme';
 import {
   DEFAULT_GENIE,
@@ -355,7 +355,6 @@ export async function open(): Promise<void> {
   current.busy = true;
   current.returnFocus = document.activeElement;
 
-  pin(current.host, 'pointer-events', 'auto');
   current.frame.style.visibility = 'hidden';
   // Before the animation, not after: the button sits exactly where the genie
   // starts, and would otherwise show through the first few frames.
@@ -384,7 +383,6 @@ export async function close(): Promise<void> {
   current.busy = true;
 
   await genie(current, 'out');
-  pin(current.host, 'pointer-events', 'none');
   current.open = false;
   current.busy = false;
   restoreFocus(current);
@@ -423,24 +421,12 @@ export function destroy(): void {
   host.remove();
 }
 
-// Clicking outside closes, the way clicking away from a panel would. Clicks
-// inside the iframe never reach this document at all. Clicks on the shell are
-// retargeted to the host by the closed shadow root, as are clicks on the empty
-// stage around the panel, so position is what tells the two apart.
-document.addEventListener(
-  'pointerdown',
-  (event) => {
-    if (!state?.open || state.busy) return;
-    const r = state.frame.getBoundingClientRect();
-    const inside =
-      event.clientX >= r.left &&
-      event.clientX <= r.right &&
-      event.clientY >= r.top &&
-      event.clientY <= r.bottom;
-    if (!inside) void close();
-  },
-  true,
-);
+// Clicking the page does not close the panel. It is a notes window kept open
+// beside the page being read — copying from the page, scrolling it, clicking
+// its links — so the page stays fully usable underneath: the host never takes
+// pointer events, and only the panel's own frame does (see overlay.css). It
+// closes from its ✕, Escape, the toolbar icon, the shortcut, or the
+// quick-open button.
 
 // The panel asks to close (its close button, or Escape) by posting to this
 // window. The page's own scripts can post here too, so only a message whose

@@ -28,8 +28,8 @@ if (container) {
 }
 
 // Tab cycles through the panel instead of escaping into the page behind it,
-// where nothing visible would show which element has focus. Escape and a
-// click outside still close the panel. The side panel does not need this:
+// where nothing visible would show which element has focus. Escape and the
+// ✕ still close the panel, and clicking the page moves focus there. The side panel does not need this:
 // Chrome moves focus out of it on its own terms.
 trapFocus(document);
 
