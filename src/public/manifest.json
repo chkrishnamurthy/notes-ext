@@ -3,7 +3,7 @@
   "name": "__MSG_extStoreName__",
   "short_name": "__MSG_extName__",
   "default_locale": "en",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "__MSG_extDescription__",
   "minimum_chrome_version": "141",
   "icons": {

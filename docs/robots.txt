@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://chkrishnamurthy.github.io/notes-ext/sitemap.xml
+Sitemap: https://holdpad.vercel.app/sitemap.xml

@@ -44,7 +44,7 @@ napkin.one / napkin.ai own the word in Google.
 - [ ] Privacy policy URL → `docs/privacy.html` once hosted
 - [ ] Support email / site → replace `SUPPORT_EMAIL` in `docs/`
 - [ ] Homepage URL → the `docs/` site
-- [ ] Privacy practices tab: "does not collect user data"; justify each permission with the table in `docs/privacy.html`
+- [ ] Privacy practices tab: declare **Website content** and **Web history** (Google requires disclosure even for data kept only on the device); tick the three certifications; justify each permission with the table in `docs/privacy.html`
 - [ ] Verify the publisher domain (for the verified-publisher badge)
 
 ## Ranking beyond the words

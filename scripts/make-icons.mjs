@@ -5,8 +5,13 @@
  * image library for four flat shapes is not worth the dependency, so this
  * rasterises the mark directly and writes the PNGs with zlib.
  *
- * The mark is the accent rounded square from the mockup with three lines of
- * "note" on it, which stays legible down to 16px.
+ * The mark is a pad held by a clip: a paper sheet with a folded corner and
+ * three lines of note, clipped at the top, on the accent rounded square. Every
+ * part is a flat shape thick enough to survive at 16px.
+ *
+ * The 128px icon keeps the artwork to the middle 96px, with 16px of clear
+ * space on every side, as the Chrome Web Store asks. The toolbar sizes fill
+ * their whole square.
  */
 
 import { deflateSync } from 'node:zlib';
@@ -16,10 +21,16 @@ import { fileURLToPath } from 'node:url';
 
 const OUT_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '../src/public/icons');
 const SIZES = [16, 32, 48, 128];
+// Clear space around the artwork, as a fraction of the icon, per size.
+const PADDING = { 128: 16 / 128 };
 
 // Light-theme palette. Chrome tints toolbar icons for dark themes itself.
 const ACCENT = [0x31, 0x5e, 0x49];
 const PAPER = [0xfb, 0xfa, 0xf7];
+// The underside of the folded corner, and the clip.
+const FOLD = [0xc9, 0xdc, 0xd1];
+const CLIP = [0x9f, 0xcf, 0xb5];
+const CLIP_EDGE = [0x1f, 0x3d, 0x2f];
 
 /** Signed distance to a rounded rectangle, in the unit square. */
 function roundedRect(x, y, cx, cy, hw, hh, r) {
@@ -29,23 +40,46 @@ function roundedRect(x, y, cx, cy, hw, hh, r) {
   return outside + Math.min(Math.max(qx, qy), 0) - r;
 }
 
-/** The three note lines: [centre y, half-width]. */
+/** The sheet: left, top, right, bottom, corner radius, fold size. */
+const SHEET = { l: 0.225, t: 0.24, r: 0.775, b: 0.855, radius: 0.07, fold: 0.17 };
+
+/** The note lines on the sheet, left-aligned: [centre y, right end]. */
 const LINES = [
-  [0.335, 0.26],
-  [0.5, 0.26],
-  [0.665, 0.175],
+  [0.47, 0.6],
+  [0.595, 0.665],
+  [0.72, 0.535],
 ];
+const LINE_LEFT = 0.325;
+const LINE_HALF = 0.036;
 
 function sample(x, y) {
   // Background plate.
   if (roundedRect(x, y, 0.5, 0.5, 0.5, 0.5, 0.22) > 0) return null;
-  for (const [cy, hw] of LINES) {
-    if (roundedRect(x, y, 0.5, cy, hw, 0.043, 0.043) <= 0) return PAPER;
+
+  // The clip, over the top edge of the sheet: a dark rim around a light body.
+  const clip = roundedRect(x, y, 0.5, SHEET.t + 0.005, 0.135, 0.07, 0.045);
+  if (clip <= 0) return clip > -0.028 ? CLIP_EDGE : CLIP;
+
+  const { l, t, r, b, radius, fold } = SHEET;
+  const inSheet =
+    roundedRect(x, y, (l + r) / 2, (t + b) / 2, (r - l) / 2, (b - t) / 2, radius) <= 0;
+  if (inSheet) {
+    // Top-right corner folded down: beyond the diagonal is gone, and the
+    // triangle just inside it is the paper's underside.
+    const beyond = x - y > r - t - fold;
+    if (beyond) return ACCENT;
+    if (x > r - fold && y < t + fold) return FOLD;
+    for (const [cy, right] of LINES) {
+      const cx = (LINE_LEFT + right) / 2;
+      if (roundedRect(x, y, cx, cy, (right - LINE_LEFT) / 2, LINE_HALF, LINE_HALF) <= 0) return ACCENT;
+    }
+    return PAPER;
   }
   return ACCENT;
 }
 
 function render(size) {
+  const pad = PADDING[size] ?? 0;
   // 4x supersampling: the 16px icon's 0.7px-tall lines need it to read at all.
   const SS = 4;
   const pixels = Buffer.alloc(size * size * 4);
@@ -59,7 +93,7 @@ function render(size) {
         for (let sx = 0; sx < SS; sx += 1) {
           const x = (px + (sx + 0.5) / SS) / size;
           const y = (py + (sy + 0.5) / SS) / size;
-          const colour = sample(x, y);
+          const colour = sample((x - pad) / (1 - 2 * pad), (y - pad) / (1 - 2 * pad));
           if (!colour) continue;
           r += colour[0];
           g += colour[1];

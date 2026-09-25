@@ -1,6 +1,6 @@
 {
   "name": "holdpad",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "description": "Holdpad \u2014 quick notes and notepad for any page, in a local-first Chrome side panel.",
   "type": "module",
