@@ -1,24 +1,30 @@
 {
   "extName": {
-    "message": "For Now"
+    "message": "Holdpad",
+    "description": "The product name, shown in the panel. Not translated."
+  },
+  "extStoreName": {
+    "message": "Holdpad – Notas rápidas e bloco de notas para qualquer página",
+    "description": "The listing title: the brand, then what it does. Chrome and the Web Store search on it."
   },
   "extDescription": {
-    "message": "Um painel lateral para as notas que você precisa agora. Salve sem arquivar, ache sem lembrar onde, limpe sem perder nada."
+    "message": "Faça notas rápidas num painel lateral em qualquer página. Salve textos e links, pesquise tudo. Privado, offline, sem cadastro.",
+    "description": "The Web Store summary. At most 132 characters."
   },
   "actionTitle": {
-    "message": "For Now — abrir notas"
+    "message": "Holdpad — abrir notas"
   },
   "commandOpen": {
-    "message": "Abrir as notas do For Now"
+    "message": "Abrir as notas do Holdpad"
   },
   "menuSaveSelection": {
-    "message": "Salvar seleção no For Now"
+    "message": "Salvar seleção no Holdpad"
   },
   "menuSaveLink": {
-    "message": "Salvar link no For Now"
+    "message": "Salvar link no Holdpad"
   },
   "menuSavePage": {
-    "message": "Salvar esta página no For Now"
+    "message": "Salvar esta página no Holdpad"
   },
   "captureNothing": {
     "message": "Não havia nada para salvar com esse clique."
@@ -33,10 +39,10 @@
     "message": "Não salvo — $1"
   },
   "launcherTitle": {
-    "message": "For Now — abrir notas (Alt+Shift+N)"
+    "message": "Holdpad — abrir notas (Alt+Shift+N)"
   },
   "overlayFrameTitle": {
-    "message": "Notas do For Now"
+    "message": "Notas do Holdpad"
   },
   "resizeLabel": {
     "message": "Redimensionar o painel de notas"
@@ -45,7 +51,7 @@
     "message": "Arraste para redimensionar. Clique duas vezes para redefinir."
   },
   "settingsPageTitle": {
-    "message": "For Now — Configurações e backup"
+    "message": "Holdpad — Configurações e backup"
   },
   "noteNeedsText": {
     "message": "Uma nota precisa de algum texto."
@@ -57,7 +63,7 @@
     "message": "Cópia em conflito · $1"
   },
   "errorNewerNote": {
-    "message": "Esta nota foi salva por uma versão mais nova do For Now. Atualize a extensão para alterá-la."
+    "message": "Esta nota foi salva por uma versão mais nova do Holdpad. Atualize a extensão para alterá-la."
   },
   "errorNoteGone": {
     "message": "Essa nota não existe mais neste dispositivo."
@@ -75,16 +81,16 @@
     "message": "Esse arquivo não é um JSON válido."
   },
   "backupNotBackup": {
-    "message": "Esse arquivo não é um backup do For Now."
+    "message": "Esse arquivo não é um backup do Holdpad."
   },
   "backupNotOurs": {
-    "message": "Esse arquivo não foi exportado pelo For Now."
+    "message": "Esse arquivo não foi exportado pelo Holdpad."
   },
   "backupNoNotes": {
     "message": "Esse backup não tem uma lista de notas."
   },
   "backupNewer": {
-    "message": "Esse backup foi feito por uma versão mais nova do For Now. Atualize a extensão e importe de novo."
+    "message": "Esse backup foi feito por uma versão mais nova do Holdpad. Atualize a extensão e importe de novo."
   },
   "backupInvalid": {
     "message": "Backup inválido."
@@ -381,7 +387,7 @@
     "message": "Ideia rápida"
   },
   "savedInApp": {
-    "message": "Salva no For Now"
+    "message": "Salva no Holdpad"
   },
   "tagFilterTitle": {
     "message": "Mostrar só as notas com a tag $1"
@@ -441,7 +447,7 @@
     "message": "Um cantinho para pensar."
   },
   "emptyAllBody": {
-    "message": "Anote uma ideia acima ou selecione texto em qualquer página e escolha “Salvar seleção no For Now”."
+    "message": "Anote uma ideia acima ou selecione texto em qualquer página e escolha “Salvar seleção no Holdpad”."
   },
   "emptyPinnedTitle": {
     "message": "Deixe o que é útil por perto."
@@ -462,7 +468,7 @@
     "message": "Tente uma palavra da nota, da tag ou da fonte."
   },
   "optTitle": {
-    "message": "Configurações do For Now"
+    "message": "Configurações do Holdpad"
   },
   "optSubtitle": {
     "message": "Aparência, backup e privacidade · tudo fica neste dispositivo"

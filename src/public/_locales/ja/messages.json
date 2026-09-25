@@ -1,24 +1,30 @@
 {
   "extName": {
-    "message": "For Now"
+    "message": "Holdpad",
+    "description": "The product name, shown in the panel. Not translated."
+  },
+  "extStoreName": {
+    "message": "Holdpad – どのページでも使えるクイックメモ＆メモ帳",
+    "description": "The listing title: the brand, then what it does. Chrome and the Web Store search on it."
   },
   "extDescription": {
-    "message": "今すぐ必要なメモのためのサイドパネル。整理せずに保存、場所を覚えずに検索、失う心配なく片付け。"
+    "message": "どのページでもサイドパネルですばやくメモ。選択したテキストやリンクを保存して全文検索。プライベート、オフライン、登録不要。",
+    "description": "The Web Store summary. At most 132 characters."
   },
   "actionTitle": {
-    "message": "For Now — メモを開く"
+    "message": "Holdpad — メモを開く"
   },
   "commandOpen": {
-    "message": "For Now のメモを開く"
+    "message": "Holdpad のメモを開く"
   },
   "menuSaveSelection": {
-    "message": "選択範囲を For Now に保存"
+    "message": "選択範囲を Holdpad に保存"
   },
   "menuSaveLink": {
-    "message": "リンクを For Now に保存"
+    "message": "リンクを Holdpad に保存"
   },
   "menuSavePage": {
-    "message": "このページを For Now に保存"
+    "message": "このページを Holdpad に保存"
   },
   "captureNothing": {
     "message": "そのクリックでは保存するものがありませんでした。"
@@ -33,10 +39,10 @@
     "message": "保存されていません — $1"
   },
   "launcherTitle": {
-    "message": "For Now — メモを開く (Alt+Shift+N)"
+    "message": "Holdpad — メモを開く (Alt+Shift+N)"
   },
   "overlayFrameTitle": {
-    "message": "For Now のメモ"
+    "message": "Holdpad のメモ"
   },
   "resizeLabel": {
     "message": "メモパネルのサイズを変更"
@@ -45,7 +51,7 @@
     "message": "ドラッグでサイズを変更。ダブルクリックで元に戻します。"
   },
   "settingsPageTitle": {
-    "message": "For Now — 設定とバックアップ"
+    "message": "Holdpad — 設定とバックアップ"
   },
   "noteNeedsText": {
     "message": "メモにはテキストが必要です。"
@@ -57,7 +63,7 @@
     "message": "競合したコピー · $1"
   },
   "errorNewerNote": {
-    "message": "このメモは新しいバージョンの For Now で保存されています。変更するには拡張機能を更新してください。"
+    "message": "このメモは新しいバージョンの Holdpad で保存されています。変更するには拡張機能を更新してください。"
   },
   "errorNoteGone": {
     "message": "そのメモはこのデバイスにもうありません。"
@@ -75,16 +81,16 @@
     "message": "このファイルは有効な JSON ではありません。"
   },
   "backupNotBackup": {
-    "message": "このファイルは For Now のバックアップではありません。"
+    "message": "このファイルは Holdpad のバックアップではありません。"
   },
   "backupNotOurs": {
-    "message": "このファイルは For Now から書き出されたものではありません。"
+    "message": "このファイルは Holdpad から書き出されたものではありません。"
   },
   "backupNoNotes": {
     "message": "このバックアップにはメモの一覧がありません。"
   },
   "backupNewer": {
-    "message": "このバックアップは新しいバージョンの For Now で作成されています。拡張機能を更新してから、もう一度読み込んでください。"
+    "message": "このバックアップは新しいバージョンの Holdpad で作成されています。拡張機能を更新してから、もう一度読み込んでください。"
   },
   "backupInvalid": {
     "message": "無効なバックアップです。"
@@ -381,7 +387,7 @@
     "message": "ひらめきメモ"
   },
   "savedInApp": {
-    "message": "For Now に保存"
+    "message": "Holdpad に保存"
   },
   "tagFilterTitle": {
     "message": "タグ「$1」のメモだけを表示"
@@ -441,7 +447,7 @@
     "message": "考えごとのための小さなスペース。"
   },
   "emptyAllBody": {
-    "message": "上にひとこと書くか、ページのテキストを選択して「選択範囲を For Now に保存」を選んでください。"
+    "message": "上にひとこと書くか、ページのテキストを選択して「選択範囲を Holdpad に保存」を選んでください。"
   },
   "emptyPinnedTitle": {
     "message": "役立つものを手元に。"
@@ -462,7 +468,7 @@
     "message": "メモの本文、タグ、出典にある言葉で試してください。"
   },
   "optTitle": {
-    "message": "For Now の設定"
+    "message": "Holdpad の設定"
   },
   "optSubtitle": {
     "message": "外観、バックアップ、プライバシー · すべてこのデバイス内に保存"

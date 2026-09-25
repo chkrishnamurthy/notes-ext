@@ -1,24 +1,30 @@
 {
   "extName": {
-    "message": "For Now"
+    "message": "Holdpad",
+    "description": "The product name, shown in the panel. Not translated."
+  },
+  "extStoreName": {
+    "message": "Holdpad – Catatan Cepat & Notepad untuk Semua Halaman",
+    "description": "The listing title: the brand, then what it does. Chrome and the Web Store search on it."
   },
   "extDescription": {
-    "message": "Panel samping untuk catatan yang Anda perlukan sekarang. Simpan tanpa memilah, temukan tanpa mengingat, hapus tanpa kehilangan."
+    "message": "Buat catatan cepat di panel samping di halaman mana pun. Simpan teks dan tautan, cari semuanya. Privat, offline, tanpa akun.",
+    "description": "The Web Store summary. At most 132 characters."
   },
   "actionTitle": {
-    "message": "For Now — buka catatan"
+    "message": "Holdpad — buka catatan"
   },
   "commandOpen": {
-    "message": "Buka catatan For Now"
+    "message": "Buka catatan Holdpad"
   },
   "menuSaveSelection": {
-    "message": "Simpan pilihan ke For Now"
+    "message": "Simpan pilihan ke Holdpad"
   },
   "menuSaveLink": {
-    "message": "Simpan tautan ke For Now"
+    "message": "Simpan tautan ke Holdpad"
   },
   "menuSavePage": {
-    "message": "Simpan halaman ini ke For Now"
+    "message": "Simpan halaman ini ke Holdpad"
   },
   "captureNothing": {
     "message": "Tidak ada yang bisa disimpan dari klik itu."
@@ -33,10 +39,10 @@
     "message": "Tidak tersimpan — $1"
   },
   "launcherTitle": {
-    "message": "For Now — buka catatan (Alt+Shift+N)"
+    "message": "Holdpad — buka catatan (Alt+Shift+N)"
   },
   "overlayFrameTitle": {
-    "message": "Catatan For Now"
+    "message": "Catatan Holdpad"
   },
   "resizeLabel": {
     "message": "Ubah ukuran panel catatan"
@@ -45,7 +51,7 @@
     "message": "Seret untuk mengubah ukuran. Klik dua kali untuk mengatur ulang."
   },
   "settingsPageTitle": {
-    "message": "For Now — Setelan dan cadangan"
+    "message": "Holdpad — Setelan dan cadangan"
   },
   "noteNeedsText": {
     "message": "Catatan perlu berisi teks."
@@ -57,7 +63,7 @@
     "message": "Salinan konflik · $1"
   },
   "errorNewerNote": {
-    "message": "Catatan ini disimpan oleh versi For Now yang lebih baru. Perbarui ekstensi untuk mengubahnya."
+    "message": "Catatan ini disimpan oleh versi Holdpad yang lebih baru. Perbarui ekstensi untuk mengubahnya."
   },
   "errorNoteGone": {
     "message": "Catatan itu sudah tidak ada di perangkat ini."
@@ -75,16 +81,16 @@
     "message": "File itu bukan JSON yang valid."
   },
   "backupNotBackup": {
-    "message": "File itu bukan cadangan For Now."
+    "message": "File itu bukan cadangan Holdpad."
   },
   "backupNotOurs": {
-    "message": "File itu tidak diekspor oleh For Now."
+    "message": "File itu tidak diekspor oleh Holdpad."
   },
   "backupNoNotes": {
     "message": "Cadangan itu tidak memiliki daftar catatan."
   },
   "backupNewer": {
-    "message": "Cadangan itu dibuat oleh versi For Now yang lebih baru. Perbarui ekstensi, lalu impor lagi."
+    "message": "Cadangan itu dibuat oleh versi Holdpad yang lebih baru. Perbarui ekstensi, lalu impor lagi."
   },
   "backupInvalid": {
     "message": "Cadangan tidak valid."
@@ -381,7 +387,7 @@
     "message": "Ide singkat"
   },
   "savedInApp": {
-    "message": "Disimpan di For Now"
+    "message": "Disimpan di Holdpad"
   },
   "tagFilterTitle": {
     "message": "Hanya tampilkan catatan dengan tag $1"
@@ -441,7 +447,7 @@
     "message": "Sedikit ruang untuk berpikir."
   },
   "emptyAllBody": {
-    "message": "Tulis ide di atas, atau pilih teks di halaman mana pun dan pilih “Simpan pilihan ke For Now”."
+    "message": "Tulis ide di atas, atau pilih teks di halaman mana pun dan pilih “Simpan pilihan ke Holdpad”."
   },
   "emptyPinnedTitle": {
     "message": "Simpan yang berguna tetap dekat."
@@ -462,7 +468,7 @@
     "message": "Coba kata dari catatan, tag, atau sumbernya."
   },
   "optTitle": {
-    "message": "Setelan For Now"
+    "message": "Setelan Holdpad"
   },
   "optSubtitle": {
     "message": "Tampilan, cadangan, dan privasi · semuanya tetap di perangkat ini"

@@ -56,7 +56,7 @@ const exported = { name: files[0] ?? '', text: files[0] ? readFileSync(join(down
 check('the file is named by date', /^for-now-backup-\d{4}-\d{2}-\d{2}\.json$/.test(exported.name),
   exported.name);
 const parsed = JSON.parse(exported.text);
-check('the export is valid JSON with a For Now marker', parsed.app === 'for-now');
+check('the export is valid JSON with a Holdpad marker', parsed.app === 'for-now');
 check('it carries a schema version', parsed.schemaVersion === 4);
 check('it includes every note, Trash included', parsed.notes.length === 4, String(parsed.notes.length));
 check('pinned state is exported', parsed.notes.find((n) => n.id === 'n1')?.pinned === true);
@@ -126,7 +126,7 @@ await s.evalJson(`
   await new Promise((r) => setTimeout(r, 400));
   return true;
 `);
-check('a file from another app is refused by name', has(await text(s), 'not exported by For Now'));
+check('a file from another app is refused by name', has(await text(s), 'not exported by Holdpad'));
 check('the refusal changes nothing', await s.evalJson(`
   const all = await chrome.storage.local.get(null);
   return Object.keys(all).filter((k) => k.startsWith('note:')).length === 4;

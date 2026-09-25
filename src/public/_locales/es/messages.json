@@ -1,24 +1,30 @@
 {
   "extName": {
-    "message": "For Now"
+    "message": "Holdpad",
+    "description": "The product name, shown in the panel. Not translated."
+  },
+  "extStoreName": {
+    "message": "Holdpad – Notas rápidas y bloc de notas para cualquier página",
+    "description": "The listing title: the brand, then what it does. Chrome and the Web Store search on it."
   },
   "extDescription": {
-    "message": "Un panel lateral para las notas que necesitas ahora. Guarda sin archivar, encuentra sin recordar dónde y borra sin perder nada."
+    "message": "Toma notas rápidas en un panel lateral en cualquier página. Guarda texto y enlaces, búscalo todo. Privado, sin conexión, sin cuenta.",
+    "description": "The Web Store summary. At most 132 characters."
   },
   "actionTitle": {
-    "message": "For Now — abrir notas"
+    "message": "Holdpad — abrir notas"
   },
   "commandOpen": {
-    "message": "Abrir las notas de For Now"
+    "message": "Abrir las notas de Holdpad"
   },
   "menuSaveSelection": {
-    "message": "Guardar la selección en For Now"
+    "message": "Guardar la selección en Holdpad"
   },
   "menuSaveLink": {
-    "message": "Guardar el enlace en For Now"
+    "message": "Guardar el enlace en Holdpad"
   },
   "menuSavePage": {
-    "message": "Guardar esta página en For Now"
+    "message": "Guardar esta página en Holdpad"
   },
   "captureNothing": {
     "message": "No había nada que guardar con ese clic."
@@ -33,10 +39,10 @@
     "message": "No se guardó: $1"
   },
   "launcherTitle": {
-    "message": "For Now — abrir notas (Alt+Shift+N)"
+    "message": "Holdpad — abrir notas (Alt+Shift+N)"
   },
   "overlayFrameTitle": {
-    "message": "Notas de For Now"
+    "message": "Notas de Holdpad"
   },
   "resizeLabel": {
     "message": "Cambiar el tamaño del panel de notas"
@@ -45,7 +51,7 @@
     "message": "Arrastra para cambiar el tamaño. Doble clic para restablecerlo."
   },
   "settingsPageTitle": {
-    "message": "For Now — Ajustes y copia de seguridad"
+    "message": "Holdpad — Ajustes y copia de seguridad"
   },
   "noteNeedsText": {
     "message": "Una nota necesita algo de texto."
@@ -57,7 +63,7 @@
     "message": "Copia en conflicto · $1"
   },
   "errorNewerNote": {
-    "message": "Esta nota se guardó con una versión más reciente de For Now. Actualiza la extensión para modificarla."
+    "message": "Esta nota se guardó con una versión más reciente de Holdpad. Actualiza la extensión para modificarla."
   },
   "errorNoteGone": {
     "message": "Esa nota ya no existe en este dispositivo."
@@ -75,16 +81,16 @@
     "message": "Ese archivo no es un JSON válido."
   },
   "backupNotBackup": {
-    "message": "Ese archivo no es una copia de seguridad de For Now."
+    "message": "Ese archivo no es una copia de seguridad de Holdpad."
   },
   "backupNotOurs": {
-    "message": "Ese archivo no se exportó desde For Now."
+    "message": "Ese archivo no se exportó desde Holdpad."
   },
   "backupNoNotes": {
     "message": "Esa copia de seguridad no tiene lista de notas."
   },
   "backupNewer": {
-    "message": "Esa copia de seguridad se hizo con una versión más reciente de For Now. Actualiza la extensión y vuelve a importarla."
+    "message": "Esa copia de seguridad se hizo con una versión más reciente de Holdpad. Actualiza la extensión y vuelve a importarla."
   },
   "backupInvalid": {
     "message": "Copia de seguridad no válida."
@@ -381,7 +387,7 @@
     "message": "Idea rápida"
   },
   "savedInApp": {
-    "message": "Guardada en For Now"
+    "message": "Guardada en Holdpad"
   },
   "tagFilterTitle": {
     "message": "Mostrar solo las notas con la etiqueta $1"
@@ -441,7 +447,7 @@
     "message": "Un pequeño espacio para pensar."
   },
   "emptyAllBody": {
-    "message": "Anota una idea arriba, o selecciona texto en cualquier página y elige “Guardar la selección en For Now”."
+    "message": "Anota una idea arriba, o selecciona texto en cualquier página y elige “Guardar la selección en Holdpad”."
   },
   "emptyPinnedTitle": {
     "message": "Ten a mano lo útil."
@@ -462,7 +468,7 @@
     "message": "Prueba con una palabra de la nota, de su etiqueta o de su fuente."
   },
   "optTitle": {
-    "message": "Ajustes de For Now"
+    "message": "Ajustes de Holdpad"
   },
   "optSubtitle": {
     "message": "Apariencia, copia de seguridad y privacidad · todo se queda en este dispositivo"

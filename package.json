@@ -1,8 +1,8 @@
 {
-  "name": "for-now",
+  "name": "holdpad",
   "version": "0.1.0",
   "private": true,
-  "description": "For Now \u2014 a local-first Chrome side-panel scratchpad for notes you need right now.",
+  "description": "Holdpad \u2014 quick notes and notepad for any page, in a local-first Chrome side panel.",
   "type": "module",
   "scripts": {
     "icons": "node scripts/make-icons.mjs",

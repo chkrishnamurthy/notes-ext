@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacy Policy – Holdpad Quick Notes for Chrome</title>
+  <meta name="description" content="Holdpad stores your notes only on your device. It has no network access, no account, no analytics and collects no personal data.">
+  <link rel="canonical" href="https://chkrishnamurthy.github.io/notes-ext/privacy.html">
+  <link rel="icon" href="icon-128.png" type="image/png">
+  <style>
+    :root { --bg: #f7f6f2; --text: #1f2421; --muted: #5d6660; --line: #e3e1da; --accent: #2f5d4a; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #161a18; --text: #e8ebe8; --muted: #a3ada6; --line: #2e3531; --accent: #9fd0b4; }
+    }
+    body { margin: 0; background: var(--bg); color: var(--text); font: 17px/1.65 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    main { max-width: 720px; margin: 0 auto; padding: 32px 20px 64px; }
+    a { color: var(--accent); }
+    h1 { font-size: 34px; line-height: 1.2; margin: 12px 0 4px; }
+    h2 { font-size: 21px; margin: 32px 0 8px; }
+    .muted { color: var(--muted); }
+    code { font-size: 15px; }
+    table { border-collapse: collapse; width: 100%; font-size: 15px; }
+    th, td { border-bottom: 1px solid var(--line); text-align: left; padding: 8px 8px 8px 0; vertical-align: top; }
+  </style>
+</head>
+<body>
+<main>
+  <p><a href="./">← Holdpad</a></p>
+  <h1>Privacy Policy</h1>
+  <p class="muted">Holdpad – Quick Notes &amp; Notepad for Any Page · Last updated 25 September 2026</p>
+
+  <h2>Summary</h2>
+  <p>Holdpad does not collect, transmit, sell or share any personal data. Your notes are stored only on your own device, and the extension has no network access.</p>
+
+  <h2>What Holdpad stores</h2>
+  <p>The notes you write or save (their text and formatting, and for saved selections, links and pages, the address and title of the page they came from), an unsaved draft, and your settings. All of this is kept in Chrome's local extension storage (<code>chrome.storage.local</code>) on your computer.</p>
+  <p>Nothing is stored on any server. Holdpad does not use sync storage, cookies, analytics, advertising or crash reporting.</p>
+
+  <h2>No network access</h2>
+  <p>The extension's content security policy blocks all network connections (<code>connect-src 'none'</code>). Holdpad cannot send your notes, or anything else, over the internet.</p>
+
+  <h2>Permissions and why they are needed</h2>
+  <table>
+    <tr><th>Permission</th><th>Used for</th></tr>
+    <tr><td><code>storage</code></td><td>Saving your notes and settings on your device.</td></tr>
+    <tr><td><code>sidePanel</code></td><td>Showing the notes panel where a page cannot host it.</td></tr>
+    <tr><td><code>contextMenus</code></td><td>The right-click items “Save selection”, “Save link” and “Save this page”.</td></tr>
+    <tr><td><code>activeTab</code>, <code>scripting</code></td><td>Opening the panel on the page you clicked from, and reading the text you chose to save. Only after you click the icon or a menu item.</td></tr>
+    <tr><td>Optional: access to all sites</td><td>Requested only if you turn on the quick-open button, to draw that button on pages. It reads no page content and is released when you turn the button off.</td></tr>
+  </table>
+
+  <h2>Your control</h2>
+  <p>You can export all notes at any time from Settings, delete any note, and empty the Trash. Uninstalling Holdpad removes all of its stored data from your device.</p>
+
+  <h2>Children</h2>
+  <p>Holdpad collects no personal information from anyone, including children.</p>
+
+  <h2>Changes</h2>
+  <p>If this policy changes, the new version will be posted on this page with a new date.</p>
+
+  <h2>Contact</h2>
+  <p>Questions: <a href="mailto:SUPPORT_EMAIL">SUPPORT_EMAIL</a></p>
+</main>
+</body>
+</html>

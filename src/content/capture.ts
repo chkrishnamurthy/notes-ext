@@ -1,5 +1,5 @@
 /**
- * Reads the page's selection as rich text, for "Save selection to For Now".
+ * Reads the page's selection as rich text, for "Save selection to Holdpad".
  *
  * Injected by the service worker on the context-menu click, under the
  * `activeTab` grant that click creates. It only defines a function; the worker

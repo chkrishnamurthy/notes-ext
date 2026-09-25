@@ -1,4 +1,4 @@
-/** Shared helpers for driving the For Now panel over CDP. */
+/** Shared helpers for driving the Holdpad panel over CDP. */
 import { Session, targets, waitFor } from './cdp.mjs';
 
 /** Set by run.mjs after it loads the unpacked extension. */

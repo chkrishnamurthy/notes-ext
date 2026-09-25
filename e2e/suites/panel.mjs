@@ -17,7 +17,7 @@ await resetStorage(s);
 console.log('\n# Empty state');
 let body = await text(s);
 check('shows the empty-state heading', has(body, 'A little space to think.'));
-check('explains both entry points', has(body, 'Save selection to For Now'));
+check('explains both entry points', has(body, 'Save selection to Holdpad'));
 check('says notes are local', has(body, 'on this device'));
 await shot(s, `${OUT}/01-empty.png`);
 

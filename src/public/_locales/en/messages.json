@@ -1,25 +1,30 @@
 {
   "extName": {
-    "message": "For Now",
-    "description": "The product name. Not translated."
+    "message": "Holdpad",
+    "description": "The product name, shown in the panel. Not translated."
+  },
+  "extStoreName": {
+    "message": "Holdpad – Quick Notes & Notepad for Any Page",
+    "description": "The listing title: the brand, then what it does. Chrome and the Web Store search on it."
   },
   "extDescription": {
-    "message": "A side panel for notes you need right now. Capture without filing, find without remembering where, clear without losing anything."
+    "message": "Take quick notes in a side panel on any page. Save selected text and links, search it all. Private, offline, no sign-up.",
+    "description": "The Web Store summary. At most 132 characters."
   },
   "actionTitle": {
-    "message": "For Now — open notes"
+    "message": "Holdpad — open notes"
   },
   "commandOpen": {
-    "message": "Open For Now notes"
+    "message": "Open Holdpad notes"
   },
   "menuSaveSelection": {
-    "message": "Save selection to For Now"
+    "message": "Save selection to Holdpad"
   },
   "menuSaveLink": {
-    "message": "Save link to For Now"
+    "message": "Save link to Holdpad"
   },
   "menuSavePage": {
-    "message": "Save this page to For Now"
+    "message": "Save this page to Holdpad"
   },
   "captureNothing": {
     "message": "There was nothing to save from that click."
@@ -34,10 +39,10 @@
     "message": "Not saved — $1"
   },
   "launcherTitle": {
-    "message": "For Now — open notes (Alt+Shift+N)"
+    "message": "Holdpad — open notes (Alt+Shift+N)"
   },
   "overlayFrameTitle": {
-    "message": "For Now notes"
+    "message": "Holdpad notes"
   },
   "resizeLabel": {
     "message": "Resize notes panel"
@@ -46,7 +51,7 @@
     "message": "Drag to resize. Double-click to reset."
   },
   "settingsPageTitle": {
-    "message": "For Now — Settings and backup"
+    "message": "Holdpad — Settings and backup"
   },
   "noteNeedsText": {
     "message": "A note needs some text."
@@ -58,7 +63,7 @@
     "message": "Conflicting copy · $1"
   },
   "errorNewerNote": {
-    "message": "This note was saved by a newer version of For Now. Update the extension to change it."
+    "message": "This note was saved by a newer version of Holdpad. Update the extension to change it."
   },
   "errorNoteGone": {
     "message": "That note no longer exists on this device."
@@ -76,16 +81,16 @@
     "message": "That file is not valid JSON."
   },
   "backupNotBackup": {
-    "message": "That file is not a For Now backup."
+    "message": "That file is not a Holdpad backup."
   },
   "backupNotOurs": {
-    "message": "That file was not exported by For Now."
+    "message": "That file was not exported by Holdpad."
   },
   "backupNoNotes": {
     "message": "That backup has no notes list."
   },
   "backupNewer": {
-    "message": "That backup was made by a newer version of For Now. Update the extension, then import again."
+    "message": "That backup was made by a newer version of Holdpad. Update the extension, then import again."
   },
   "backupInvalid": {
     "message": "Invalid backup."
@@ -382,7 +387,7 @@
     "message": "Quick thought"
   },
   "savedInApp": {
-    "message": "Saved in For Now"
+    "message": "Saved in Holdpad"
   },
   "tagFilterTitle": {
     "message": "Show only notes tagged $1"
@@ -442,7 +447,7 @@
     "message": "A little space to think."
   },
   "emptyAllBody": {
-    "message": "Jot a thought above, or select text on any page and choose “Save selection to For Now”."
+    "message": "Jot a thought above, or select text on any page and choose “Save selection to Holdpad”."
   },
   "emptyPinnedTitle": {
     "message": "Keep the useful bits close."
@@ -463,7 +468,7 @@
     "message": "Try a word from the note, its tag or its source."
   },
   "optTitle": {
-    "message": "For Now settings"
+    "message": "Holdpad settings"
   },
   "optSubtitle": {
     "message": "Appearance, backup and privacy · everything stays on this device"

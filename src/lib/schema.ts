@@ -3,7 +3,7 @@ import { DEFAULT_PALETTE, isPaletteId, type PaletteId } from './palettes';
 import { stripTagsFallback, textToHtml } from './richtext';
 
 /**
- * Data model and schema versioning for For Now.
+ * Data model and schema versioning for Holdpad.
  *
  * Every persisted note carries its own `schemaVersion` and `rev`. The version
  * lets migrations run per-record without rewriting the whole store; the

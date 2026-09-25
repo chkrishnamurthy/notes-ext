@@ -1,24 +1,30 @@
 {
   "extName": {
-    "message": "For Now"
+    "message": "Holdpad",
+    "description": "The product name, shown in the panel. Not translated."
+  },
+  "extStoreName": {
+    "message": "Holdpad – किसी भी पेज के लिए क्विक नोट्स और नोटपैड",
+    "description": "The listing title: the brand, then what it does. Chrome and the Web Store search on it."
   },
   "extDescription": {
-    "message": "अभी काम आने वाले नोट्स के लिए साइड पैनल। बिना छांटे सहेजें, बिना याद रखे खोजें, बिना कुछ खोए साफ़ करें।"
+    "message": "किसी भी पेज पर साइड पैनल में क्विक नोट्स लें। चुना हुआ टेक्स्ट और लिंक सहेजें, सब खोजें। निजी, ऑफ़लाइन, बिना साइन-अप।",
+    "description": "The Web Store summary. At most 132 characters."
   },
   "actionTitle": {
-    "message": "For Now — नोट्स खोलें"
+    "message": "Holdpad — नोट्स खोलें"
   },
   "commandOpen": {
-    "message": "For Now नोट्स खोलें"
+    "message": "Holdpad नोट्स खोलें"
   },
   "menuSaveSelection": {
-    "message": "चुना गया टेक्स्ट For Now में सहेजें"
+    "message": "चुना गया टेक्स्ट Holdpad में सहेजें"
   },
   "menuSaveLink": {
-    "message": "लिंक For Now में सहेजें"
+    "message": "लिंक Holdpad में सहेजें"
   },
   "menuSavePage": {
-    "message": "यह पेज For Now में सहेजें"
+    "message": "यह पेज Holdpad में सहेजें"
   },
   "captureNothing": {
     "message": "उस क्लिक से सहेजने के लिए कुछ नहीं मिला।"
@@ -33,10 +39,10 @@
     "message": "सहेजा नहीं गया — $1"
   },
   "launcherTitle": {
-    "message": "For Now — नोट्स खोलें (Alt+Shift+N)"
+    "message": "Holdpad — नोट्स खोलें (Alt+Shift+N)"
   },
   "overlayFrameTitle": {
-    "message": "For Now नोट्स"
+    "message": "Holdpad नोट्स"
   },
   "resizeLabel": {
     "message": "नोट्स पैनल का आकार बदलें"
@@ -45,7 +51,7 @@
     "message": "आकार बदलने के लिए खींचें। रीसेट के लिए डबल-क्लिक करें।"
   },
   "settingsPageTitle": {
-    "message": "For Now — सेटिंग्स और बैकअप"
+    "message": "Holdpad — सेटिंग्स और बैकअप"
   },
   "noteNeedsText": {
     "message": "नोट में कुछ टेक्स्ट होना चाहिए।"
@@ -57,7 +63,7 @@
     "message": "टकराव वाली कॉपी · $1"
   },
   "errorNewerNote": {
-    "message": "यह नोट For Now के नए वर्ज़न से सहेजा गया था। इसे बदलने के लिए एक्सटेंशन अपडेट करें।"
+    "message": "यह नोट Holdpad के नए वर्ज़न से सहेजा गया था। इसे बदलने के लिए एक्सटेंशन अपडेट करें।"
   },
   "errorNoteGone": {
     "message": "वह नोट अब इस डिवाइस पर मौजूद नहीं है।"
@@ -75,16 +81,16 @@
     "message": "यह फ़ाइल मान्य JSON नहीं है।"
   },
   "backupNotBackup": {
-    "message": "यह फ़ाइल For Now का बैकअप नहीं है।"
+    "message": "यह फ़ाइल Holdpad का बैकअप नहीं है।"
   },
   "backupNotOurs": {
-    "message": "यह फ़ाइल For Now से एक्सपोर्ट नहीं की गई थी।"
+    "message": "यह फ़ाइल Holdpad से एक्सपोर्ट नहीं की गई थी।"
   },
   "backupNoNotes": {
     "message": "इस बैकअप में नोट्स की सूची नहीं है।"
   },
   "backupNewer": {
-    "message": "यह बैकअप For Now के नए वर्ज़न से बना है। एक्सटेंशन अपडेट करें, फिर दोबारा इंपोर्ट करें।"
+    "message": "यह बैकअप Holdpad के नए वर्ज़न से बना है। एक्सटेंशन अपडेट करें, फिर दोबारा इंपोर्ट करें।"
   },
   "backupInvalid": {
     "message": "अमान्य बैकअप।"
@@ -381,7 +387,7 @@
     "message": "झटपट विचार"
   },
   "savedInApp": {
-    "message": "For Now में सहेजा गया"
+    "message": "Holdpad में सहेजा गया"
   },
   "tagFilterTitle": {
     "message": "सिर्फ़ $1 टैग वाले नोट्स दिखाएं"
@@ -441,7 +447,7 @@
     "message": "सोचने के लिए थोड़ी-सी जगह।"
   },
   "emptyAllBody": {
-    "message": "ऊपर कोई विचार लिखें, या किसी भी पेज पर टेक्स्ट चुनकर “चुना गया टेक्स्ट For Now में सहेजें” चुनें।"
+    "message": "ऊपर कोई विचार लिखें, या किसी भी पेज पर टेक्स्ट चुनकर “चुना गया टेक्स्ट Holdpad में सहेजें” चुनें।"
   },
   "emptyPinnedTitle": {
     "message": "काम की चीज़ें पास रखें।"
@@ -462,7 +468,7 @@
     "message": "नोट, उसके टैग या स्रोत का कोई शब्द आज़माएं।"
   },
   "optTitle": {
-    "message": "For Now सेटिंग्स"
+    "message": "Holdpad सेटिंग्स"
   },
   "optSubtitle": {
     "message": "रूप-रंग, बैकअप और निजता · सब कुछ इसी डिवाइस पर रहता है"

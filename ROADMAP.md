@@ -1,4 +1,4 @@
-# For Now — Feature Roadmap and Growth Plan
+# Holdpad — Feature Roadmap and Growth Plan
 
 **Written:** 23 September 2026 · **Updated:** 24 September 2026
 **Status:** Proposal. Items marked **Shipped** are built; everything else is uncommitted.
@@ -87,7 +87,10 @@ Listing is table stakes, not distribution.
 
 ### 0.1 — Decide the name
 
-**Status:** open decision.
+**Status:** decided 2026-09-25 — **Holdpad**. Store title: “Holdpad – Quick Notes & Notepad
+for Any Page”. “Napkin” was dropped: *Napkin Notes • Side panel notes* already ships the
+same idea on the Web Store, and napkin.one and napkin.ai own the word in search. A web
+search found no notes product called Holdpad; USPTO / IP India and domains are still unchecked.
 
 Shortlist, warm/concrete style, with room to grow as features are added:
 
@@ -107,6 +110,8 @@ Sidecar (Apple), Scratch (MIT), Thumbtack, Pinboard, Doodle.
 `.com` / `.app` domains. None of the above have been verified.
 
 ### 0.2 — Write the listing for the tier you want
+
+**Status:** drafted — title and summary in `_locales/*/messages.json`, full copy in `store/`.
 
 **Effort:** S · **Permissions:** none · **Touches:** `src/public/manifest.json`, store listing
 

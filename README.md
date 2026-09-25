@@ -1,4 +1,4 @@
-# For Now
+# Holdpad
 
 A local-first Chrome side panel for notes you need during the current task or
 the next few days.
@@ -36,10 +36,10 @@ to pick the change up.
 | Format text | The toolbar, or type it: `- ` a list, `1. ` a numbered list, `# ` a heading, `> ` a quote, ``` a code block, `**bold**` |
 | Keep a snippet | The code-block button — whitespace is preserved exactly |
 | Switch layout | The list / card icons at the right of the filter row |
-| Save a selection | Select text on any page → right-click → **Save selection to For Now**. Links, bold and italic, lists and code blocks are kept |
-| Save a link | Right-click a link → **Save link to For Now** |
+| Save a selection | Select text on any page → right-click → **Save selection to Holdpad**. Links, bold and italic, lists and code blocks are kept |
+| Save a link | Right-click a link → **Save link to Holdpad** |
 | Get a button on every page | Settings → **Quick-open button**. Off by default; turning it on asks Chrome for site access |
-| Save a page | Right-click a page → **Save this page to For Now** |
+| Save a page | Right-click a page → **Save this page to Holdpad** |
 | Find something | **Ctrl/Cmd+K**, or the search box in the filter row, below the editor |
 | Edit a note | Click its text |
 | Tag a note | **Add tag** on the note. One tag per note, never asked for when you save; empty the field to remove it |

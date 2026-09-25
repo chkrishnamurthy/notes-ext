@@ -96,7 +96,7 @@ describe('import validation', () => {
   it('rejects a JSON file from another app', () => {
     const parsed = parseBackup(JSON.stringify({ app: 'something-else', notes: [] }));
     expect(parsed.ok).toBe(false);
-    expect(parsed.error).toMatch(/not exported by For Now/);
+    expect(parsed.error).toMatch(/not exported by Holdpad/);
   });
 
   it('rejects a backup from a newer schema version', () => {

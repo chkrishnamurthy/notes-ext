@@ -46,7 +46,7 @@ function registerMenus(): void {
     // Reported here rather than thrown: a failed menu registration should not
     // take down the rest of the worker's start-up.
     if (chrome.runtime.lastError) {
-      console.warn('For Now: could not register context menus.');
+      console.warn('Holdpad: could not register context menus.');
     }
   });
 }

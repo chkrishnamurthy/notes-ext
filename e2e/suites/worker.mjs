@@ -142,7 +142,7 @@ check('the panel can still save with the worker stopped', await panel.evalJson(`
 // Context menus live in the browser, not the worker, so they must outlive it.
 check('the context menus survive the worker being terminated', await panel.evalJson(`
   try {
-    await chrome.contextMenus.update('for-now-save-selection', { title: 'Save selection to For Now' });
+    await chrome.contextMenus.update('for-now-save-selection', { title: 'Save selection to Holdpad' });
     return true;
   } catch { return false; }
 `));
@@ -166,7 +166,7 @@ await settle(sw2, 800);
 check('the worker restarts on a cold start', !!restarted);
 check('the menus are registered once, not duplicated', await sw2.evalJson(`
   try {
-    await chrome.contextMenus.update('for-now-save-selection', { title: 'Save selection to For Now' });
+    await chrome.contextMenus.update('for-now-save-selection', { title: 'Save selection to Holdpad' });
     return true;
   } catch { return false; }
 `));

@@ -1,24 +1,30 @@
 {
   "extName": {
-    "message": "For Now"
+    "message": "Holdpad",
+    "description": "The product name, shown in the panel. Not translated."
+  },
+  "extStoreName": {
+    "message": "Holdpad – Schnelle Notizen & Notizblock für jede Seite",
+    "description": "The listing title: the brand, then what it does. Chrome and the Web Store search on it."
   },
   "extDescription": {
-    "message": "Ein Seitenbereich für Notizen, die du jetzt brauchst. Festhalten ohne Ablage, finden ohne Suchen, löschen ohne Verlust."
+    "message": "Schnelle Notizen im Seitenbereich auf jeder Webseite. Text und Links speichern, alles durchsuchen. Privat, offline, ohne Konto.",
+    "description": "The Web Store summary. At most 132 characters."
   },
   "actionTitle": {
-    "message": "For Now — Notizen öffnen"
+    "message": "Holdpad — Notizen öffnen"
   },
   "commandOpen": {
     "message": "For-Now-Notizen öffnen"
   },
   "menuSaveSelection": {
-    "message": "Auswahl in For Now speichern"
+    "message": "Auswahl in Holdpad speichern"
   },
   "menuSaveLink": {
-    "message": "Link in For Now speichern"
+    "message": "Link in Holdpad speichern"
   },
   "menuSavePage": {
-    "message": "Diese Seite in For Now speichern"
+    "message": "Diese Seite in Holdpad speichern"
   },
   "captureNothing": {
     "message": "Mit diesem Klick gab es nichts zu speichern."
@@ -33,7 +39,7 @@
     "message": "Nicht gespeichert — $1"
   },
   "launcherTitle": {
-    "message": "For Now — Notizen öffnen (Alt+Shift+N)"
+    "message": "Holdpad — Notizen öffnen (Alt+Shift+N)"
   },
   "overlayFrameTitle": {
     "message": "For-Now-Notizen"
@@ -45,7 +51,7 @@
     "message": "Ziehen, um die Größe zu ändern. Doppelklick zum Zurücksetzen."
   },
   "settingsPageTitle": {
-    "message": "For Now — Einstellungen und Sicherung"
+    "message": "Holdpad — Einstellungen und Sicherung"
   },
   "noteNeedsText": {
     "message": "Eine Notiz braucht etwas Text."
@@ -57,7 +63,7 @@
     "message": "Konfliktkopie · $1"
   },
   "errorNewerNote": {
-    "message": "Diese Notiz wurde mit einer neueren Version von For Now gespeichert. Aktualisiere die Erweiterung, um sie zu ändern."
+    "message": "Diese Notiz wurde mit einer neueren Version von Holdpad gespeichert. Aktualisiere die Erweiterung, um sie zu ändern."
   },
   "errorNoteGone": {
     "message": "Diese Notiz gibt es auf diesem Gerät nicht mehr."
@@ -78,13 +84,13 @@
     "message": "Diese Datei ist keine For-Now-Sicherung."
   },
   "backupNotOurs": {
-    "message": "Diese Datei wurde nicht von For Now exportiert."
+    "message": "Diese Datei wurde nicht von Holdpad exportiert."
   },
   "backupNoNotes": {
     "message": "Diese Sicherung enthält keine Notizliste."
   },
   "backupNewer": {
-    "message": "Diese Sicherung stammt von einer neueren Version von For Now. Aktualisiere die Erweiterung und importiere sie dann erneut."
+    "message": "Diese Sicherung stammt von einer neueren Version von Holdpad. Aktualisiere die Erweiterung und importiere sie dann erneut."
   },
   "backupInvalid": {
     "message": "Ungültige Sicherung."
@@ -381,7 +387,7 @@
     "message": "Schneller Gedanke"
   },
   "savedInApp": {
-    "message": "In For Now gespeichert"
+    "message": "In Holdpad gespeichert"
   },
   "tagFilterTitle": {
     "message": "Nur Notizen mit dem Tag $1 anzeigen"
@@ -441,7 +447,7 @@
     "message": "Ein wenig Raum zum Denken."
   },
   "emptyAllBody": {
-    "message": "Notiere oben einen Gedanken, oder markiere Text auf einer Seite und wähle „Auswahl in For Now speichern“."
+    "message": "Notiere oben einen Gedanken, oder markiere Text auf einer Seite und wähle „Auswahl in Holdpad speichern“."
   },
   "emptyPinnedTitle": {
     "message": "Das Nützliche griffbereit halten."

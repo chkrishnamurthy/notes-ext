@@ -107,7 +107,9 @@ await settle(s, 800);
 // save was refused with a warning about a change that never happened.
 await second.evalJson(`
   const all = await chrome.storage.local.get(null);
-  const [key, note] = Object.entries(all).find(([, v]) => v.text === 'a note to pin mid-edit');
+  // The open edit's draft carries the same text, so match note records only.
+  const [key, note] = Object.entries(all)
+    .find(([k, v]) => k.startsWith('note:') && v.text === 'a note to pin mid-edit');
   await chrome.storage.local.set({ [key]: { ...note, pinned: true, rev: note.rev + 1, updatedAt: Date.now() } });
   return true;
 `);
