@@ -32,6 +32,9 @@
   "notSavedQuotaShort": {
     "message": "Not saved — this device is out of space for notes. Export a backup and clear some notes."
   },
+  "savedTruncated": {
+    "message": "Saved on this device — the selection was very long, so only the first 100,000 characters were kept."
+  },
   "notSavedQuota": {
     "message": "Not saved — this device is out of space for notes. Export a backup from Settings, then clear some notes."
   },

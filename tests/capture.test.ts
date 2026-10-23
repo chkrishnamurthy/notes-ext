@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   captureFrom,
+  isTruncated,
   MAX_CAPTURE_LENGTH,
   MENU_LINK,
   MENU_PAGE,
@@ -29,6 +30,13 @@ describe('selection capture', () => {
 
   it('saves nothing when the selection is only whitespace', () => {
     expect(captureFrom({ menuItemId: MENU_SELECTION, selectionText: '   \n ' }, tab)).toBeNull();
+  });
+
+  it('reports when a selection was cut short', () => {
+    const long = 'x'.repeat(MAX_CAPTURE_LENGTH + 1);
+    expect(isTruncated({ menuItemId: MENU_SELECTION, selectionText: long })).toBe(true);
+    expect(isTruncated({ menuItemId: MENU_SELECTION, selectionText: 'short' })).toBe(false);
+    expect(isTruncated({ menuItemId: MENU_LINK, selectionText: long })).toBe(false);
   });
 
   it('caps a runaway selection', () => {

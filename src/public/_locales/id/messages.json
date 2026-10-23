@@ -32,6 +32,9 @@
   "notSavedQuotaShort": {
     "message": "Tidak tersimpan — ruang untuk catatan di perangkat ini habis. Ekspor cadangan lalu hapus beberapa catatan."
   },
+  "savedTruncated": {
+    "message": "Tersimpan di perangkat ini — pilihan sangat panjang, jadi hanya 100.000 karakter pertama yang disimpan."
+  },
   "notSavedQuota": {
     "message": "Tidak tersimpan — ruang untuk catatan di perangkat ini habis. Ekspor cadangan dari Setelan, lalu hapus beberapa catatan."
   },

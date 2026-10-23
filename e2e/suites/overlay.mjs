@@ -65,6 +65,22 @@ const injected = await sw.evalJson(`
 check('the overlay injects into a page', injected === true, String(injected));
 await settle(s, 1600);
 
+// --- Injecting twice -------------------------------------------------------
+console.log('\n# Injecting twice');
+const reinjected = await sw.evalJson(`
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  try {
+    await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ['content.js'] });
+    return true;
+  } catch (e) { return String(e); }
+`);
+check('a second injection is accepted', reinjected === true, String(reinjected));
+await settle(s, 1600);
+const hostCount = await s.evalJson(
+  `return document.querySelectorAll('#for-now-overlay-host').length;`,
+);
+check('a second injection leaves exactly one panel', hostCount === 1, String(hostCount));
+
 // --- Mounting -------------------------------------------------------------
 console.log('\n# Mounting');
 const shellMount = await inShell(s, `

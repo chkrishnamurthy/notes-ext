@@ -32,6 +32,9 @@
   "notSavedQuotaShort": {
     "message": "Não salvo — este dispositivo está sem espaço para notas. Exporte um backup e limpe algumas notas."
   },
+  "savedTruncated": {
+    "message": "Salvo neste dispositivo — a seleção era muito longa, então apenas os primeiros 100.000 caracteres foram mantidos."
+  },
   "notSavedQuota": {
     "message": "Não salvo — este dispositivo está sem espaço para notas. Exporte um backup em Configurações e depois limpe algumas notas."
   },

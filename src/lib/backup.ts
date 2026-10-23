@@ -13,6 +13,7 @@ import { SCHEMA_VERSION, isFromNewerVersion, parseNote, type Note } from './sche
 import { migrateRecord } from './migrations';
 import type { NoteStore, WriteResult } from './storage';
 
+/** Identifies a backup file. Kept as "for-now" (the original name) so files exported by earlier builds still import. */
 export const BACKUP_APP = 'for-now';
 export const BACKUP_KIND = 'backup';
 
@@ -40,10 +41,10 @@ export function serializeBackup(notes: Note[], now = Date.now()): string {
   return JSON.stringify(buildBackup(notes, now), null, 2);
 }
 
-/** `for-now-backup-2026-09-23.json` */
+/** `holdpad-backup-2026-09-23.json` */
 export function backupFilename(now = Date.now()): string {
   const date = new Date(now).toISOString().slice(0, 10);
-  return `for-now-backup-${date}.json`;
+  return `holdpad-backup-${date}.json`;
 }
 
 export interface ParsedBackup {

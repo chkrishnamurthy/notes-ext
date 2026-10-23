@@ -84,7 +84,7 @@ describe('export and import round trip', () => {
   });
 
   it('names the file by date', () => {
-    expect(backupFilename(Date.UTC(2026, 8, 23))).toBe('for-now-backup-2026-09-23.json');
+    expect(backupFilename(Date.UTC(2026, 8, 23))).toBe('holdpad-backup-2026-09-23.json');
   });
 });
 

@@ -32,6 +32,9 @@
   "notSavedQuotaShort": {
     "message": "Nicht gespeichert — auf diesem Gerät ist kein Platz mehr für Notizen. Exportiere eine Sicherung und lösche einige Notizen."
   },
+  "savedTruncated": {
+    "message": "Auf diesem Gerät gespeichert — die Auswahl war sehr lang, daher wurden nur die ersten 100.000 Zeichen behalten."
+  },
   "notSavedQuota": {
     "message": "Nicht gespeichert — auf diesem Gerät ist kein Platz mehr für Notizen. Exportiere in den Einstellungen eine Sicherung und lösche dann einige Notizen."
   },

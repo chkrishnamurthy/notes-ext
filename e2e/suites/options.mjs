@@ -53,7 +53,7 @@ const files = readdirSync(downloadDir).filter((f) => !f.endsWith('.crdownload'))
 check('the export really downloads a file', files.length === 1, JSON.stringify(readdirSync(downloadDir)));
 const exported = { name: files[0] ?? '', text: files[0] ? readFileSync(join(downloadDir, files[0]), 'utf8') : '{}' };
 
-check('the file is named by date', /^for-now-backup-\d{4}-\d{2}-\d{2}\.json$/.test(exported.name),
+check('the file is named by date', /^holdpad-backup-\d{4}-\d{2}-\d{2}\.json$/.test(exported.name),
   exported.name);
 const parsed = JSON.parse(exported.text);
 check('the export is valid JSON with a Holdpad marker', parsed.app === 'for-now');

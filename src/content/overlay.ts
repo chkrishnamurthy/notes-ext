@@ -25,7 +25,7 @@
  */
 
 import { cornerPoint } from '../lib/corner';
-import { OVERLAY_CLOSE, OVERLAY_OPENED } from '../lib/host';
+import { OVERLAY_CLOSE, OVERLAY_OPENED, OVERLAY_READY } from '../lib/host';
 import { t } from '../lib/i18n';
 import {
   DEFAULT_OVERLAY_WIDTH,
@@ -60,6 +60,9 @@ const HOST_ID = 'for-now-overlay-host';
 /** How long a first open waits for the frame to load before animating anyway. */
 const FRAME_LOAD_TIMEOUT_MS = 1500;
 
+/** How long the panel has to report in before the page is assumed to block it. */
+const FRAME_READY_TIMEOUT_MS = 5000;
+
 interface OverlayState {
   host: HTMLElement;
   shadow: ShadowRoot;
@@ -70,6 +73,9 @@ interface OverlayState {
   width: number;
   /** Resolves once the iframe has loaded, or the wait has timed out. */
   loaded: Promise<void>;
+  /** True once the panel inside has reported in; false if it never did. */
+  ready: Promise<boolean>;
+  markReady: () => void;
   /** Where focus was on the page before the panel took it. */
   returnFocus: Element | null;
   open: boolean;
@@ -150,9 +156,18 @@ function create(): OverlayState {
   // iframe, and so cannot read the dynamic URL the panel is served from.
   const shadow = host.attachShadow({ mode: 'closed' });
 
-  const style = document.createElement('style');
-  style.textContent = `${panelCss}\n${overlayCss}`;
-  shadow.append(style);
+  // A constructed stylesheet rather than a <style> element: a page policy
+  // without 'unsafe-inline' can refuse the latter, and never sees the former.
+  const css = `${panelCss}\n${overlayCss}`;
+  try {
+    const sheet = new CSSStyleSheet();
+    sheet.replaceSync(css);
+    shadow.adoptedStyleSheets = [sheet];
+  } catch {
+    const style = document.createElement('style');
+    style.textContent = css;
+    shadow.append(style);
+  }
 
   const stage = document.createElement('div');
   stage.className = 'fn-stage';
@@ -195,6 +210,12 @@ function create(): OverlayState {
 
   void syncTheme(host);
 
+  let markReady = (): void => undefined;
+  const ready = new Promise<boolean>((resolve) => {
+    markReady = () => resolve(true);
+    setTimeout(() => resolve(false), FRAME_READY_TIMEOUT_MS);
+  });
+
   const created: OverlayState = {
     host,
     shadow,
@@ -207,6 +228,8 @@ function create(): OverlayState {
     loaded: Promise.all([frameLoaded, loadWidth(frame)]).then((results) => {
       created.width = results[1];
     }),
+    ready,
+    markReady,
     returnFocus: null,
     open: false,
     busy: false,
@@ -364,6 +387,18 @@ export async function open(): Promise<void> {
   // frame would look broken, so give it a moment to arrive.
   await current.loaded;
 
+  if (!(await current.ready)) {
+    // The frame is blank: the page's policy refuses to frame extension pages.
+    // Leave nothing half-working on the page and use another surface.
+    destroy();
+    try {
+      await chrome.runtime.sendMessage({ type: 'overlay-unavailable' });
+    } catch {
+      // The extension went away; there is nothing left to fall back to.
+    }
+    return;
+  }
+
   await genie(current, 'in');
   current.frame.style.visibility = 'visible';
   current.open = true;
@@ -434,7 +469,9 @@ export function destroy(): void {
 // source is the panel's own frame is believed.
 window.addEventListener('message', (event) => {
   if (!state || event.source !== state.iframe.contentWindow) return;
-  if ((event.data as { type?: unknown } | null)?.type === OVERLAY_CLOSE) void close();
+  const type = (event.data as { type?: unknown } | null)?.type;
+  if (type === OVERLAY_READY) state.markReady();
+  if (type === OVERLAY_CLOSE) void close();
 });
 
 chrome.storage.onChanged.addListener((changes, area) => {
@@ -450,11 +487,33 @@ chrome.storage.onChanged.addListener((changes, area) => {
 
 window.addEventListener('pagehide', destroy);
 
-chrome.runtime.onMessage.addListener((message: { type?: string }) => {
+/**
+ * Injecting twice must leave exactly one panel. Two copies of this script can
+ * meet in the same world (a second injection while the first is still live) or
+ * the first can be an orphan: after the extension is updated or reloaded, the
+ * old script's listeners are dead but its host element is still on the page.
+ * A newcomer asks any live predecessor to stand down, then clears whatever
+ * host is left behind. This runs before the newcomer registers its own
+ * listeners, so it can never stand itself down.
+ */
+const REPLACE_EVENT = 'for-now:overlay-replace';
+
+function onRuntimeMessage(message: { type?: string }): undefined {
   if (message?.type === 'toggle-overlay') void toggle();
   if (message?.type === 'open-overlay') void open();
   return undefined;
-});
+}
+
+function standDown(): void {
+  chrome.runtime.onMessage.removeListener(onRuntimeMessage);
+  window.removeEventListener(REPLACE_EVENT, standDown);
+  destroy();
+}
+
+window.dispatchEvent(new CustomEvent(REPLACE_EVENT));
+document.getElementById(HOST_ID)?.remove();
+window.addEventListener(REPLACE_EVENT, standDown);
+chrome.runtime.onMessage.addListener(onRuntimeMessage);
 
 // Injection is the open gesture: the worker injects on the first click and
 // sends `toggle-overlay` on every click after that.

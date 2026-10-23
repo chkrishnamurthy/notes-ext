@@ -32,6 +32,9 @@
   "notSavedQuotaShort": {
     "message": "No se guardó: este dispositivo no tiene espacio para más notas. Exporta una copia de seguridad y borra algunas notas."
   },
+  "savedTruncated": {
+    "message": "Guardado en este dispositivo: la selección era muy larga, así que solo se conservaron los primeros 100.000 caracteres."
+  },
   "notSavedQuota": {
     "message": "No se guardó: este dispositivo no tiene espacio para más notas. Exporta una copia de seguridad desde Ajustes y borra algunas notas."
   },

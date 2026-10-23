@@ -32,6 +32,9 @@
   "notSavedQuotaShort": {
     "message": "Non enregistré — cet appareil n'a plus de place pour les notes. Exportez une sauvegarde et effacez quelques notes."
   },
+  "savedTruncated": {
+    "message": "Enregistré sur cet appareil — la sélection était très longue, seuls les 100 000 premiers caractères ont été conservés."
+  },
   "notSavedQuota": {
     "message": "Non enregistré — cet appareil n'a plus de place pour les notes. Exportez une sauvegarde depuis les paramètres, puis effacez quelques notes."
   },

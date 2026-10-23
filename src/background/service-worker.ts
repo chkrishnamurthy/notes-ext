@@ -9,6 +9,8 @@
 
 import {
   captureFrom,
+  isTruncated,
+  MAX_CAPTURE_HTML,
   MAX_CAPTURE_LENGTH,
   MENU_LINK,
   MENU_PAGE,
@@ -308,7 +310,8 @@ async function readRichSelection(
       !value ||
       typeof value.html !== 'string' ||
       typeof value.text !== 'string' ||
-      value.text.length > MAX_CAPTURE_LENGTH
+      value.text.length > MAX_CAPTURE_LENGTH ||
+      value.html.length > MAX_CAPTURE_HTML
     ) {
       return null;
     }
@@ -348,7 +351,11 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 
     const result = await createNote(store, input);
     if (result.ok) {
-      broadcast({ type: 'capture-saved', note: result.value });
+      broadcast({
+        type: 'capture-saved',
+        note: result.value,
+        truncated: isTruncated(info),
+      });
       return;
     }
     broadcast({
@@ -414,6 +421,13 @@ chrome.runtime.onMessage.addListener((message: ExtensionMessage, sender, respond
     // `sender.tab` is the page the button lives on, which is the tab the panel
     // belongs to — the same path a toolbar click takes from here on.
     if (sender.tab) void showPanel(sender.tab);
+    respond({ ok: true });
+    return false;
+  }
+  if (message?.type === 'overlay-unavailable') {
+    // Best effort: opening a popup normally wants a user gesture, which may
+    // have lapsed by now. The side panel is tried next, as everywhere else.
+    if (sender.tab) openPopup(sender.tab);
     respond({ ok: true });
     return false;
   }

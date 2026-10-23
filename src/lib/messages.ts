@@ -10,6 +10,8 @@ import type { Note } from './schema';
 export interface CaptureSavedMessage {
   type: 'capture-saved';
   note: Note;
+  /** The selection was longer than a capture keeps, so the note ends early. */
+  truncated?: boolean;
 }
 
 export interface CaptureFailedMessage {
@@ -50,6 +52,14 @@ export interface LauncherChangedMessage {
   type: 'launcher-changed';
 }
 
+/**
+ * The overlay mounted but its panel never loaded — the page's own policy
+ * forbids framing it. The worker shows the popup instead.
+ */
+export interface OverlayUnavailableMessage {
+  type: 'overlay-unavailable';
+}
+
 export type ExtensionMessage =
   | CaptureSavedMessage
   | CaptureFailedMessage
@@ -57,6 +67,7 @@ export type ExtensionMessage =
   | ToggleOverlayMessage
   | OpenOverlayMessage
   | LauncherClickMessage
+  | OverlayUnavailableMessage
   | LauncherChangedMessage;
 
 /**

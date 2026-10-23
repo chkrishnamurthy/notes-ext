@@ -227,7 +227,7 @@ export function App({ host }: { host: HostBridge }) {
       if (message.type === 'capture-saved') {
         setView('all');
         setQuery('');
-        announce(t('savedOnDevice'));
+        announce(message.truncated ? t('savedTruncated') : t('savedOnDevice'));
         void refresh();
       } else if (message.type === 'capture-failed') {
         announce(message.message);

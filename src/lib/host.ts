@@ -14,6 +14,13 @@ export const OVERLAY_CLOSE = 'for-now:close';
 /** Sent by the shell to the framed panel once it has finished opening. */
 export const OVERLAY_OPENED = 'for-now:opened';
 
+/**
+ * Sent by the framed panel to the shell once it is running. A page whose
+ * Content-Security-Policy forbids framing extension pages leaves the frame
+ * blank; silence here is how the shell finds out and falls back.
+ */
+export const OVERLAY_READY = 'for-now:ready';
+
 export type Surface = 'sidepanel' | 'overlay' | 'popup';
 
 export interface HostBridge {

@@ -15,6 +15,18 @@ export const MENU_PAGE = 'for-now-save-page';
 /** Keeps a runaway selection from eating the 10 MB local quota in one go. */
 export const MAX_CAPTURE_LENGTH = 100_000;
 
+/**
+ * Rich selections carry markup as well as text. The page-side check allows up
+ * to eight times the text, but a page's renderer is not trusted to have done
+ * it, so the worker enforces its own ceiling before anything is stored.
+ */
+export const MAX_CAPTURE_HTML = 800_000;
+
+/** True when a selection is longer than a capture keeps, so the note is cut short. */
+export function isTruncated(click: CaptureClick): boolean {
+  return click.menuItemId === MENU_SELECTION && (click.selectionText ?? '').length > MAX_CAPTURE_LENGTH;
+}
+
 /** The subset of the click payload that matters, so tests need no Chrome types. */
 export interface CaptureClick {
   menuItemId: string | number;

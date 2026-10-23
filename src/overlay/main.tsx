@@ -10,7 +10,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import '../styles.css';
 import { trapFocus } from '../lib/focusTrap';
-import { OVERLAY_OPENED, framedOverlayHost } from '../lib/host';
+import { OVERLAY_OPENED, OVERLAY_READY, framedOverlayHost } from '../lib/host';
 import { App } from '../sidepanel/App';
 import { applyCachedTheme } from '../lib/theme';
 import { applyLanguage } from '../lib/i18n';
@@ -44,3 +44,7 @@ window.addEventListener('message', (event) => {
   if ((event.data as { type?: unknown } | null)?.type !== OVERLAY_OPENED) return;
   (document.querySelector('.fn-prose') as HTMLElement | null)?.focus();
 });
+
+// Tells the shell the frame was not blocked from loading. It carries nothing
+// private, so the target origin does not matter.
+window.parent.postMessage({ type: OVERLAY_READY }, '*');

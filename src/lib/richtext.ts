@@ -39,6 +39,8 @@ const DROP_WITH_CONTENTS = new Set([
   'TEXTAREA', 'FORM', 'SVG', 'MATH', 'CANVAS', 'AUDIO', 'VIDEO', 'SOURCE',
 ]);
 
+const HTML_NS = 'http://www.w3.org/1999/xhtml';
+
 const SAFE_PROTOCOLS = ['http:', 'https:', 'mailto:'];
 
 function safeHref(value: string): string | null {
@@ -60,7 +62,10 @@ function safeHref(value: string): string | null {
  * unknown tag is kept as text instead of silently vanishing.
  */
 function scrub(node: Element): void {
-  if (DROP_WITH_CONTENTS.has(node.tagName)) {
+  // SVG and MathML elements keep lowercase tag names in an HTML document, so
+  // the name sets below would miss them and unwrap their contents as text.
+  // Nothing the editor produces lives in another namespace: drop it whole.
+  if (node.namespaceURI !== HTML_NS || DROP_WITH_CONTENTS.has(node.tagName)) {
     node.remove();
     return;
   }

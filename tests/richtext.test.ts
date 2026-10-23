@@ -10,6 +10,11 @@ import {
 } from '../src/lib/richtext';
 
 describe('sanitizer', () => {
+  it('drops SVG and MathML with their contents instead of leaving script text behind', () => {
+    expect(sanitizeHtml('<svg><script>alert(1)</script><style>x{}</style></svg>ok')).toBe('ok');
+    expect(sanitizeHtml('<p>a</p><math><mi>x</mi></math>')).toBe('<p>a</p>');
+  });
+
   it('keeps the formatting the editor produces', () => {
     const html =
       '<h1>Title</h1><p><strong>bold</strong> <em>italic</em> <s>struck</s> <code>x</code></p>' +
