@@ -85,17 +85,40 @@ function advance(current: Note, mutated: Note, now: number): Note {
   };
 }
 
+/** Runs `task` while holding the lock that serializes writes to the notes. */
+export type LockRunner = <T>(task: () => Promise<T>) => Promise<T>;
+
+/**
+ * The browser's Web Lock, shared by every extension page and the service
+ * worker, which all run on the extension's origin. Without it two contexts
+ * can each read a note, each pass the revision check, and each write — the
+ * second silently replacing the first. Where there is no lock manager, as in
+ * unit tests, the task simply runs.
+ */
+const NOTES_LOCK = 'holdpad-notes';
+
+export const webLockRunner: LockRunner = async <T,>(task: () => Promise<T>): Promise<T> => {
+  const locks = (globalThis as { navigator?: { locks?: LockManager } }).navigator?.locks;
+  if (!locks) return task();
+  return locks.request(NOTES_LOCK, async () => task());
+};
+
 export class NoteStore {
   /**
-   * Serializes mutations within this context. Cross-context races are caught
-   * by the revision check instead; this only prevents a context racing itself.
+   * Serializes mutations within this context, in order. Across contexts the
+   * lock does the same job, and the revision check is what turns a stale edit
+   * into a conflict instead of an overwrite.
    */
   private queue: Promise<unknown> = Promise.resolve();
 
-  constructor(private readonly area: StorageArea) {}
+  constructor(
+    private readonly area: StorageArea,
+    private readonly withLock: LockRunner = webLockRunner,
+  ) {}
 
   private run<T>(task: () => Promise<T>): Promise<T> {
-    const next = this.queue.then(task, task);
+    const locked = () => this.withLock(task);
+    const next = this.queue.then(locked, locked);
     // Keep the chain alive even when a task rejects.
     this.queue = next.catch(() => undefined);
     return next;

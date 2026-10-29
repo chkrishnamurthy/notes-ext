@@ -6,6 +6,7 @@
  * still a working notes panel.
  */
 import { Session, targets, waitFor } from '../cdp.mjs';
+import { startHostPage } from '../hostPage.mjs';
 import { ID, check, inShell, overlayPanel, report, settle, shot, workerTarget } from '../driver.mjs';
 
 const OUT = process.env.FORNOW_SHOTS ?? '.';
@@ -18,7 +19,8 @@ const PORT = process.env.FORNOW_CDP_PORT ?? 9222;
  * a data document cannot be injected into at all. The styles are applied after
  * navigation instead of being served with the page.
  */
-const HOST_PAGE = 'https://example.com/';
+const host = await startHostPage();
+const HOST_PAGE = host.url;
 
 const HOSTILE_CSS = `
   html { font-size: 10px; }
@@ -646,16 +648,20 @@ console.log('\n# Saving a selection');
 await s.evalJson(`
   document.body.insertAdjacentHTML('beforeend',
     '<div id="fn-capture"><p>Keep <strong>this bold</strong> and <a href="/more">this link</a>.</p>' +
-    '<ul><li>one</li><li>two</li></ul><p onclick="alert(1)">tail<img src=x onerror=alert(1)></p></div>');
+    '<ul><li>one</li><li>two</li></ul><p onclick="window.__pwned=1">tail<img src=x onerror="window.__pwned=1"></p></div>');
   const range = document.createRange();
   range.selectNodeContents(document.getElementById('fn-capture'));
   getSelection().removeAllRanges();
   getSelection().addRange(range);
   return true;
 `);
-const captured = await sw.evalJson(`
+// The worker may have been stopped for idling during the checks above, which
+// closes the session opened at the start; ask for a fresh one.
+const sw2 = await Session.open((await workerTarget()).webSocketDebuggerUrl);
+await sw2.send('Runtime.enable');
+const captured = await sw2.evalJson(`
   // Not the active tab: the settings check above left its own tab in front.
-  const [tab] = await chrome.tabs.query({ url: 'https://example.com/*' });
+  const [tab] = await chrome.tabs.query({ url: "http://127.0.0.1/*" });
   const target = { tabId: tab.id, frameIds: [0] };
   await chrome.scripting.executeScript({ target, files: ['capture.js'] });
   const [injection] = await chrome.scripting.executeScript({
@@ -668,7 +674,7 @@ check('the selection is read as rich text', typeof captured?.html === 'string',
   JSON.stringify(captured).slice(0, 200));
 check('emphasis survives', captured?.html?.includes('<strong>this bold</strong>'));
 check('a relative link becomes a working absolute one',
-  captured?.html?.includes('href="https://example.com/more"'));
+  captured?.html?.includes(`href="${host.origin}/more"`));
 check('lists survive', /<ul><li>one<\/li><li>two<\/li><\/ul>/.test(captured?.html ?? ''));
 check('the page’s handlers and images are stripped before it leaves the page',
   !/onclick|onerror|<img/i.test(captured?.html ?? ''));
@@ -690,3 +696,4 @@ report();
 s.close();
 sw.close();
 panel.close();
+sw2.close();

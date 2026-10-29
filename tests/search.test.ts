@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { filterNotes, highlight, parseQuery, snippet } from '../src/lib/search';
+import { filterNotes, highlight, parseQuery, snippet, withinOneEdit } from '../src/lib/search';
 import { buildNote } from '../src/lib/notes';
 import type { Note } from '../src/lib/schema';
 
@@ -106,5 +106,82 @@ describe('snippets', () => {
     const result = snippet(`needle ${'z'.repeat(400)}`, ['needle']);
     expect(result.truncatedStart).toBe(false);
     expect(result.text.startsWith('needle')).toBe(true);
+  });
+});
+
+describe('accents', () => {
+  it('matches without regard to accents, in either direction', () => {
+    const notes = [note({ text: 'Café menu' }), note({ text: 'plain cafe' })];
+    expect(filterNotes(notes, 'cafe')).toHaveLength(2);
+    expect(filterNotes(notes, 'café')).toHaveLength(2);
+  });
+
+  it('keeps characters whose marks carry meaning', () => {
+    const notes = [note({ text: 'か' }), note({ text: 'が' })];
+    expect(filterNotes(notes, 'が')).toHaveLength(1);
+  });
+
+  it('folds to the same length so highlights land on the right letters', () => {
+    const segments = highlight('Résumé of Rene', ['resume']);
+    expect(segments.filter((s) => s.match).map((s) => s.text)).toEqual(['Résumé']);
+  });
+});
+
+describe('typos', () => {
+  const notes = [note({ text: 'Essay outline: compare recall with rereading' })];
+
+  it('finds a word one typo away', () => {
+    expect(filterNotes(notes, 'recal')).toHaveLength(1);
+    expect(filterNotes(notes, 'recalll')).toHaveLength(1);
+    expect(filterNotes(notes, 'rexeadxng')).toHaveLength(0); // two edits
+    expect(filterNotes(notes, 'comapre')).toHaveLength(1); // a swap
+  });
+
+  it('does not guess at short terms', () => {
+    expect(filterNotes([note({ text: 'cat' })], 'cut')).toHaveLength(0);
+  });
+
+  it('highlights the word a typo matched', () => {
+    const marked = highlight('compare recall', ['recalll']).filter((s) => s.match);
+    expect(marked.map((s) => s.text)).toEqual(['recall']);
+  });
+
+  it('counts edits correctly', () => {
+    expect(withinOneEdit('recall', 'recal')).toBe(true);
+    expect(withinOneEdit('recall', 'recoll')).toBe(true);
+    expect(withinOneEdit('recall', 'rcall')).toBe(true);
+    expect(withinOneEdit('recall', 'rcaell')).toBe(false);
+    expect(withinOneEdit('recall', 'recalling')).toBe(false);
+  });
+});
+
+describe('ranking', () => {
+  it('puts a tag or title hit above a body hit', () => {
+    const body = note({ text: 'notes about budgets' });
+    const tagged = note({ text: 'something else', tag: 'budget' });
+    const titled = note({ text: 'unrelated', sourceTitle: 'Budget planner' });
+    const ranked = filterNotes([body, tagged, titled], 'budget');
+    expect(ranked[0]).toBe(tagged);
+    expect(ranked[1]).toBe(titled);
+    expect(ranked[2]).toBe(body);
+  });
+
+  it('prefers the start of a word to the middle of one', () => {
+    const middle = note({ text: 'the subcontract is signed' });
+    const start = note({ text: 'contract is signed' });
+    expect(filterNotes([middle, start], 'contract')[0]).toBe(start);
+  });
+
+  it('prefers an exact hit to a typo', () => {
+    const typo = note({ text: 'recal this later' });
+    const exact = note({ text: 'recall this later' });
+    expect(filterNotes([typo, exact], 'recall')[0]).toBe(exact);
+  });
+
+  it('keeps the incoming order among equal matches', () => {
+    const first = note({ text: 'alpha beta' });
+    const second = note({ text: 'alpha gamma' });
+    expect(filterNotes([first, second], 'alpha')).toEqual([first, second]);
+    expect(filterNotes([second, first], 'alpha')).toEqual([second, first]);
   });
 });

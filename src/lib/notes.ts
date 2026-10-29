@@ -165,6 +165,25 @@ export function setTag(
   );
 }
 
+/**
+ * The site a note was captured from: the host of the page it came from, without
+ * a leading `www.`. A note typed into the composer has none. The link a note
+ * saved (`targetUrl`) is not the site — it is the thing that was saved.
+ */
+export function siteOf(note: Note): string | undefined {
+  if (!note.sourceUrl) return undefined;
+  try {
+    const { hostname } = new URL(note.sourceUrl);
+    const host = hostname.replace(/^www\./i, '').toLowerCase();
+    return host || undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+export const sameSite = (a: string | undefined, b: string | undefined): boolean =>
+  a !== undefined && b !== undefined && a === b;
+
 /** Every tag in use, once each (first spelling wins), sorted for display. */
 export function tagsInUse(notes: Note[]): string[] {
   const byKey = new Map<string, string>();

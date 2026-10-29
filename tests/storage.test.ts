@@ -121,3 +121,78 @@ describe('NoteStore', () => {
     expect(updated.ok && updated.value.schemaVersion).toBe(SCHEMA_VERSION);
   });
 });
+
+describe('two contexts writing at once', () => {
+  /** A queue standing in for the browser's Web Lock manager. */
+  function installLocks() {
+    let tail: Promise<unknown> = Promise.resolve();
+    const locks = {
+      request: <T,>(_name: string, callback: () => Promise<T>): Promise<T> => {
+        const run = tail.then(callback, callback);
+        tail = run.catch(() => undefined);
+        return run;
+      },
+    };
+    Object.defineProperty(globalThis.navigator, 'locks', { value: locks, configurable: true });
+  }
+  const removeLocks = () => {
+    Reflect.deleteProperty(globalThis.navigator, 'locks');
+  };
+
+  async function raceTwoEdits(makeStore: (area: FakeArea) => NoteStore) {
+    const area = new FakeArea();
+    const first = makeStore(area);
+    const second = makeStore(area);
+    const note = buildNote({ text: 'original' });
+    await first.putNote(note);
+
+    const edit = (store: NoteStore, text: string) =>
+      store.updateNote(
+        note.id,
+        (current) => ({ ...current, text, html: `<p>${text}</p>` }),
+        note.contentRev,
+      );
+    const results = await Promise.all([edit(first, 'from the panel'), edit(second, 'from the worker')]);
+    const [stored] = await first.listNotes();
+    return { results, stored };
+  }
+
+  it('without a shared lock the later edit silently replaces the earlier one', async () => {
+    // Documents the hazard the lock exists for: both edits pass the revision
+    // check before either has written, so neither is told about the other.
+    const { results } = await raceTwoEdits((area) => new NoteStore(area, (task) => task()));
+    expect(results.every((result) => result.ok)).toBe(true);
+  });
+
+  it('with the browser lock, one edit wins and the other is told it conflicted', async () => {
+    installLocks();
+    try {
+      const { results, stored } = await raceTwoEdits((area) => new NoteStore(area));
+      const [won, lost] = results;
+      expect(won.ok).toBe(true);
+      expect(lost.ok).toBe(false);
+      if (lost.ok) return;
+      expect(lost.reason).toBe('conflict');
+      // The edit that lost is handed the text that won, and nothing was overwritten.
+      expect(lost.conflict?.text).toBe('from the panel');
+      expect(stored.text).toBe('from the panel');
+    } finally {
+      removeLocks();
+    }
+  });
+
+  it('keeps serializing when no lock manager exists', async () => {
+    const area = new FakeArea();
+    const store = new NoteStore(area);
+    const note = buildNote({ text: 'n' });
+    await store.putNote(note);
+    await Promise.all([
+      store.updateNote(note.id, (c) => ({ ...c, pinned: true })),
+      store.updateNote(note.id, (c) => ({ ...c, tag: 'a' })),
+    ]);
+    const [stored] = await store.listNotes();
+    expect(stored.pinned).toBe(true);
+    expect(stored.tag).toBe('a');
+    expect(stored.rev).toBe(3);
+  });
+});

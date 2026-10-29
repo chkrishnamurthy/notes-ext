@@ -218,6 +218,18 @@
   "showAllTags": {
     "message": "Alle Tags anzeigen"
   },
+  "siteFilterTitle": {
+    "message": "Nur Notizen von $1 anzeigen"
+  },
+  "siteFiltered": {
+    "message": "Von $1"
+  },
+  "stopSiteFilter": {
+    "message": "Filter $1 aufheben"
+  },
+  "showAllSites": {
+    "message": "Alle Websites anzeigen"
+  },
   "loadingNotes": {
     "message": "Notizen werden geladen …"
   },
@@ -451,6 +463,24 @@
   },
   "emptyAllBody": {
     "message": "Notiere oben einen Gedanken, oder markiere Text auf einer Seite und wähle „Auswahl in Holdpad speichern“."
+  },
+  "welcomeTitle": {
+    "message": "Drei Wege, Holdpad zu nutzen"
+  },
+  "welcomeTip1": {
+    "message": "Gedanken oben eintippen und mit Strg/Cmd+Enter speichern."
+  },
+  "welcomeTip2": {
+    "message": "Text auf einer Seite markieren, Rechtsklick und „$1“ wählen."
+  },
+  "welcomeTip3": {
+    "message": "Auf jeder Seite mit Alt+Shift+N oder dem Symbol in der Symbolleiste öffnen."
+  },
+  "welcomeFooter": {
+    "message": "Gelöschte Notizen bleiben $1 Tage im Papierkorb, und alles bleibt auf diesem Gerät."
+  },
+  "welcomeDismiss": {
+    "message": "Verstanden"
   },
   "emptyPinnedTitle": {
     "message": "Das Nützliche griffbereit halten."
@@ -700,6 +730,57 @@
   },
   "privacy5": {
     "message": "In Inkognitofenstern ist die Erweiterung deaktiviert."
+  },
+  "privVerifyTitle": {
+    "message": "Selbst prüfen"
+  },
+  "privVerify1": {
+    "message": "Öffne chrome://extensions, wähle bei Holdpad „Details“ und lies die Berechtigungen. Holdpad hat auf keine Website Zugriff, bis du auf das Symbol klickst, einen Menüeintrag nutzt oder die Schnellzugriff-Schaltfläche aktivierst."
+  },
+  "privVerify2": {
+    "message": "Die Liste unten wird jetzt aus dieser Installation gelesen und nicht in die Seite geschrieben. Sie zeigt, was Chrome tatsächlich gewährt hat."
+  },
+  "privVerify3": {
+    "message": "Netzwerkverbindungen sind durch die eigene Sicherheitsrichtlinie der Erweiterung blockiert, daher kann sie deine Notizen nirgendwohin senden."
+  },
+  "privLiveTitle": {
+    "message": "Diese Installation, jetzt"
+  },
+  "privLivePermissions": {
+    "message": "Berechtigungen: $1"
+  },
+  "privLiveSites": {
+    "message": "Website-Zugriff: $1"
+  },
+  "privSitesNone": {
+    "message": "keiner"
+  },
+  "privSitesAll": {
+    "message": "alle Websites (die Schnellzugriff-Schaltfläche ist aktiv)"
+  },
+  "privSitesSome": {
+    "message": "$1"
+  },
+  "privLiveNetwork": {
+    "message": "Netzwerkverbindungen: $1"
+  },
+  "privNetworkBlocked": {
+    "message": "durch die Sicherheitsrichtlinie der Erweiterung blockiert"
+  },
+  "privNetworkOpen": {
+    "message": "nicht blockiert — dieser Build weicht von der veröffentlichten Version ab"
+  },
+  "privFeedback": {
+    "message": "Feedback senden"
+  },
+  "privFeedbackHint": {
+    "message": "Öffnet einen E-Mail-Entwurf. Es wird nichts gesendet, solange du ihn nicht abschickst."
+  },
+  "feedbackSubject": {
+    "message": "Holdpad-Feedback (v$1)"
+  },
+  "feedbackBody": {
+    "message": "Was ist passiert, oder was wünschst du dir?\n\n"
   },
   "settingsSections": {
     "message": "Einstellungsbereiche"

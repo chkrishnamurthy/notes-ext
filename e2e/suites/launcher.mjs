@@ -13,12 +13,14 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { startHostPage } from '../hostPage.mjs';
 import { Session, targets, waitFor } from '../cdp.mjs';
 import { ID, OPTIONS, check, clickReal, inShell, openPage, report, settle, shot, workerTarget } from '../driver.mjs';
 
 const OUT = process.env.FORNOW_SHOTS ?? '.';
 const PORT = process.env.FORNOW_CDP_PORT ?? 9222;
-const HOST_PAGE = 'https://example.com/';
+const host = await startHostPage();
+const HOST_PAGE = host.url;
 
 const HOSTILE_CSS = `
   html { font-size: 10px; }
@@ -144,7 +146,7 @@ const pageTab = await sw.evalJson(`
 check('the page under test is a real http page', typeof pageTab === 'number', String(pageTab));
 
 const pageTarget = await waitFor(
-  async () => (await targets(PORT)).find((t) => t.type === 'page' && t.url.includes('example.com')),
+  async () => (await targets(PORT)).find((t) => t.type === 'page' && t.url.startsWith(host.origin)),
   { label: 'the host page' },
 );
 const s = await Session.open(pageTarget.webSocketDebuggerUrl);

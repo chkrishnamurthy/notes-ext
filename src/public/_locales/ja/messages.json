@@ -218,6 +218,18 @@
   "showAllTags": {
     "message": "すべてのタグを表示"
   },
+  "siteFilterTitle": {
+    "message": "$1 のノートだけを表示"
+  },
+  "siteFiltered": {
+    "message": "$1 から"
+  },
+  "stopSiteFilter": {
+    "message": "$1 での絞り込みを解除"
+  },
+  "showAllSites": {
+    "message": "すべてのサイトを表示"
+  },
   "loadingNotes": {
     "message": "メモを読み込んでいます…"
   },
@@ -451,6 +463,24 @@
   },
   "emptyAllBody": {
     "message": "上にひとこと書くか、ページのテキストを選択して「選択範囲を Holdpad に保存」を選んでください。"
+  },
+  "welcomeTitle": {
+    "message": "Holdpad の使い方 3 つ"
+  },
+  "welcomeTip1": {
+    "message": "上の欄にメモを入力し、Ctrl/Cmd+Enter で保存します。"
+  },
+  "welcomeTip2": {
+    "message": "どのページでもテキストを選択し、右クリックして「$1」を選びます。"
+  },
+  "welcomeTip3": {
+    "message": "どのページでも Alt+Shift+N またはツールバーのアイコンで開けます。"
+  },
+  "welcomeFooter": {
+    "message": "削除したノートはゴミ箱に $1 日間残り、すべてこの端末内に保存されます。"
+  },
+  "welcomeDismiss": {
+    "message": "わかりました"
   },
   "emptyPinnedTitle": {
     "message": "役立つものを手元に。"
@@ -700,6 +730,57 @@
   },
   "privacy5": {
     "message": "シークレット ウィンドウでは拡張機能は無効です。"
+  },
+  "privVerifyTitle": {
+    "message": "ご自身で確認する"
+  },
+  "privVerify1": {
+    "message": "chrome://extensions を開き、Holdpad の「詳細」を選んで権限を確認してください。アイコンをクリックする、メニュー項目を使う、またはクイック起動ボタンをオンにするまで、どのウェブサイトにもアクセスしません。"
+  },
+  "privVerify2": {
+    "message": "下の一覧は、このインストールから今読み取ったもので、ページに書き込まれたものではありません。Chrome が実際に付与した内容を示します。"
+  },
+  "privVerify3": {
+    "message": "ネットワーク接続は拡張機能自身のセキュリティポリシーでブロックされているため、ノートをどこにも送信できません。"
+  },
+  "privLiveTitle": {
+    "message": "このインストール（現在）"
+  },
+  "privLivePermissions": {
+    "message": "権限: $1"
+  },
+  "privLiveSites": {
+    "message": "サイトへのアクセス: $1"
+  },
+  "privSitesNone": {
+    "message": "なし"
+  },
+  "privSitesAll": {
+    "message": "すべてのウェブサイト（クイック起動ボタンがオン）"
+  },
+  "privSitesSome": {
+    "message": "$1"
+  },
+  "privLiveNetwork": {
+    "message": "ネットワーク接続: $1"
+  },
+  "privNetworkBlocked": {
+    "message": "拡張機能のセキュリティポリシーでブロック"
+  },
+  "privNetworkOpen": {
+    "message": "ブロックされていません — このビルドは公開版と異なります"
+  },
+  "privFeedback": {
+    "message": "フィードバックを送る"
+  },
+  "privFeedbackHint": {
+    "message": "メールの下書きが開きます。送信しない限り何も送られません。"
+  },
+  "feedbackSubject": {
+    "message": "Holdpad フィードバック (v$1)"
+  },
+  "feedbackBody": {
+    "message": "何が起きましたか？ または、どんな機能がほしいですか？\n\n"
   },
   "settingsSections": {
     "message": "設定のセクション"

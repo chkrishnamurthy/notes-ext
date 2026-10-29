@@ -16,9 +16,11 @@ import {
   purgeExpiredTrash,
   restoreMany,
   restoreNote,
+  sameSite,
   saveConflictCopy,
   setPinned,
   setTag,
+  siteOf,
   sortNotes,
   tagsInUse,
   trashNote,
@@ -36,12 +38,13 @@ import {
   type Note,
   type Settings,
 } from '../lib/schema';
-import { matchesNote, parseQuery } from '../lib/search';
+import { parseQuery, rankNotes } from '../lib/search';
 import { QUOTA_WARN_RATIO, type WriteResult } from '../lib/storage';
 import { applyTheme } from '../lib/theme';
 import { formatBytes } from '../lib/time';
 
 import { EmptyState, type EmptyKind } from './components/EmptyState';
+import { Welcome } from './components/Welcome';
 import { FilterBar, type View } from './components/FilterBar';
 import { NoteEditor, type EditorValue, type SaveError, type SaveState } from './components/NoteEditor';
 import { NoteList } from './components/NoteList';
@@ -110,6 +113,7 @@ export function App({ host }: { host: HostBridge }) {
   const [query, setQuery] = useState('');
   /** Set by clicking a note's tag: the list shows only notes with that tag. */
   const [tagFilter, setTagFilter] = useState<string | null>(null);
+  const [siteFilter, setSiteFilter] = useState<string | null>(null);
   const [view, setView] = useState<View>('all');
   const [noteView, setNoteView] = useState<NoteView>(loadNoteView);
   const [status, setStatus] = useState('');
@@ -150,11 +154,15 @@ export function App({ host }: { host: HostBridge }) {
         setEditTarget({ id: draft.editingId, rev: draft.editingRev });
       }
       setDraftSaved(draft.text.trim().length > 0);
+      // As soon as the draft is in: this flag only gates the draft sync, and
+      // the purge and note load below can take a while with many notes. A
+      // draft another panel wrote in that gap would otherwise be missed for
+      // good, since nothing re-reads it.
+      hydrated.current = true;
 
       // Opportunistic: the alarms permission is not worth a timer for this.
       await purgeExpiredTrash(store, loadedSettings.trashRetentionDays);
       await refresh();
-      hydrated.current = true;
     })();
   }, [refresh]);
 
@@ -299,10 +307,13 @@ export function App({ host }: { host: HostBridge }) {
       view === 'trash' ? trashed : view === 'pinned' ? active.filter((n) => n.pinned) : active;
     const filtered = pool.filter(
       (note) =>
-        (tagFilter === null || sameTag(note.tag, tagFilter)) && matchesNote(note, terms),
+        (tagFilter === null || sameTag(note.tag, tagFilter)) &&
+        (siteFilter === null || sameSite(siteOf(note), siteFilter)),
     );
-    return sortNotes(filtered);
-  }, [view, terms, tagFilter, active, trashed]);
+    // Most recent first; a search then reorders by how well each note matches,
+    // keeping that order among equal matches.
+    return rankNotes(sortNotes(filtered), terms);
+  }, [view, terms, tagFilter, siteFilter, active, trashed]);
 
   const tags = useMemo(() => tagsInUse(active), [active]);
 
@@ -535,6 +546,8 @@ export function App({ host }: { host: HostBridge }) {
         setQuery('');
       } else if (tagFilter) {
         setTagFilter(null);
+      } else if (siteFilter) {
+        setSiteFilter(null);
       } else if (status) {
         announce('');
       } else {
@@ -543,14 +556,24 @@ export function App({ host }: { host: HostBridge }) {
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [saveError, confirmClear, editTarget, query, tagFilter, status, host, listCollapsed]);
+  }, [saveError, confirmClear, editTarget, query, tagFilter, siteFilter, status, host, listCollapsed]);
 
   // ---------------------------------------------------------------------
   // Render
   // ---------------------------------------------------------------------
 
-  const filtering = searching || tagFilter !== null;
+  const filtering = searching || tagFilter !== null || siteFilter !== null;
   const emptyKind: EmptyKind = filtering ? 'search' : view;
+
+  // First run only: a panel that has never held a note, on its main view.
+  // Once dismissed it is remembered in settings and stays away.
+  const showWelcome =
+    !settings.welcomeSeen && notes !== null && notes.length === 0 && emptyKind === 'all';
+
+  function dismissWelcome() {
+    setSettings((current) => ({ ...current, welcomeSeen: true }));
+    void store.setSettings({ ...settings, welcomeSeen: true });
+  }
   const nearQuota = usageRatio >= QUOTA_WARN_RATIO;
 
   return (
@@ -645,6 +668,21 @@ export function App({ host }: { host: HostBridge }) {
             onChangeNoteView={changeNoteView}
           />
 
+          {siteFilter ? (
+            <div className="flex items-center gap-1.5 border-b border-line px-3 py-1 text-xs text-muted">
+              <span className="font-medium text-accent">{t('siteFiltered', siteFilter)}</span>
+              <button
+                type="button"
+                className="fn-tool"
+                aria-label={t('stopSiteFilter', siteFilter)}
+                title={t('showAllSites')}
+                onClick={() => setSiteFilter(null)}
+              >
+                <X size={13} aria-hidden="true" />
+              </button>
+            </div>
+          ) : null}
+
           {tagFilter ? (
             <div className="flex items-center gap-1.5 border-b border-line px-3 py-1 text-xs text-muted">
               <span className="font-medium text-accent">{t('taggedFilter', `#${tagFilter}`)}</span>
@@ -664,16 +702,23 @@ export function App({ host }: { host: HostBridge }) {
             {notes === null ? (
               <p className="px-4 py-8 text-center text-xs text-muted">{t('loadingNotes')}</p>
             ) : visible.length === 0 ? (
-              <EmptyState
-                kind={emptyKind}
-                action={
-                  searching
-                    ? { label: t('clearSearch'), onClick: () => changeQuery('') }
-                    : tagFilter
-                      ? { label: t('showAllTags'), onClick: () => setTagFilter(null) }
-                      : undefined
-                }
-              />
+              <>
+                <EmptyState
+                  kind={emptyKind}
+                  action={
+                    searching
+                      ? { label: t('clearSearch'), onClick: () => changeQuery('') }
+                      : tagFilter
+                        ? { label: t('showAllTags'), onClick: () => setTagFilter(null) }
+                        : siteFilter
+                          ? { label: t('showAllSites'), onClick: () => setSiteFilter(null) }
+                          : undefined
+                  }
+                />
+                {showWelcome ? (
+                  <Welcome retentionDays={settings.trashRetentionDays} onDismiss={dismissWelcome} />
+                ) : null}
+              </>
             ) : (
               <NoteList
                 notes={visible}
@@ -689,6 +734,10 @@ export function App({ host }: { host: HostBridge }) {
                   onSetTag: (note, tag) => void changeTag(note, tag),
                   onFilterTag: (tag) => {
                     setTagFilter(tag);
+                    announce('');
+                  },
+                  onFilterSite: (site) => {
+                    setSiteFilter(site);
                     announce('');
                   },
                   onTogglePin: (note) => void togglePin(note),

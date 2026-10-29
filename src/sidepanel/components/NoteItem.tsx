@@ -3,7 +3,7 @@ import { useId, useRef, useState } from 'react';
 import { plural, t } from '../../lib/i18n';
 import { TAG_MAX_LENGTH, type Note } from '../../lib/schema';
 import { snippet } from '../../lib/search';
-import { daysUntilPurge } from '../../lib/notes';
+import { daysUntilPurge, siteOf } from '../../lib/notes';
 import { sanitizeHtml } from '../../lib/richtext';
 import { formatTimestamp, formatUrl } from '../../lib/time';
 import { Highlighted } from './Highlighted';
@@ -16,6 +16,7 @@ export interface NoteActions {
   onCopyMarkdown: (note: Note) => void;
   onSetTag: (note: Note, tag: string | undefined) => void;
   onFilterTag: (tag: string) => void;
+  onFilterSite: (site: string) => void;
   onTogglePin: (note: Note) => void;
   onTrash: (note: Note) => void;
   onRestore: (note: Note) => void;
@@ -53,6 +54,7 @@ export function NoteItem({
   const [tagging, setTagging] = useState(false);
   const searching = terms.length > 0;
   const source = describeSource(note);
+  const site = siteOf(note);
   const link = sourceLink(note);
 
   // While searching, both views fall back to a highlighted plain-text snippet:
@@ -99,6 +101,20 @@ export function NoteItem({
         </>
       ) : null}
       <Highlighted text={source} terms={terms} />
+      {site ? (
+        <>
+          {' '}
+          <button
+            type="button"
+            className="fn-tag"
+            title={t('siteFilterTitle', site)}
+            aria-label={t('siteFilterTitle', site)}
+            onClick={() => actions.onFilterSite(site)}
+          >
+            {site}
+          </button>
+        </>
+      ) : null}
       <span> · {formatTimestamp(note.updatedAt)}</span>
       {inTrash ? <span> · {describeRecovery(note, retentionDays)}</span> : null}
     </div>

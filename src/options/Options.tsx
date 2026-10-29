@@ -5,6 +5,7 @@ import {
   FileText,
   HardDrive,
   Keyboard,
+  Mail,
   MousePointerClick,
   NotebookPen,
   Palette,
@@ -29,6 +30,7 @@ import { DEFAULT_SETTINGS, type Settings } from '../lib/schema';
 import { chromeLocalArea, NoteStore, QUOTA_BYTES } from '../lib/storage';
 import { applyTheme } from '../lib/theme';
 import { formatBytes } from '../lib/time';
+import { blocksNetwork, summarizeAccess, type AccessSummary } from '../lib/trust';
 import { Appearance } from './Appearance';
 
 const store = new NoteStore(chromeLocalArea());
@@ -45,6 +47,7 @@ export function Options() {
   const [message, setMessage] = useState('');
   const [pending, setPending] = useState<{ parsed: ParsedBackup; filename: string } | null>(null);
   const [siteAccess, setSiteAccess] = useState(false);
+  const [access, setAccess] = useState<AccessSummary | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const refresh = useCallback(async () => {
@@ -67,6 +70,16 @@ export function Options() {
   useEffect(() => {
     void refresh();
   }, [refresh]);
+
+  // Read back from Chrome rather than written out, so the privacy section
+  // shows what this install really has — including after the quick-open
+  // button is switched on or off.
+  useEffect(() => {
+    chrome.permissions
+      .getAll()
+      .then((granted) => setAccess(summarizeAccess(granted)))
+      .catch(() => setAccess(null));
+  }, [siteAccess]);
 
   async function saveSettings(next: Settings) {
     const result = await store.setSettings(next);
@@ -433,6 +446,23 @@ export function Options() {
                   </li>
                 ))}
               </ul>
+
+              <h3 className="mt-6 text-sm font-semibold">{t('privVerifyTitle')}</h3>
+              <ol className="mt-2 list-decimal space-y-2 pl-5 text-sm text-muted">
+                <li>{t('privVerify1')}</li>
+                <li>{t('privVerify2')}</li>
+                <li>{t('privVerify3')}</li>
+              </ol>
+
+              <TrustReadout access={access} />
+
+              <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-line pt-4">
+                <a className="fn-btn" href={feedbackLink()}>
+                  <Mail size={16} aria-hidden="true" />
+                  {t('privFeedback')}
+                </a>
+                <span className="text-xs text-muted">{t('privFeedbackHint')}</span>
+              </div>
             </Card>
           </div>
         </main>
@@ -470,6 +500,50 @@ const SHORTCUTS: [string, MessageKey][] = [
   ['Ctrl/Cmd+Enter', 'keyCommit'],
   ['Escape', 'keyEscape'],
 ];
+
+/** Where feedback goes. The same address the privacy policy gives for questions. */
+const FEEDBACK_ADDRESS = 'chalapatikrishna@gmail.com';
+
+/**
+ * A draft for the user's own mail app, carrying only the version number. It
+ * sends nothing by itself: the user writes it and presses send.
+ */
+function feedbackLink(): string {
+  const version = chrome.runtime.getManifest().version;
+  const subject = encodeURIComponent(t('feedbackSubject', version));
+  const body = encodeURIComponent(t('feedbackBody'));
+  return `mailto:${FEEDBACK_ADDRESS}?subject=${subject}&body=${body}`;
+}
+
+/** What this install has been granted and allowed, read live from Chrome. */
+function TrustReadout({ access }: { access: AccessSummary | null }) {
+  const csp = chrome.runtime.getManifest().content_security_policy as
+    | { extension_pages?: string }
+    | undefined;
+  const networkBlocked = blocksNetwork(csp?.extension_pages);
+  const sites = !access
+    ? '…'
+    : access.allSites
+      ? t('privSitesAll')
+      : access.hosts.length > 0
+        ? t('privSitesSome', access.hosts.join(', '))
+        : t('privSitesNone');
+
+  return (
+    <div className="mt-5 rounded-lg border border-line bg-bg p-4 text-sm">
+      <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted">
+        {t('privLiveTitle')}
+      </p>
+      <ul className="space-y-1">
+        <li>{t('privLivePermissions', access ? access.permissions.join(', ') : '…')}</li>
+        <li>{t('privLiveSites', sites)}</li>
+        <li className={networkBlocked ? undefined : 'text-warning'}>
+          {t('privLiveNetwork', networkBlocked ? t('privNetworkBlocked') : t('privNetworkOpen'))}
+        </li>
+      </ul>
+    </div>
+  );
+}
 
 const PRIVACY: MessageKey[] = ['privacy1', 'privacy2', 'privacy3', 'privacy4', 'privacy5'];
 

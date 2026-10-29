@@ -218,6 +218,18 @@
   "showAllTags": {
     "message": "Mostrar todas as tags"
   },
+  "siteFilterTitle": {
+    "message": "Mostrar apenas notas de $1"
+  },
+  "siteFiltered": {
+    "message": "De $1"
+  },
+  "stopSiteFilter": {
+    "message": "Parar de filtrar por $1"
+  },
+  "showAllSites": {
+    "message": "Mostrar todos os sites"
+  },
   "loadingNotes": {
     "message": "Carregando suas notas…"
   },
@@ -451,6 +463,24 @@
   },
   "emptyAllBody": {
     "message": "Anote uma ideia acima ou selecione texto em qualquer página e escolha “Salvar seleção no Holdpad”."
+  },
+  "welcomeTitle": {
+    "message": "Três formas de usar o Holdpad"
+  },
+  "welcomeTip1": {
+    "message": "Digite um pensamento acima e pressione Ctrl/Cmd+Enter para salvá-lo."
+  },
+  "welcomeTip2": {
+    "message": "Selecione texto em qualquer página, clique com o botão direito e escolha “$1”."
+  },
+  "welcomeTip3": {
+    "message": "Abra em qualquer página com Alt+Shift+N ou o ícone da barra de ferramentas."
+  },
+  "welcomeFooter": {
+    "message": "Notas apagadas ficam na Lixeira por $1 dias, e tudo permanece neste dispositivo."
+  },
+  "welcomeDismiss": {
+    "message": "Entendi"
   },
   "emptyPinnedTitle": {
     "message": "Deixe o que é útil por perto."
@@ -700,6 +730,57 @@
   },
   "privacy5": {
     "message": "A extensão fica desativada nas janelas anônimas."
+  },
+  "privVerifyTitle": {
+    "message": "Confira você mesmo"
+  },
+  "privVerify1": {
+    "message": "Abra chrome://extensions, escolha Detalhes no Holdpad e leia as permissões. Ele não tem acesso a nenhum site até você clicar no ícone, usar um item de menu ou ativar o botão de abertura rápida."
+  },
+  "privVerify2": {
+    "message": "A lista abaixo é lida agora desta instalação, não escrita na página. Ela mostra o que o Chrome realmente concedeu."
+  },
+  "privVerify3": {
+    "message": "As conexões de rede são bloqueadas pela própria política de segurança da extensão, então ela não pode enviar suas notas a lugar nenhum."
+  },
+  "privLiveTitle": {
+    "message": "Esta instalação, agora"
+  },
+  "privLivePermissions": {
+    "message": "Permissões: $1"
+  },
+  "privLiveSites": {
+    "message": "Acesso a sites: $1"
+  },
+  "privSitesNone": {
+    "message": "nenhum"
+  },
+  "privSitesAll": {
+    "message": "todos os sites (o botão de abertura rápida está ativado)"
+  },
+  "privSitesSome": {
+    "message": "$1"
+  },
+  "privLiveNetwork": {
+    "message": "Conexões de rede: $1"
+  },
+  "privNetworkBlocked": {
+    "message": "bloqueadas pela política de segurança da extensão"
+  },
+  "privNetworkOpen": {
+    "message": "não bloqueadas — esta versão difere da publicada"
+  },
+  "privFeedback": {
+    "message": "Enviar feedback"
+  },
+  "privFeedbackHint": {
+    "message": "Abre um rascunho de e-mail. Nada é enviado a menos que você envie."
+  },
+  "feedbackSubject": {
+    "message": "Feedback do Holdpad (v$1)"
+  },
+  "feedbackBody": {
+    "message": "O que aconteceu, ou o que você gostaria de ver?\n\n"
   },
   "settingsSections": {
     "message": "Seções das configurações"

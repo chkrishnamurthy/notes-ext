@@ -14,6 +14,9 @@ import {
   purgeExpiredTrash,
   restoreMany,
   restoreNote,
+  sameSite,
+  siteOf,
+  buildNote,
   saveConflictCopy,
   setPinned,
   sortNotes,
@@ -335,5 +338,33 @@ describe('what counts as a conflicting change', () => {
     const { store, note } = await editing();
     const pinned = await setPinned(store, note.id, true);
     expect(pinned.ok && [pinned.value.rev, pinned.value.contentRev]).toEqual([2, 1]);
+  });
+});
+
+describe('site of a note', () => {
+  const from = (sourceUrl?: string, targetUrl?: string) =>
+    buildNote({ text: 'x', sourceUrl, targetUrl });
+
+  it('is the host of the page the note came from', () => {
+    expect(siteOf(from('https://docs.example.com/guide?x=1'))).toBe('docs.example.com');
+  });
+
+  it('drops a leading www and ignores case', () => {
+    expect(siteOf(from('https://WWW.Example.com/a'))).toBe('example.com');
+  });
+
+  it('is not the link a note saved', () => {
+    expect(siteOf(from(undefined, 'https://elsewhere.test/'))).toBeUndefined();
+    expect(siteOf(from('https://example.com/', 'https://elsewhere.test/'))).toBe('example.com');
+  });
+
+  it('is missing for a typed note', () => {
+    expect(siteOf(from())).toBeUndefined();
+  });
+
+  it('compares sites only when both exist', () => {
+    expect(sameSite('example.com', 'example.com')).toBe(true);
+    expect(sameSite('example.com', 'other.com')).toBe(false);
+    expect(sameSite(undefined, undefined)).toBe(false);
   });
 });

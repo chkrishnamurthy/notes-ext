@@ -110,6 +110,8 @@ export interface Settings {
    * their behalf at install time.
    */
   showLauncher: boolean;
+  /** Set once the first-run tips have been dismissed, so they are not shown again. */
+  welcomeSeen: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -121,6 +123,7 @@ export const DEFAULT_SETTINGS: Settings = {
   textSize: 'large',
   trashRetentionDays: 30,
   showLauncher: false,
+  welcomeSeen: false,
 };
 
 export const EMPTY_DRAFT: Draft = { html: '', text: '', updatedAt: 0 };
@@ -309,6 +312,7 @@ export function parseSettings(value: unknown): Settings {
     // Anything but an explicit `true` means off. A corrupt record must never
     // be the reason a button appears on every page the user visits.
     showLauncher: value.showLauncher === true,
+    welcomeSeen: value.welcomeSeen === true,
   };
 }
 

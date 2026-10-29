@@ -218,6 +218,18 @@
   "showAllTags": {
     "message": "Show all tags"
   },
+  "siteFilterTitle": {
+    "message": "Show only notes from $1"
+  },
+  "siteFiltered": {
+    "message": "From $1"
+  },
+  "stopSiteFilter": {
+    "message": "Stop filtering by $1"
+  },
+  "showAllSites": {
+    "message": "Show all sites"
+  },
   "loadingNotes": {
     "message": "Loading your notes…"
   },
@@ -451,6 +463,24 @@
   },
   "emptyAllBody": {
     "message": "Jot a thought above, or select text on any page and choose “Save selection to Holdpad”."
+  },
+  "welcomeTitle": {
+    "message": "Three ways to use Holdpad"
+  },
+  "welcomeTip1": {
+    "message": "Type a thought above and press Ctrl/Cmd+Enter to save it."
+  },
+  "welcomeTip2": {
+    "message": "Select text on any page, right-click and choose “$1”."
+  },
+  "welcomeTip3": {
+    "message": "Open it on any page with Alt+Shift+N or the toolbar icon."
+  },
+  "welcomeFooter": {
+    "message": "Cleared notes wait in Trash for $1 days, and everything stays on this device."
+  },
+  "welcomeDismiss": {
+    "message": "Got it"
   },
   "emptyPinnedTitle": {
     "message": "Keep the useful bits close."
@@ -700,6 +730,57 @@
   },
   "privacy5": {
     "message": "The extension is disabled in Incognito windows."
+  },
+  "privVerifyTitle": {
+    "message": "Check it yourself"
+  },
+  "privVerify1": {
+    "message": "Open chrome://extensions, choose Details on Holdpad, and read its permissions. It has no access to any website until you click its icon, use a menu item, or switch on the quick-open button."
+  },
+  "privVerify2": {
+    "message": "The list below is read from this install right now, not written into the page. It shows what Chrome has actually granted."
+  },
+  "privVerify3": {
+    "message": "Network connections are blocked by the extension’s own security policy, so it cannot send your notes anywhere."
+  },
+  "privLiveTitle": {
+    "message": "This install, right now"
+  },
+  "privLivePermissions": {
+    "message": "Permissions: $1"
+  },
+  "privLiveSites": {
+    "message": "Site access: $1"
+  },
+  "privSitesNone": {
+    "message": "none"
+  },
+  "privSitesAll": {
+    "message": "all websites (the quick-open button is on)"
+  },
+  "privSitesSome": {
+    "message": "$1"
+  },
+  "privLiveNetwork": {
+    "message": "Network connections: $1"
+  },
+  "privNetworkBlocked": {
+    "message": "blocked by the extension’s security policy"
+  },
+  "privNetworkOpen": {
+    "message": "not blocked — this build differs from the published one"
+  },
+  "privFeedback": {
+    "message": "Send feedback"
+  },
+  "privFeedbackHint": {
+    "message": "Opens an email draft. Nothing is sent unless you send it."
+  },
+  "feedbackSubject": {
+    "message": "Holdpad feedback (v$1)"
+  },
+  "feedbackBody": {
+    "message": "What happened, or what would you like to see?\n\n"
   },
   "settingsSections": {
     "message": "Settings sections"

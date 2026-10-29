@@ -218,6 +218,18 @@
   "showAllTags": {
     "message": "Tampilkan semua tag"
   },
+  "siteFilterTitle": {
+    "message": "Tampilkan hanya catatan dari $1"
+  },
+  "siteFiltered": {
+    "message": "Dari $1"
+  },
+  "stopSiteFilter": {
+    "message": "Berhenti memfilter menurut $1"
+  },
+  "showAllSites": {
+    "message": "Tampilkan semua situs"
+  },
   "loadingNotes": {
     "message": "Memuat catatan Anda…"
   },
@@ -451,6 +463,24 @@
   },
   "emptyAllBody": {
     "message": "Tulis ide di atas, atau pilih teks di halaman mana pun dan pilih “Simpan pilihan ke Holdpad”."
+  },
+  "welcomeTitle": {
+    "message": "Tiga cara memakai Holdpad"
+  },
+  "welcomeTip1": {
+    "message": "Ketik gagasan di atas lalu tekan Ctrl/Cmd+Enter untuk menyimpannya."
+  },
+  "welcomeTip2": {
+    "message": "Pilih teks di halaman mana pun, klik kanan, lalu pilih “$1”."
+  },
+  "welcomeTip3": {
+    "message": "Buka di halaman mana pun dengan Alt+Shift+N atau ikon di bilah alat."
+  },
+  "welcomeFooter": {
+    "message": "Catatan yang dihapus menunggu di Sampah selama $1 hari, dan semuanya tetap di perangkat ini."
+  },
+  "welcomeDismiss": {
+    "message": "Mengerti"
   },
   "emptyPinnedTitle": {
     "message": "Simpan yang berguna tetap dekat."
@@ -700,6 +730,57 @@
   },
   "privacy5": {
     "message": "Ekstensi ini dinonaktifkan di jendela Samaran."
+  },
+  "privVerifyTitle": {
+    "message": "Periksa sendiri"
+  },
+  "privVerify1": {
+    "message": "Buka chrome://extensions, pilih Detail pada Holdpad, dan baca izinnya. Holdpad tidak punya akses ke situs web mana pun sampai Anda mengeklik ikonnya, memakai item menu, atau mengaktifkan tombol buka cepat."
+  },
+  "privVerify2": {
+    "message": "Daftar di bawah dibaca dari instalasi ini saat ini juga, bukan ditulis ke dalam halaman. Daftar ini menunjukkan apa yang benar-benar diberikan Chrome."
+  },
+  "privVerify3": {
+    "message": "Koneksi jaringan diblokir oleh kebijakan keamanan ekstensi itu sendiri, sehingga ekstensi tidak dapat mengirim catatan Anda ke mana pun."
+  },
+  "privLiveTitle": {
+    "message": "Instalasi ini, saat ini"
+  },
+  "privLivePermissions": {
+    "message": "Izin: $1"
+  },
+  "privLiveSites": {
+    "message": "Akses situs: $1"
+  },
+  "privSitesNone": {
+    "message": "tidak ada"
+  },
+  "privSitesAll": {
+    "message": "semua situs web (tombol buka cepat aktif)"
+  },
+  "privSitesSome": {
+    "message": "$1"
+  },
+  "privLiveNetwork": {
+    "message": "Koneksi jaringan: $1"
+  },
+  "privNetworkBlocked": {
+    "message": "diblokir oleh kebijakan keamanan ekstensi"
+  },
+  "privNetworkOpen": {
+    "message": "tidak diblokir — build ini berbeda dari versi yang dipublikasikan"
+  },
+  "privFeedback": {
+    "message": "Kirim masukan"
+  },
+  "privFeedbackHint": {
+    "message": "Membuka draf email. Tidak ada yang dikirim kecuali Anda mengirimnya."
+  },
+  "feedbackSubject": {
+    "message": "Masukan Holdpad (v$1)"
+  },
+  "feedbackBody": {
+    "message": "Apa yang terjadi, atau apa yang ingin Anda lihat?\n\n"
   },
   "settingsSections": {
     "message": "Bagian setelan"

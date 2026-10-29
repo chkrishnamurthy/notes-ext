@@ -3,6 +3,8 @@
  * search, clear, Undo, the two list layouts, a failed save, and the layout
  * rules the panel has to keep at narrow and short sizes.
  */
+import { readFileSync, statSync } from 'node:fs';
+import { join } from 'node:path';
 import {
   META, PANEL, check, click, clickExact, clickText, consoleErrors, editorContent,
   errors, focus, has, key, openPage, report, resetEditor, resetStorage, resize,
@@ -20,6 +22,31 @@ check('shows the empty-state heading', has(body, 'A little space to think.'));
 check('explains both entry points', has(body, 'Save selection to Holdpad'));
 check('says notes are local', has(body, 'on this device'));
 await shot(s, `${OUT}/01-empty.png`);
+
+// --- First run -------------------------------------------------------------
+console.log('\n# First run');
+check('a fresh panel shows the three-ways welcome', has(body, 'Three ways to use Holdpad'));
+await clickExact(s, 'button', 'Got it');
+await settle(s, 400);
+check('dismissing it removes it', !has(await text(s), 'Three ways to use Holdpad'));
+check('the dismissal is remembered', await s.evalJson(`
+  const r = await chrome.storage.local.get('settings');
+  return r.settings?.welcomeSeen === true;
+`));
+
+// --- Speed -----------------------------------------------------------------
+// Not a benchmark: generous ceilings that catch a regression such as a large
+// dependency landing in the panel, without failing on a slow machine.
+console.log('\n# Speed');
+const alive = await s.evalJson('return Math.round(performance.now());');
+console.log(`  info panel alive ${alive} ms after navigation`);
+const html = readFileSync(join(process.env.FORNOW_DIST, 'sidepanel.html'), 'utf8');
+const files = [...html.matchAll(/(?:src|href)="\/?([^"]+\.js)"/g)].map((m) => m[1]);
+const panelBytes = files.reduce(
+  (sum, file) => sum + statSync(join(process.env.FORNOW_DIST, file)).size, 0);
+console.log(`  info panel scripts ${Math.round(panelBytes / 1024)} KB in ${files.length} files`);
+check('the panel scripts stay under 800 KB', panelBytes > 0 && panelBytes < 800 * 1024, String(panelBytes));
+check('the panel is up within 5 seconds of navigating', alive < 5000, String(alive));
 
 // --- Capture -------------------------------------------------------------
 console.log('\n# Capture');
