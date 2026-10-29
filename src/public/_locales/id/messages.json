@@ -482,6 +482,15 @@
   "welcomeDismiss": {
     "message": "Mengerti"
   },
+  "reviewPrompt": {
+    "message": "Holdpad berguna? Ulasan singkat membantu orang lain menemukannya."
+  },
+  "reviewLeave": {
+    "message": "Tulis ulasan"
+  },
+  "reviewNoThanks": {
+    "message": "Tidak, terima kasih"
+  },
   "emptyPinnedTitle": {
     "message": "Simpan yang berguna tetap dekat."
   },
@@ -619,6 +628,9 @@
   },
   "exportMarkdown": {
     "message": "Ekspor sebagai Markdown"
+  },
+  "exportMarkdownFiles": {
+    "message": "Ekspor sebagai file Markdown (.zip)"
   },
   "backupFileLabel": {
     "message": "File cadangan untuk diimpor"

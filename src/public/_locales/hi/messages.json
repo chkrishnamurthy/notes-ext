@@ -482,6 +482,15 @@
   "welcomeDismiss": {
     "message": "समझ गया"
   },
+  "reviewPrompt": {
+    "message": "क्या Holdpad आपके काम आ रहा है? एक छोटी समीक्षा दूसरों को इसे खोजने में मदद करती है।"
+  },
+  "reviewLeave": {
+    "message": "समीक्षा लिखें"
+  },
+  "reviewNoThanks": {
+    "message": "नहीं, धन्यवाद"
+  },
   "emptyPinnedTitle": {
     "message": "काम की चीज़ें पास रखें।"
   },
@@ -619,6 +628,9 @@
   },
   "exportMarkdown": {
     "message": "Markdown के रूप में एक्सपोर्ट करें"
+  },
+  "exportMarkdownFiles": {
+    "message": "Markdown फ़ाइलों के रूप में एक्सपोर्ट करें (.zip)"
   },
   "backupFileLabel": {
     "message": "इंपोर्ट करने के लिए बैकअप फ़ाइल"

@@ -112,6 +112,8 @@ export interface Settings {
   showLauncher: boolean;
   /** Set once the first-run tips have been dismissed, so they are not shown again. */
   welcomeSeen: boolean;
+  /** Set once the one-time review request has been answered either way. */
+  reviewAsked: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -124,6 +126,7 @@ export const DEFAULT_SETTINGS: Settings = {
   trashRetentionDays: 30,
   showLauncher: false,
   welcomeSeen: false,
+  reviewAsked: false,
 };
 
 export const EMPTY_DRAFT: Draft = { html: '', text: '', updatedAt: 0 };
@@ -313,6 +316,7 @@ export function parseSettings(value: unknown): Settings {
     // be the reason a button appears on every page the user visits.
     showLauncher: value.showLauncher === true,
     welcomeSeen: value.welcomeSeen === true,
+    reviewAsked: value.reviewAsked === true,
   };
 }
 

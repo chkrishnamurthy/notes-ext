@@ -115,6 +115,6 @@ describe('Markdown export', () => {
   });
 
   it('names the file by local date', () => {
-    expect(markdownFilename(new Date(2026, 0, 5, 23).getTime())).toBe('for-now-notes-2026-01-05.md');
+    expect(markdownFilename(new Date(2026, 0, 5, 23).getTime())).toBe('holdpad-notes-2026-01-05.md');
   });
 });

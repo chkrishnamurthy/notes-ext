@@ -68,6 +68,17 @@ check('code whitespace is exported verbatim',
 check('rich formatting is exported',
   parsed.notes.find((n) => n.id === 'n1')?.html.includes('<strong>'));
 check('the export confirms what it wrote', has(await text(s), 'Exported 4 notes'));
+
+// One Markdown file per note, in a real zip Chrome writes to disk.
+await clickText(s, 'button', 'Export as Markdown files');
+await settle(s, 1200);
+const zips = readdirSync(downloadDir).filter((f) => f.endsWith('.zip'));
+check('the Markdown export downloads a zip named by date',
+  zips.length === 1 && /^holdpad-notes-\d{4}-\d{2}-\d{2}\.zip$/.test(zips[0]), JSON.stringify(zips));
+const zipBytes = zips[0] ? readFileSync(join(downloadDir, zips[0])) : Buffer.alloc(0);
+check('it is a zip archive', zipBytes.subarray(0, 4).toString('hex') === '504b0304');
+check('it holds one .md file per note', (zipBytes.toString('latin1').match(/\.md/g) ?? []).length >= 2,
+  String((zipBytes.toString('latin1').match(/\.md/g) ?? []).length));
 await shot(s, `${OUT}/07-options.png`, true);
 
 console.log('\n# Import round trip');

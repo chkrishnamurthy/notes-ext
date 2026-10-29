@@ -3,7 +3,7 @@
  * filter for one site's notes. The notes are written straight to storage so
  * the suite does not depend on capturing them first.
  */
-import { PANEL, check, clickReal, key, openPage, report, resetStorage, settle, text } from '../driver.mjs';
+import { PANEL, check, clickExact, clickReal, key, openPage, report, resetStorage, settle, text } from '../driver.mjs';
 
 const s = await openPage(PANEL);
 await resetStorage(s);
@@ -66,6 +66,33 @@ await key(s, 'Escape', { code: 'Escape', keyCode: 27 });
 await settle(s, 400);
 body = await text(s);
 check('Escape returns to every note', body.includes('Recall beats rereading') && !body.includes('From docs.example.com'));
+
+console.log('\n# One-time review request');
+check('it stays away from a panel with few notes', !(await text(s)).includes('Finding Holdpad useful?'));
+await s.evalJson(`
+  const items = {};
+  for (let i = 0; i < 10; i += 1) {
+    items['note:r' + i] = {
+      id: 'r' + i, html: '<p>note ' + i + '</p>', text: 'note ' + i, kind: 'thought', pinned: false,
+      rev: 1, contentRev: 1, schemaVersion: 4, createdAt: ${NOW} - i, updatedAt: ${NOW} - i,
+    };
+  }
+  await chrome.storage.local.set(items);
+  return true;
+`);
+await s.send('Page.reload');
+await settle(s, 1200);
+check('it appears once there are ten notes', (await text(s)).includes('Finding Holdpad useful?'));
+await clickExact(s, 'button', 'No thanks');
+await settle(s, 400);
+check('answering removes it', !(await text(s)).includes('Finding Holdpad useful?'));
+check('and it is not asked again', await s.evalJson(`
+  const r = await chrome.storage.local.get('settings');
+  return r.settings?.reviewAsked === true;
+`));
+await s.send('Page.reload');
+await settle(s, 1200);
+check('not even after a reload', !(await text(s)).includes('Finding Holdpad useful?'));
 
 report();
 s.close();

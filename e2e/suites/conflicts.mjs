@@ -6,6 +6,21 @@ import { Session, targets, waitFor } from '../cdp.mjs';
 import { META, PANEL, check, clickExact, editorContent, has, key, openPage, report, settle, shot, storedNotes, text, typeInEditor } from '../driver.mjs';
 
 const OUT = process.env.FORNOW_SHOTS ?? '.';
+
+/**
+ * Wait for a condition rather than for a fixed time. Once a second panel opens,
+ * the first is a background tab and Chrome holds its timers back, so a draft
+ * that is saved 400 ms after typing can take over a second to land.
+ */
+const eventually = async (read, ok, ms = 8000) => {
+  const deadline = Date.now() + ms;
+  let value = await read();
+  while (!ok(value) && Date.now() < deadline) {
+    await new Promise((resolve) => setTimeout(resolve, 150));
+    value = await read();
+  }
+  return value;
+};
 const s = await openPage(PANEL);
 
 await s.evalJson(`
@@ -70,26 +85,29 @@ await settle(second, 800);
 // Before this, typing in one panel silently overwrote the other's draft, and
 // whichever closed last decided which unfinished thought survived.
 await typeInEditor(s, 'half a thought, started in the first panel');
-await settle(s, 900);
+const seenInSecond = await eventually(() => editorContent(second),
+  (c) => c.text.includes('half a thought, started in the first panel'));
 check('an unfinished thought shows up in the other panel',
-  (await editorContent(second)).text.includes('half a thought, started in the first panel'));
+  seenInSecond.text.includes('half a thought, started in the first panel'));
 
 await second.evalJson(`
   document.querySelector('.fn-prose').focus();
   document.execCommand('insertText', false, ' and finished in the second');
   return true;
 `);
-await settle(s, 900);
+const seenInFirst = await eventually(() => editorContent(s),
+  (c) => c.text.includes('and finished in the second'));
 check('and carries on in the first when continued in the second',
-  (await editorContent(s)).text.includes('and finished in the second'));
+  seenInFirst.text.includes('and finished in the second'));
 
 await second.evalJson('document.querySelector(".fn-prose").focus(); return true;');
 await key(second, 'Enter', { modifiers: META, code: 'Enter', keyCode: 13 });
-await settle(s, 900);
+await eventually(() => storedNotes(s), (n) => n.some((x) => x.text.includes('half a thought')));
 let notes = await storedNotes(s);
 check('committing it from either panel makes one note',
   notes.filter((n) => n.text.includes('half a thought')).length === 1, String(notes.length));
-check('the other panel’s composer empties too', (await editorContent(s)).text.trim() === '');
+const emptied = await eventually(() => editorContent(s), (c) => c.text.trim() === '');
+check('the other panel’s composer empties too', emptied.text.trim() === '');
 
 console.log('\n# A note pinned while it is being edited');
 await typeInEditor(s, 'a note to pin mid-edit');

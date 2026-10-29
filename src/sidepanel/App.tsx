@@ -44,6 +44,7 @@ import { applyTheme } from '../lib/theme';
 import { formatBytes } from '../lib/time';
 
 import { EmptyState, type EmptyKind } from './components/EmptyState';
+import { ReviewPrompt, REVIEW_AFTER_NOTES } from './components/ReviewPrompt';
 import { Welcome } from './components/Welcome';
 import { FilterBar, type View } from './components/FilterBar';
 import { NoteEditor, type EditorValue, type SaveError, type SaveState } from './components/NoteEditor';
@@ -570,9 +571,24 @@ export function App({ host }: { host: HostBridge }) {
   const showWelcome =
     !settings.welcomeSeen && notes !== null && notes.length === 0 && emptyKind === 'all';
 
+  /** Change a setting from the panel and remember it. */
+  function updateSettings(patch: Partial<Settings>) {
+    setSettings((current) => ({ ...current, ...patch }));
+    void store.setSettings({ ...settings, ...patch });
+  }
+
   function dismissWelcome() {
-    setSettings((current) => ({ ...current, welcomeSeen: true }));
-    void store.setSettings({ ...settings, welcomeSeen: true });
+    updateSettings({ welcomeSeen: true });
+  }
+
+  // Asked once, after the panel has clearly been useful, and never again
+  // whichever way it is answered.
+  const showReviewPrompt =
+    !settings.reviewAsked && active.length >= REVIEW_AFTER_NOTES && !showWelcome;
+
+  function answerReview(wantsToReview: boolean) {
+    updateSettings({ reviewAsked: true });
+    if (wantsToReview) void host.openTab(`https://chromewebstore.google.com/detail/${chrome.runtime.id}/reviews`);
   }
   const nearQuota = usageRatio >= QUOTA_WARN_RATIO;
 
@@ -777,6 +793,8 @@ export function App({ host }: { host: HostBridge }) {
       ) : (
         <StatusBar message={status} action={statusAction} />
       )}
+
+      {showReviewPrompt ? <ReviewPrompt onAnswer={answerReview} /> : null}
 
       <footer className="flex shrink-0 items-center justify-between gap-1.5 border-t border-line px-3 py-1.5 text-[11px] text-muted">
         <span>

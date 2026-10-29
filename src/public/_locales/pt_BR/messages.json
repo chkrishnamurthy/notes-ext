@@ -482,6 +482,15 @@
   "welcomeDismiss": {
     "message": "Entendi"
   },
+  "reviewPrompt": {
+    "message": "Está achando o Holdpad útil? Uma avaliação curta ajuda outras pessoas a encontrá-lo."
+  },
+  "reviewLeave": {
+    "message": "Deixar uma avaliação"
+  },
+  "reviewNoThanks": {
+    "message": "Não, obrigado"
+  },
   "emptyPinnedTitle": {
     "message": "Deixe o que é útil por perto."
   },
@@ -619,6 +628,9 @@
   },
   "exportMarkdown": {
     "message": "Exportar como Markdown"
+  },
+  "exportMarkdownFiles": {
+    "message": "Exportar como arquivos Markdown (.zip)"
   },
   "backupFileLabel": {
     "message": "Arquivo de backup para importar"

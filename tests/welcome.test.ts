@@ -24,3 +24,16 @@ describe('first-run tips setting', () => {
     expect(settings.welcomeSeen).toBe(false);
   });
 });
+
+describe('review request setting', () => {
+  it('starts unasked and is remembered once answered', () => {
+    expect(DEFAULT_SETTINGS.reviewAsked).toBe(false);
+    expect(parseSettings({ reviewAsked: true }).reviewAsked).toBe(true);
+  });
+
+  it('treats anything but an explicit true as unasked', () => {
+    for (const value of ['true', 1, null]) {
+      expect(parseSettings({ reviewAsked: value }).reviewAsked).toBe(false);
+    }
+  });
+});

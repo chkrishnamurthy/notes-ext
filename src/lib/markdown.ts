@@ -247,7 +247,47 @@ export function notesToMarkdown(notes: Note[], now = Date.now()): string {
   return [head, ...active.map(noteToMarkdown)].join('\n\n---\n\n') + '\n';
 }
 
-/** `for-now-notes-2026-09-23.md` */
+/** `holdpad-notes-2026-09-23.md` */
 export function markdownFilename(now = Date.now()): string {
-  return `for-now-notes-${localDate(now)}.md`;
+  return `holdpad-notes-${localDate(now)}.md`;
+}
+
+/** `holdpad-notes-2026-09-23.zip` */
+export function markdownZipFilename(now = Date.now()): string {
+  return `holdpad-notes-${localDate(now)}.zip`;
+}
+
+/** Characters no common file system allows in a name, and control characters. */
+// eslint-disable-next-line no-control-regex
+const UNSAFE_IN_FILENAME = /[\\/:*?"<>|\u0000-\u001f]/g;
+
+/** Longest stem kept, so a path stays well under the limits on every system. */
+const MAX_FILE_STEM = 60;
+
+function fileStem(note: Note): string {
+  const firstLine = note.text.split('\n').find((line) => line.trim()) ?? '';
+  const title = firstLine
+    .replace(UNSAFE_IN_FILENAME, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/^\.+/, '')
+    .slice(0, MAX_FILE_STEM)
+    .trim();
+  return `${localDate(note.createdAt)} ${title || 'note'}`;
+}
+
+/**
+ * Every active note as its own Markdown file, named for the day it was written
+ * and its first line, in the order the panel shows. Two notes that would share
+ * a name get a number, so none overwrites another.
+ */
+export function notesToMarkdownFiles(notes: Note[]): Array<{ name: string; content: string }> {
+  const used = new Set<string>();
+  return sortNotes(notes.filter(isActive)).map((note) => {
+    const stem = fileStem(note);
+    let name = `${stem}.md`;
+    for (let n = 2; used.has(name.toLowerCase()); n += 1) name = `${stem} (${n}).md`;
+    used.add(name.toLowerCase());
+    return { name, content: `${noteToMarkdown(note)}\n` };
+  });
 }

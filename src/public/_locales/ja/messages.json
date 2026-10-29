@@ -482,6 +482,15 @@
   "welcomeDismiss": {
     "message": "わかりました"
   },
+  "reviewPrompt": {
+    "message": "Holdpad は役に立っていますか？ 短いレビューが、ほかの人が見つける助けになります。"
+  },
+  "reviewLeave": {
+    "message": "レビューを書く"
+  },
+  "reviewNoThanks": {
+    "message": "今はしない"
+  },
   "emptyPinnedTitle": {
     "message": "役立つものを手元に。"
   },
@@ -619,6 +628,9 @@
   },
   "exportMarkdown": {
     "message": "Markdown で書き出す"
+  },
+  "exportMarkdownFiles": {
+    "message": "Markdown ファイルとして書き出す (.zip)"
   },
   "backupFileLabel": {
     "message": "読み込むバックアップファイル"

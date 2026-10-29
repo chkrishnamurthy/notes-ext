@@ -482,6 +482,15 @@
   "welcomeDismiss": {
     "message": "Verstanden"
   },
+  "reviewPrompt": {
+    "message": "Holdpad hilfreich? Eine kurze Bewertung hilft anderen, es zu finden."
+  },
+  "reviewLeave": {
+    "message": "Bewertung abgeben"
+  },
+  "reviewNoThanks": {
+    "message": "Nein, danke"
+  },
   "emptyPinnedTitle": {
     "message": "Das Nützliche griffbereit halten."
   },
@@ -619,6 +628,9 @@
   },
   "exportMarkdown": {
     "message": "Als Markdown exportieren"
+  },
+  "exportMarkdownFiles": {
+    "message": "Als Markdown-Dateien exportieren (.zip)"
   },
   "backupFileLabel": {
     "message": "Zu importierende Sicherungsdatei"

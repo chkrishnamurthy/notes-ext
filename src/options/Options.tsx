@@ -24,12 +24,13 @@ import {
   type ParsedBackup,
 } from '../lib/backup';
 import { plural, t, tParts, type MessageKey } from '../lib/i18n';
-import { markdownFilename, notesToMarkdown } from '../lib/markdown';
+import { markdownFilename, markdownZipFilename, notesToMarkdown, notesToMarkdownFiles } from '../lib/markdown';
 import { isActive, isTrashed } from '../lib/notes';
 import { DEFAULT_SETTINGS, type Settings } from '../lib/schema';
 import { chromeLocalArea, NoteStore, QUOTA_BYTES } from '../lib/storage';
 import { applyTheme } from '../lib/theme';
 import { formatBytes } from '../lib/time';
+import { buildZip } from '../lib/zip';
 import { blocksNetwork, summarizeAccess, type AccessSummary } from '../lib/trust';
 import { Appearance } from './Appearance';
 
@@ -137,6 +138,12 @@ export function Options() {
   async function exportMarkdown() {
     const notes = (await store.listNotes()).filter(isActive);
     download(notesToMarkdown(notes), 'text/markdown', markdownFilename());
+    setMessage(plural(notes.length, 'exportedMdOne', 'exportedMdOther'));
+  }
+
+  async function exportMarkdownFiles() {
+    const notes = (await store.listNotes()).filter(isActive);
+    download(buildZip(notesToMarkdownFiles(notes)), 'application/zip', markdownZipFilename());
     setMessage(plural(notes.length, 'exportedMdOne', 'exportedMdOther'));
   }
 
@@ -301,6 +308,10 @@ export function Options() {
                 <button type="button" className="fn-btn" onClick={() => void exportMarkdown()}>
                   <FileText size={16} aria-hidden="true" />
                   {t('exportMarkdown')}
+                </button>
+                <button type="button" className="fn-btn" onClick={() => void exportMarkdownFiles()}>
+                  <FileText size={16} aria-hidden="true" />
+                  {t('exportMarkdownFiles')}
                 </button>
                 <input
                   ref={fileRef}
@@ -475,7 +486,7 @@ export function Options() {
  * Save a string as a file. A blob URL keeps it entirely local; nothing is
  * uploaded anywhere.
  */
-function download(contents: string, type: string, filename: string) {
+function download(contents: BlobPart, type: string, filename: string) {
   const url = URL.createObjectURL(new Blob([contents], { type }));
   const link = document.createElement('a');
   link.href = url;
